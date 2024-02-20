@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="quizFileNameProvider" class="ru.otus.config.AppConfig">
+        <constructor-arg index="0" value="quiz.csv"/>
+    </bean>
+
+    <bean id="ioService" class="ru.otus.service.IO.IOServiceStreams">
+        <constructor-arg index="0" value="#{T(System).out}"/>
+        <constructor-arg index="1" value="#{T(System).in}"/>
+    </bean>
+
+    <bean id="questionConverter" class="ru.otus.service.QuestionConverterImpl"/>
+
+    <bean id="questionDao" class="ru.otus.dao.QuestionDaoCSV">
+        <constructor-arg index="0" ref="questionConverter"/>
+        <constructor-arg index="1" ref="quizFileNameProvider"/>
+    </bean>
+
+    <bean id="questionService" class="ru.otus.service.QuestionServiceImpl">
+        <constructor-arg index="0" ref="questionDao"/>
+    </bean>
+
+    <bean id="quizProcessor" class="ru.otus.service.QuizProcessorImpl">
+        <constructor-arg index="0" ref="questionService"/>
+        <constructor-arg index="1" ref="questionConverter"/>
+        <constructor-arg index="2" ref="ioService"/>
+    </bean>
+
+    <bean id="applicationRunner" class="ru.otus.service.ApplicationRunner">
+        <constructor-arg index="0" ref="quizProcessor"/>
+        <constructor-arg index="1" ref="ioService"/>
+    </bean>
+
+</beans>
