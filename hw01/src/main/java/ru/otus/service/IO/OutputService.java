@@ -1,5 +1,9 @@
 package ru.otus.service.IO;
 
 public interface OutputService {
-    void outputString(String s);
+
+    void printLine(String s);
+
+    void printFormattedLine(String s, Object... args);
+
 }

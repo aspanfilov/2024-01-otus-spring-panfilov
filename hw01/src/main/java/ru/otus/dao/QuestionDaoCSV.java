@@ -1,67 +1,55 @@
 package ru.otus.dao;
 
+import com.opencsv.CSVParserBuilder;
+import com.opencsv.CSVReader;
+import com.opencsv.CSVReaderBuilder;
+import com.opencsv.bean.CsvToBeanBuilder;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVRecord;
-import ru.otus.config.QuizFileNameProvider;
-import ru.otus.enums.QuestionHeaders;
-import ru.otus.exceptions.QuestionFileProcessingException;
+import ru.otus.config.TestFileNameProvider;
+import ru.otus.dao.dto.QuestionDto;
 import ru.otus.domain.Question;
-import ru.otus.service.QuestionConverter;
+import ru.otus.exceptions.QuestionReadException;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 @RequiredArgsConstructor
 public class QuestionDaoCSV implements QuestionDao {
 
-    private final QuestionConverter questionConverter;
-
-    private final QuizFileNameProvider quizFileNameProvider;
+    private final TestFileNameProvider testFileNameProvider;
 
     @Override
-    public List<Question> getAll() {
-
-        List<Question> questions;
-
-        try (Reader reader = getQuestionsReader()) {
-            Iterable<CSVRecord> records = parseQuestionsFromCSV(reader);
-            questions = convertRecordsToQuestions(records);
-
-        } catch (IOException ex) {
-            throw new QuestionFileProcessingException(
-                    String.format("Failed to process the question file %s due to an I/O error",
-                            quizFileNameProvider.getQuizFileName()), ex);
+    public List<Question> findAll() {
+        try (CSVReader csvReader = getQuestionCSVReader()) {
+            return new CsvToBeanBuilder<QuestionDto>(csvReader)
+                    .withType(QuestionDto.class)
+                    .build()
+                    .parse()
+                    .stream().map(QuestionDto::toDomainObject)
+                    .toList();
+        } catch (IOException e) {
+            throw new QuestionReadException(String.format(
+                    "Failed to process the question file %s due to an I/O error",
+                    testFileNameProvider.getTestFileName()), e);
         }
-        return questions;
     }
 
     private Reader getQuestionsReader() {
-        String quizFileName = quizFileNameProvider.getQuizFileName();
-        InputStream resourceStream = getClass().getClassLoader().getResourceAsStream(quizFileName);
+        String testFileName = testFileNameProvider.getTestFileName();
+        InputStream resourceStream = getClass().getClassLoader().getResourceAsStream(testFileName);
         return new InputStreamReader(Objects.requireNonNull(resourceStream));
     }
 
-    private Iterable<CSVRecord> parseQuestionsFromCSV(Reader reader) throws IOException {
-        CSVFormat csvFormat = CSVFormat.DEFAULT.builder()
-                .setHeader(QuestionHeaders.class)
-                .setDelimiter(";")
+    private CSVReader getQuestionCSVReader() {
+        return new CSVReaderBuilder(getQuestionsReader())
+                .withCSVParser(new CSVParserBuilder()
+                        .withSeparator(';')
+                        .build())
+                .withSkipLines(1)
                 .build();
-        return csvFormat.parse(reader);
     }
-
-    private List<Question> convertRecordsToQuestions(Iterable<CSVRecord> records) {
-        List<Question> questionsFromRecords = new ArrayList<>();
-        for (CSVRecord record : records) {
-            Question question = questionConverter.convertMapToQuestion(record.toMap());
-            questionsFromRecords.add(question);
-        }
-        return questionsFromRecords;
-    }
-
 }
