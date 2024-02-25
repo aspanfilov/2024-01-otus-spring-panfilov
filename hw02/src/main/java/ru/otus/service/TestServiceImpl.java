@@ -3,6 +3,9 @@ package ru.otus.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.otus.dao.QuestionDao;
+import ru.otus.domain.Question;
+import ru.otus.domain.Student;
+import ru.otus.domain.TestResult;
 import ru.otus.exceptions.QuestionFileReadException;
 import ru.otus.exceptions.QuestionReadException;
 import ru.otus.service.IO.IOService;
@@ -18,26 +21,47 @@ public class TestServiceImpl implements TestService {
     private final QuestionConverter questionConverter;
 
     @Override
-    public void executeTest() {
-        ioService.printLine("");
-        ioService.printFormattedLine("Please answer the questions below%n");
+    public TestResult executeTestFor(Student student) {
+        greetStudent();
+        var testResult = new TestResult(student);
 
         try {
-            questionDao.findAll().stream()
-                    .map(questionConverter::convertQuestionToString)
-                    .forEach(ioService::printLine);
-        } catch (
-                QuestionFileReadException e) {
+            questionDao.findAll().forEach(question ->
+                    handleQuestion(question, testResult));
+        } catch (QuestionFileReadException e) {
             ioService.printLine(
                     "Resource file not found");
-        } catch (
-                QuestionReadException e) {
+        } catch (QuestionReadException e) {
             ioService.printLine(
                     "Failed to process the question file due to an I/O error");
-        } catch (
-                Exception e) {
+        } catch (IllegalArgumentException e) {
+            ioService.printLine(
+                    "Maximum input attempts exceeded. The test has ended with some questions left unanswered"
+            );
+        } catch (Exception e) {
             ioService.printLine("An unexpected error has occurred");
         }
+        return testResult;
+    }
+
+    private void greetStudent() {
+        ioService.printLine("");
+        ioService.printFormattedLine("Please answer the questions below%n");
+    }
+
+    private void handleQuestion(Question question, TestResult testResult) {
+        String questionText = questionConverter.convertQuestionToString(question);
+        ioService.printLine(questionText);
+        int answerNumber = askForAnswer(question);
+        boolean isAnswerValid = question.answers().get(answerNumber - 1).isCorrect();
+        testResult.applyAnswer(question, isAnswerValid);
+    }
+
+    private int askForAnswer(Question question) {
+        return ioService.readIntForRangeWithPrompt(1, question.answers().size(),
+                "Please input correct answer number",
+                String.format("A numeric value within the range from %d to %d is required. Please, try again.",
+                        1, question.answers().size()));
     }
 
 }

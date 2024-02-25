@@ -12,11 +12,11 @@ public class QuestionConverterImpl implements QuestionConverter {
     public String convertQuestionToString(Question question) {
         StringBuilder builder = new StringBuilder();
 
-        builder.append(String.format("%s\n", question.getQuestionText()));
+        builder.append(String.format("%s\n", question.text()));
 
-        IntStream.range(0, question.getAnswers().size())
+        IntStream.range(0, question.answers().size())
                 .forEach(i -> builder.append(
-                        String.format("%d %s\n", i + 1, question.getAnswers().get(i).getText())));
+                        String.format("%d %s\n", i + 1, question.answers().get(i).text())));
 
         return builder.toString();
     }

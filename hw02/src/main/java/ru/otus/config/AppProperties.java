@@ -8,11 +8,19 @@ import org.springframework.stereotype.Component;
 @Component
 @PropertySource("classpath:application.properties")
 @Getter
-public class AppProperties implements TestFileNameProvider {
+public class AppProperties implements TestFileNameProvider, TestConfig, IOConfig {
 
     private final String testFileName;
 
-    public AppProperties(@Value("${application.test-file-name}") String testFileName) {
+    private final int rightAnswersCountToPass;
+
+    private final int maxInputAttempts;
+
+    public AppProperties(@Value("${application.test-file-name}") String testFileName,
+                         @Value("${application.right-answers-count-to-pass}") int rightAnswersCountToPass,
+                         @Value("${application.max-input-attempts}") int maxInputAttempts) {
         this.testFileName = testFileName;
+        this.rightAnswersCountToPass = rightAnswersCountToPass;
+        this.maxInputAttempts = maxInputAttempts;
     }
 }
