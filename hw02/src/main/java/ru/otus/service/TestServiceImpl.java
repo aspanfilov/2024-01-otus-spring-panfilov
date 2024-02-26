@@ -50,10 +50,10 @@ public class TestServiceImpl implements TestService {
     }
 
     private void handleQuestion(Question question, TestResult testResult) {
-        String questionText = questionConverter.convertQuestionToString(question);
+        var questionText = questionConverter.convertQuestionToString(question);
         ioService.printLine(questionText);
-        int answerNumber = askForAnswer(question);
-        boolean isAnswerValid = question.answers().get(answerNumber - 1).isCorrect();
+        var answerNumber = askForAnswer(question);
+        var isAnswerValid = isAnswerValid(question, answerNumber);
         testResult.applyAnswer(question, isAnswerValid);
     }
 
@@ -62,6 +62,10 @@ public class TestServiceImpl implements TestService {
                 "Please input correct answer number",
                 String.format("A numeric value within the range from %d to %d is required. Please, try again.",
                         1, question.answers().size()));
+    }
+
+    private boolean isAnswerValid(Question question, int answerNumber) {
+        return question.answers().get(answerNumber - 1).isCorrect();
     }
 
 }
