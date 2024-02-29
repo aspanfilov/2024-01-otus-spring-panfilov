@@ -8,24 +8,23 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.otus.domain.Student;
 import ru.otus.service.IO.InputService;
-import ru.otus.service.StudentService;
 import ru.otus.service.StudentServiceImpl;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
-@DisplayName("Класс StudentServiceImpl")
+@DisplayName("РљР»Р°СЃСЃ StudentServiceImpl")
 @ExtendWith(MockitoExtension.class)
 public class StudentServiceImplTest {
 
     @Mock
-    InputService inputService;
+    private InputService inputService;
 
     @InjectMocks
-    StudentService studentService;
+    private StudentServiceImpl studentService;
 
     @Test
-    @DisplayName("Корректно определяет текущего студента на основе ввода имени и фамилии")
+    @DisplayName("РљРѕСЂСЂРµРєС‚РЅРѕ РѕРїСЂРµРґРµР»СЏРµС‚ С‚РµРєСѓС‰РµРіРѕ СЃС‚СѓРґРµРЅС‚Р° РЅР° РѕСЃРЅРѕРІРµ РІРІРѕРґР° РёРјРµРЅРё Рё С„Р°РјРёР»РёРё")
     void shouldCorrectDetermineCurrentStudent() {
         when(inputService.readStringWithPrompt("Please input your first name"))
                 .thenReturn("Ivan");

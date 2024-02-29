@@ -12,13 +12,12 @@ import ru.otus.domain.Question;
 import ru.otus.domain.Student;
 import ru.otus.domain.TestResult;
 import ru.otus.service.IO.IOService;
-import ru.otus.service.ResultService;
 import ru.otus.service.ResultServiceImpl;
 
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@DisplayName("Класс ResultServiceImpl")
+@DisplayName("РљР»Р°СЃСЃ ResultServiceImpl")
 @ExtendWith(MockitoExtension.class)
 public class ResultServiceImplTest {
 
@@ -32,7 +31,7 @@ public class ResultServiceImplTest {
     private Question anyQuestion;
 
     @InjectMocks
-    private ResultService resultService;
+    private ResultServiceImpl resultService;
 
     private TestResult testResult;
 
@@ -44,7 +43,7 @@ public class ResultServiceImplTest {
     }
 
     @Test
-    @DisplayName("Поздравляет студента, если тест пройден удачно")
+    @DisplayName("РџРѕР·РґСЂР°РІР»СЏРµС‚ СЃС‚СѓРґРµРЅС‚Р°, РµСЃР»Рё С‚РµСЃС‚ РїСЂРѕР№РґРµРЅ")
     void shouldCongratulateStudentIfPassed() {
         when(testConfig.getRightAnswersCountToPass()).thenReturn(1);
 
@@ -54,7 +53,7 @@ public class ResultServiceImplTest {
     }
 
     @Test
-    @DisplayName("Информирует студента, если тест провален")
+    @DisplayName("РћРїРѕРІРµС‰Р°РµС‚ СЃС‚СѓРґРµРЅС‚Р°, РµСЃР»Рё С‚РµСЃС‚ РїСЂРѕРІР°Р»РµРЅ")
     void shouldInformStudentOfFailureIfNotPassed() {
         when(testConfig.getRightAnswersCountToPass()).thenReturn(2);
 

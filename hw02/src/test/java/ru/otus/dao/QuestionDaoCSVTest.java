@@ -3,6 +3,7 @@ package ru.otus.dao;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.otus.config.TestFileNameProvider;
@@ -19,15 +20,15 @@ import static org.mockito.Mockito.when;
 public class QuestionDaoCSVTest {
 
     @Mock
-    TestFileNameProvider testFileNameProvider;
+    private TestFileNameProvider testFileNameProvider;
 
-    QuestionDaoCSV questionDaoCSV;
+    @InjectMocks
+    private QuestionDaoCSV questionDaoCSV;
 
     @Test
     @DisplayName("findAll должен корректно считывать вопросы из CSV файла")
     void findAllShouldCorrectlyReadQuestionsFromCsvFile() {
         when(testFileNameProvider.getTestFileName()).thenReturn("questions.csv");
-        questionDaoCSV = new QuestionDaoCSV(testFileNameProvider);
 
         List<Question> questions = questionDaoCSV.findAll();
 

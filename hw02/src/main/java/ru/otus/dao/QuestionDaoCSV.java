@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 import ru.otus.config.TestFileNameProvider;
 import ru.otus.dao.dto.QuestionDto;
 import ru.otus.domain.Question;
-import ru.otus.exceptions.QuestionFileReadException;
 import ru.otus.exceptions.QuestionReadException;
 
 import java.io.IOException;
@@ -22,17 +21,16 @@ import java.util.List;
 @RequiredArgsConstructor
 public class QuestionDaoCSV implements QuestionDao {
 
+    private static final char CSV_SEPARATOR = ';';
+
+    private static final int SKIP_LINES = 1;
+
     private final TestFileNameProvider testFileNameProvider;
 
     @Override
     public List<Question> findAll() {
         try (CSVReader csvReader = getQuestionCSVReader()) {
-            return new CsvToBeanBuilder<QuestionDto>(csvReader)
-                    .withType(QuestionDto.class)
-                    .build()
-                    .parse()
-                    .stream().map(QuestionDto::toDomainObject)
-                    .toList();
+            return parseQuestions(csvReader);
         } catch (IOException e) {
             throw new QuestionReadException(String.format(
                     "Failed to process the question file %s due to an I/O error",
@@ -40,12 +38,21 @@ public class QuestionDaoCSV implements QuestionDao {
         }
     }
 
+    private List<Question> parseQuestions(CSVReader csvReader) {
+        return new CsvToBeanBuilder<QuestionDto>(csvReader)
+                .withType(QuestionDto.class)
+                .build()
+                .parse()
+                .stream().map(QuestionDto::toDomainObject)
+                .toList();
+    }
+
     private CSVReader getQuestionCSVReader() {
         return new CSVReaderBuilder(getQuestionsReader())
                 .withCSVParser(new CSVParserBuilder()
-                        .withSeparator(';')
+                        .withSeparator(CSV_SEPARATOR)
                         .build())
-                .withSkipLines(1)
+                .withSkipLines(SKIP_LINES)
                 .build();
     }
 
@@ -53,7 +60,7 @@ public class QuestionDaoCSV implements QuestionDao {
         String testFileName = testFileNameProvider.getTestFileName();
         InputStream resourceStream = getClass().getClassLoader().getResourceAsStream(testFileName);
         if (resourceStream == null) {
-            throw new QuestionFileReadException(String.format(
+            throw new QuestionReadException(String.format(
                     "Resource file %s not found", testFileName));
         }
         return new InputStreamReader(resourceStream);

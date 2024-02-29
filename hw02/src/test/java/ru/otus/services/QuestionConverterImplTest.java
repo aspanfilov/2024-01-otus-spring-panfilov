@@ -16,7 +16,7 @@ public class QuestionConverterImplTest {
 
     @Test
     @DisplayName("правильно конвертирует вопросы в текстовое представление")
-    void shouldCorrectСonvertQuestionToString() {
+    void shouldCorrectConvertQuestionToString() {
         Question question = new Question("Name the capital of France?", List.of(
                 new Answer("Paris", true),
                 new Answer("Madrid", false),

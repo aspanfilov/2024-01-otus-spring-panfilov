@@ -6,7 +6,6 @@ import ru.otus.dao.QuestionDao;
 import ru.otus.domain.Question;
 import ru.otus.domain.Student;
 import ru.otus.domain.TestResult;
-import ru.otus.exceptions.QuestionFileReadException;
 import ru.otus.exceptions.QuestionReadException;
 import ru.otus.service.IO.IOService;
 
@@ -28,12 +27,9 @@ public class TestServiceImpl implements TestService {
         try {
             questionDao.findAll().forEach(question ->
                     handleQuestion(question, testResult));
-        } catch (QuestionFileReadException e) {
-            ioService.printLine(
-                    "Resource file not found");
         } catch (QuestionReadException e) {
             ioService.printLine(
-                    "Failed to process the question file due to an I/O error");
+                    "An error occurred while accessing the question data. Please check the data source and try again");
         } catch (IllegalArgumentException e) {
             ioService.printLine(
                     "Maximum input attempts exceeded. The test has ended with some questions left unanswered"

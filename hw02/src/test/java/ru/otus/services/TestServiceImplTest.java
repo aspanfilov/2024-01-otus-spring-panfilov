@@ -23,27 +23,27 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@DisplayName("Класс TestServiceImpl")
+@DisplayName("РљР»Р°СЃСЃ TestServiceImpl")
 @ExtendWith(MockitoExtension.class)
 public class TestServiceImplTest {
 
     @Mock
-    IOService ioService;
+    private IOService ioService;
 
     @Mock
-    QuestionDao questionDao;
+    private QuestionDao questionDao;
 
     @Mock
-    QuestionConverter questionConverter;
+    private QuestionConverter questionConverter;
 
     @Mock
-    Student anyStudent;
+    private Student anyStudent;
 
     @InjectMocks
-    TestServiceImpl testService;
+    private TestServiceImpl testService;
 
     @Test
-    @DisplayName("Должен корректно выполнить тестирование")
+    @DisplayName("Р”РѕР»Р¶РµРЅ РєРѕСЂСЂРµРєС‚РЅРѕ РІС‹РїРѕР»РЅРёС‚СЊ С‚РµСЃС‚РёСЂРѕРІР°РЅРёРµ")
     void shouldCorrectExecuteTest() {
         Question question = new Question("Name the capital of France?", List.of(
                 new Answer("Paris", true),
