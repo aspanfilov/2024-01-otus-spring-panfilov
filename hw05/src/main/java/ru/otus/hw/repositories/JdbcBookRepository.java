@@ -32,17 +32,17 @@ public class JdbcBookRepository implements BookRepository {
 
     @Override
     public Optional<Book> findById(long id) {
-        final String sql = """
+        String sql = """
                 SELECT b.id        AS book_id,
                        b.title     AS book_title,
                        a.id        AS author_id,
                        a.full_name AS author_fullname,
                        g.id        AS genre_id,
                        g.name      AS genre_name
-                FROM books AS b
-                    LEFT JOIN authors AS a ON b.author_id = a.id
-                    LEFT JOIN books_genres AS bg ON b.id = bg.book_id
-                    LEFT JOIN genres AS g ON g.id = bg.genre_id
+                FROM books b
+                    LEFT JOIN authors a ON b.author_id = a.id
+                    LEFT JOIN books_genres bg ON b.id = bg.book_id
+                    LEFT JOIN genres g ON g.id = bg.genre_id
                 WHERE b.id = :id""";
         return Optional.ofNullable(jdbcOperations.query(sql, Map.of("id", id), BOOK_RESULT_SET_EXTRACTOR));
     }
@@ -70,7 +70,7 @@ public class JdbcBookRepository implements BookRepository {
     }
 
     private List<Book> getAllBooksWithoutGenres() {
-        final String sql = """
+        String sql = """
                 SELECT b.id        AS book_id,
                        b.title     AS book_title,
                        b.author_id AS author_id,
@@ -102,7 +102,7 @@ public class JdbcBookRepository implements BookRepository {
     }
 
     private Book insert(Book book) {
-        final String sql = "INSERT INTO books (title, author_id) VALUES (:title, :authorId)";
+        String sql = "INSERT INTO books (title, author_id) VALUES (:title, :authorId)";
         var params = createBookParameters(book);
         var keyHolder = new GeneratedKeyHolder();
 
@@ -120,7 +120,7 @@ public class JdbcBookRepository implements BookRepository {
     }
 
     private Book update(Book book) {
-        final String sql = "UPDATE books SET title = :title, author_id = :authorId WHERE id = :id";
+        String sql = "UPDATE books SET title = :title, author_id = :authorId WHERE id = :id";
         var params = createBookParameters(book);
 
         int updateCount = jdbcOperations.update(sql, params);
