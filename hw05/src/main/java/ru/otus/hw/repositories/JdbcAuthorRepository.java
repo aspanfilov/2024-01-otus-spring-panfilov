@@ -20,8 +20,9 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class JdbcAuthorRepository implements AuthorRepository {
 
-    private final NamedParameterJdbcOperations jdbcOperations;
     private static final RowMapper<Author> AUTHOR_ROW_MAPPER = new AuthorRowMapper();
+
+    private final NamedParameterJdbcOperations jdbcOperations;
 
     @Override
     public List<Author> findAll() {
@@ -81,7 +82,7 @@ public class JdbcAuthorRepository implements AuthorRepository {
         @Override
         public Author mapRow(ResultSet rs, int i) throws SQLException {
             var id = rs.getLong("id");
-            var fullName = rs.getString("fullName");
+            var fullName = rs.getString("full_name");
             return new Author(id, fullName);
         }
     }

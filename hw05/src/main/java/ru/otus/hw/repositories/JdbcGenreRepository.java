@@ -14,14 +14,16 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 @Repository
 @RequiredArgsConstructor
 public class JdbcGenreRepository implements GenreRepository {
 
-    private final NamedParameterJdbcOperations jdbcOperations;
     private static final RowMapper<Genre> GENRE_ROW_MAPPER = new JdbcGenreRepository.GenreRowMapper();
+
+    private final NamedParameterJdbcOperations jdbcOperations;
 
     @Override
     public List<Genre> findAll() {
@@ -30,8 +32,18 @@ public class JdbcGenreRepository implements GenreRepository {
 
     @Override
     public List<Genre> findAllByIds(Set<Long> ids) {
-        return jdbcOperations.query("SELECT id, name FROM genres WHERE id IN :ids",
-                Map.of("ids", ids), GENRE_ROW_MAPPER);
+        var sql = "SELECT id, name FROM genres WHERE id IN (:ids)";
+        var params = new MapSqlParameterSource()
+                .addValue("ids", ids);
+        return jdbcOperations.query(sql, params, GENRE_ROW_MAPPER);
+    }
+
+    @Override
+    public Optional<Genre> findById(long id) {
+        return jdbcOperations.query("SELECT id, name FROM genres WHERE id = :id",
+                        Map.of("id", id), GENRE_ROW_MAPPER)
+                .stream()
+                .findFirst();
     }
 
     @Override
@@ -48,7 +60,7 @@ public class JdbcGenreRepository implements GenreRepository {
     }
 
     private Genre insert(Genre genre) {
-        String sql = "INSERT INTO genres (name) VALUES (:name)";
+        var sql = "INSERT INTO genres (name) VALUES (:name)";
         var params = new MapSqlParameterSource()
                 .addValue("name", genre.getName());
         var keyHolder = new GeneratedKeyHolder();

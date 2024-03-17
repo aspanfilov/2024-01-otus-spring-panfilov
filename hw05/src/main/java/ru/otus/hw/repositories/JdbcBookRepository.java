@@ -16,19 +16,25 @@ import ru.otus.hw.models.Genre;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
 public class JdbcBookRepository implements BookRepository {
 
-    private final NamedParameterJdbcOperations jdbcOperations;
-    private final GenreRepository genreRepository;
-
     private static final RowMapper<Book> BOOK_ROW_MAPPER =
             new JdbcBookRepository.BookRowMapper();
+
     private static final ResultSetExtractor<Book> BOOK_RESULT_SET_EXTRACTOR =
             new JdbcBookRepository.BookResultSetExtractor();
+
+    private final NamedParameterJdbcOperations jdbcOperations;
+
+    private final GenreRepository genreRepository;
 
     @Override
     public Optional<Book> findById(long id) {
@@ -190,7 +196,6 @@ public class JdbcBookRepository implements BookRepository {
             if (authorId != null) {
                 book.setAuthor(new Author(authorId, authorFullName));
             }
-
             List<Genre> genres = new ArrayList<>();
             do {
                 var genreId = rs.getObject("genre_id", Long.class);
@@ -199,8 +204,8 @@ public class JdbcBookRepository implements BookRepository {
                     genres.add(new Genre(genreId, genreName));
                 }
             } while (rs.next());
-
             book.setGenres(genres);
+
             return book;
         }
     }
