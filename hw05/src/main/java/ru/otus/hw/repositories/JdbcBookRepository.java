@@ -21,6 +21,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
@@ -95,16 +97,20 @@ public class JdbcBookRepository implements BookRepository {
 
     private void mergeBooksInfo(List<Book> booksWithoutGenres, List<Genre> genres,
                                 List<BookGenreRelation> relations) {
-        booksWithoutGenres.forEach(book -> {
-            var bookGenreIds = relations.stream()
-                    .filter(relation -> relation.bookId() == book.getId())
-                    .map(BookGenreRelation::genreId)
-                    .toList();
-            var bookGenres = genres.stream()
-                    .filter(genre -> bookGenreIds.contains(genre.getId()))
-                    .toList();
-            book.setGenres(bookGenres);
+        Map<Long, Genre> genresMap = genres.stream()
+                .collect(Collectors.toMap(Genre::getId, Function.identity()));
+        Map<Long, Book> booksMap = booksWithoutGenres.stream()
+                .collect(Collectors.toMap(Book::getId, Function.identity()));
+        Map<Book, List<Genre>> bookGenresMap = booksWithoutGenres.stream()
+                .collect(Collectors.toMap(book -> book, book -> new ArrayList<>()));
+
+        relations.forEach(r -> {
+            Book book = booksMap.get(r.bookId());
+            Genre genre = genresMap.get(r.genreId());
+            bookGenresMap.get(book).add(genre);
         });
+
+        bookGenresMap.forEach(Book::setGenres);
     }
 
     private Book insert(Book book) {
