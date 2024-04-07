@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import ru.otus.hw.models.Author;
 
@@ -15,13 +15,13 @@ import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DisplayName("Репозиторий на основе Jdbc для работы с авторами")
-@JdbcTest
-@Import({JdbcAuthorRepository.class})
+@DisplayName("Репозиторий на основе Jpa для работы с авторами")
+@DataJpaTest
+@Import({JpaAuthorRepository.class})
 public class JdbcAuthorRepositoryTest {
 
     @Autowired
-    private JdbcAuthorRepository repositoryJdbc;
+    private JpaAuthorRepository repositoryJpa;
 
     private List<Author> dbAuthors;
 
@@ -34,7 +34,7 @@ public class JdbcAuthorRepositoryTest {
     @ParameterizedTest
     @MethodSource("getDbAuthors")
     void shouldReturnCorrectAuthorById(Author expectedAuthor) {
-        var actualAuthor = repositoryJdbc.findById(expectedAuthor.getId());
+        var actualAuthor = repositoryJpa.findById(expectedAuthor.getId());
         assertThat(actualAuthor).isPresent()
                 .get()
                 .isEqualTo(expectedAuthor);
@@ -43,7 +43,7 @@ public class JdbcAuthorRepositoryTest {
     @DisplayName("должен загружать список всех авторов")
     @Test
     void shouldReturnCorrectAuthorsList() {
-        var actualAuthors = repositoryJdbc.findAll();
+        var actualAuthors = repositoryJpa.findAll();
         var expectedAuthors = dbAuthors;
 
         assertThat(actualAuthors).containsExactlyElementsOf(expectedAuthors);
@@ -54,12 +54,12 @@ public class JdbcAuthorRepositoryTest {
     @Test
     void shouldSaveNewAuthor() {
         var expectedAuthor = new Author(0, "newAuthor");
-        var returnedAuthor = repositoryJdbc.save(expectedAuthor);
+        var returnedAuthor = repositoryJpa.save(expectedAuthor);
         assertThat(returnedAuthor).isNotNull()
                 .matches(author -> author.getId() > 0)
                 .usingRecursiveComparison().ignoringExpectedNullFields().isEqualTo(expectedAuthor);
 
-        assertThat(repositoryJdbc.findById(returnedAuthor.getId()))
+        assertThat(repositoryJpa.findById(returnedAuthor.getId()))
                 .isPresent()
                 .get()
                 .isEqualTo(returnedAuthor);
@@ -70,17 +70,17 @@ public class JdbcAuthorRepositoryTest {
     void shouldSaveUpdatedAuthor() {
         var expectedAuthor = new Author(1L, "updatableAuthor");
 
-        assertThat(repositoryJdbc.findById(expectedAuthor.getId()))
+        assertThat(repositoryJpa.findById(expectedAuthor.getId()))
                 .isPresent()
                 .get()
                 .isNotEqualTo(expectedAuthor);
 
-        var returnedAuthor = repositoryJdbc.save(expectedAuthor);
+        var returnedAuthor = repositoryJpa.save(expectedAuthor);
         assertThat(returnedAuthor).isNotNull()
                 .matches(author -> author.getId() > 0)
                 .usingRecursiveComparison().ignoringExpectedNullFields().isEqualTo(expectedAuthor);
 
-        assertThat(repositoryJdbc.findById(returnedAuthor.getId()))
+        assertThat(repositoryJpa.findById(returnedAuthor.getId()))
                 .isPresent()
                 .get()
                 .isEqualTo(returnedAuthor);
@@ -89,9 +89,9 @@ public class JdbcAuthorRepositoryTest {
     @DisplayName("должен удалять автора по id ")
     @Test
     void shouldDeleteAuthor() {
-        assertThat(repositoryJdbc.findById(1L)).isPresent();
-        repositoryJdbc.deleteById(1L);
-        assertThat(repositoryJdbc.findById(1L)).isEmpty();
+        assertThat(repositoryJpa.findById(1L)).isPresent();
+        repositoryJpa.deleteById(1L);
+        assertThat(repositoryJpa.findById(1L)).isEmpty();
     }
 
     private static List<Author> getDbAuthors() {
