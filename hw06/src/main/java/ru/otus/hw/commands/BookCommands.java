@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import ru.otus.hw.converters.BookConverter;
+import ru.otus.hw.dtos.BookDTO;
 import ru.otus.hw.services.BookService;
 
 import java.util.Set;
@@ -21,7 +22,7 @@ public class BookCommands {
     @ShellMethod(value = "Find all books", key = "ab")
     public String findAllBooks() {
         return bookService.findAll().stream()
-                .map(bookConverter::bookToString)
+                .map(BookDTO::toString)
                 .collect(Collectors.joining("," + System.lineSeparator()));
     }
 

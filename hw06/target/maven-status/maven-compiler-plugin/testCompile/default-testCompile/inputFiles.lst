@@ -1,3 +1,4 @@
-D:\Java\3 Projects\OTUS\Spring\2024-01-otus-spring-panfilov\hw06\src\test\java\ru\otus\hw\repositories\JdbcAuthorRepositoryTest.java
-D:\Java\3 Projects\OTUS\Spring\2024-01-otus-spring-panfilov\hw06\src\test\java\ru\otus\hw\repositories\JdbcBookRepositoryTest.java
-D:\Java\3 Projects\OTUS\Spring\2024-01-otus-spring-panfilov\hw06\src\test\java\ru\otus\hw\repositories\JdbcGenreRepositoryTest.java
+D:\Java\3 Projects\OTUS\Spring\2024-01-otus-spring-panfilov\hw06\src\test\java\ru\otus\hw\repositories\JpaBookRepositoryTest.java
+D:\Java\3 Projects\OTUS\Spring\2024-01-otus-spring-panfilov\hw06\src\test\java\ru\otus\hw\repositories\JpaBookCommentRepositoryTest.java
+D:\Java\3 Projects\OTUS\Spring\2024-01-otus-spring-panfilov\hw06\src\test\java\ru\otus\hw\repositories\JpaGenreRepositoryTest.java
+D:\Java\3 Projects\OTUS\Spring\2024-01-otus-spring-panfilov\hw06\src\test\java\ru\otus\hw\repositories\JpaAuthorRepositoryTest.java

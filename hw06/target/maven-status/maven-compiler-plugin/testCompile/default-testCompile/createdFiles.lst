@@ -1,3 +1,4 @@
-ru\otus\hw\repositories\JdbcBookRepositoryTest.class
-ru\otus\hw\repositories\JdbcGenreRepositoryTest.class
-ru\otus\hw\repositories\JdbcAuthorRepositoryTest.class
+ru\otus\hw\repositories\JpaGenreRepositoryTest.class
+ru\otus\hw\repositories\JpaBookRepositoryTest.class
+ru\otus\hw\repositories\JpaAuthorRepositoryTest.class
+ru\otus\hw\repositories\JpaBookCommentRepositoryTest.class

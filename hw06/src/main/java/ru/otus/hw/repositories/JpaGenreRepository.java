@@ -25,7 +25,6 @@ public class JpaGenreRepository implements GenreRepository {
 
     @Override
     public List<Genre> findAllByIds(Set<Long> ids) {
-        //todo нужна ли здесь эта проверка ?
         if (ids == null || ids.isEmpty()) {
             return Collections.emptyList();
         }

@@ -8,17 +8,28 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.NamedAttributeNode;
+import jakarta.persistence.NamedEntityGraph;
+import jakarta.persistence.NamedSubgraph;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "book_commentary")
+@Table(name = "book_comments")
+@NamedEntityGraph(
+        name = "bookComment-book-entity-graph",
+        attributeNodes = {@NamedAttributeNode(value = "book", subgraph = "book-author-subgraph")},
+        subgraphs = {@NamedSubgraph(
+                name = "book-author-subgraph",
+                attributeNodes = {@NamedAttributeNode("author")})
+        }
+)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class BookCommentary {
+public class BookComment {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,4 +42,5 @@ public class BookCommentary {
             fetch = FetchType.LAZY)
     @JoinColumn(name = "book_id")
     private Book book;
+
 }

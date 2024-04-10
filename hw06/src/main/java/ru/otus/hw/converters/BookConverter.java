@@ -6,8 +6,8 @@ import ru.otus.hw.models.Book;
 
 import java.util.stream.Collectors;
 
-@RequiredArgsConstructor
 @Component
+@RequiredArgsConstructor
 public class BookConverter {
     private final AuthorConverter authorConverter;
 
@@ -25,3 +25,4 @@ public class BookConverter {
                 genresString);
     }
 }
+
