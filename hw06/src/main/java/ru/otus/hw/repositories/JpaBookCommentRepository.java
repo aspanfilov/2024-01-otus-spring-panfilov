@@ -18,17 +18,6 @@ public class JpaBookCommentRepository implements BookCommentRepository {
     private EntityManager entityManager;
 
     @Override
-    public List<BookComment> findAll() {
-        String jpql = "select bc from BookComment bc";
-        TypedQuery<BookComment> query = entityManager.createQuery(jpql, BookComment.class);
-
-        EntityGraph<?> entityGraph = entityManager.getEntityGraph("bookComment-book-entity-graph");
-        query.setHint(FETCH.getKey(), entityGraph);
-
-        return query.getResultList();
-    }
-
-    @Override
     public List<BookComment> findAllByBookId(long bookId) {
         String jpql = "select bc from BookComment bc where bc.book.id = :bookId";
         TypedQuery<BookComment> query = entityManager.createQuery(jpql, BookComment.class);

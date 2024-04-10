@@ -65,34 +65,6 @@ public class JpaBookCommentRepositoryTest {
                 .get().usingRecursiveComparison().isEqualTo(expectedBookComment);
     }
 
-    @DisplayName("должен загружать список всех комментариев книг")
-    @Test
-    void shouldReturnCorrectAllBookComments() {
-        val actualBookComments = repositoryJpa.findAll();
-        val expectedBookComments = dbBookComments;
-
-        assertThat(actualBookComments).hasSize(expectedBookComments.size());
-        assertThat(actualBookComments).usingRecursiveComparison().isEqualTo(expectedBookComments);
-    }
-
-    @DisplayName("должен загружать список всех комментариев книг с полной информацией за указанное количество запросов")
-    @Test
-    void shouldLoadAllBookCommentsWithFullInfoInGivenQueryCount() {
-        SessionFactory sessionFactory = entityManager.getEntityManager().getEntityManagerFactory()
-                .unwrap(SessionFactory.class);
-        sessionFactory.getStatistics().setStatisticsEnabled(true);
-        sessionFactory.getStatistics().clear();
-
-        val bookComments = repositoryJpa.findAll();
-        assertThat(bookComments).isNotNull().hasSize(6)
-                .allMatch(bc -> !bc.getCommentText().equals(""))
-                .allMatch(bc -> !bc.getBook().getTitle().equals(""))
-                .allMatch(bc -> !bc.getBook().getAuthor().getFullName().equals(""))
-                .allMatch(bc -> bc.getBook().getGenres().size() > 0);
-
-        assertThat(sessionFactory.getStatistics().getPrepareStatementCount()).isEqualTo(EXPECTED_QUERIES_COUNT);
-    }
-
     @DisplayName("должен загружать список всех комментариев по id книги")
     @Test
     void shouldReturnCorrectAllCommentsByBookId() {

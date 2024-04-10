@@ -51,11 +51,10 @@ public class Book {
     @Fetch(FetchMode.SUBSELECT)
     private List<Genre> genres;
 
-
 //    @OneToMany(cascade = {CascadeType.ALL},
 //            fetch = FetchType.LAZY,
 //            orphanRemoval = true,
 //            mappedBy = "book")
 //    @JoinColumn(name = "book_id")
-//    private List<BookCommentary> bookCommentaries;
+//    private List<BookComments> bookComments;
 }

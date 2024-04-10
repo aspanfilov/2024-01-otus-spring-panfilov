@@ -18,13 +18,6 @@ public class BookCommentCommands {
 
     private final BookCommentConverter bookCommentConverter;
 
-    @ShellMethod(value = "Find all book comments", key = "abc")
-    public String findAllBookComments() {
-        return bookCommentService.findAll().stream()
-                .map(BookCommentDTO::toString)
-                .collect(Collectors.joining("," + System.lineSeparator()));
-    }
-
     @ShellMethod(value = "Find all book comments by book id", key = "bcbb")
     public String findBookCommentsByBookId(long id) {
         return bookCommentService.findAllByBookId(id).stream()

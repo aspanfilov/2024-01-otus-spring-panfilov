@@ -6,8 +6,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface BookCommentService {
-    List<BookCommentDTO> findAll();
-
     List<BookCommentDTO> findAllByBookId(long bookId);
 
     Optional<BookCommentDTO> findById(long id);
