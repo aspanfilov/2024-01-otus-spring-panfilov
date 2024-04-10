@@ -22,12 +22,6 @@ public class BookCommentServiceImpl implements BookCommentService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<BookCommentDTO> findAll() {
-        return bookCommentRepository.findAll().stream().map(BookCommentMapper::toBookCommentDTO).toList();
-    }
-
-    @Transactional(readOnly = true)
-    @Override
     public List<BookCommentDTO> findAllByBookId(long bookId) {
         return bookCommentRepository.findAllByBookId(bookId).stream().map(BookCommentMapper::toBookCommentDTO).toList();
     }

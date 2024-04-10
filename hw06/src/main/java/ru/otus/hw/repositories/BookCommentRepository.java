@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface BookCommentRepository {
-    List<BookComment> findAll();
 
     List<BookComment> findAllByBookId(long bookId);
 
