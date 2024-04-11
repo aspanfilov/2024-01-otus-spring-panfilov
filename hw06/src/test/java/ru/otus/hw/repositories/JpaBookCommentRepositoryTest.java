@@ -2,7 +2,6 @@ package ru.otus.hw.repositories;
 
 import lombok.val;
 import org.hibernate.Hibernate;
-import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -27,7 +26,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Import({JpaBookCommentRepository.class})
 public class JpaBookCommentRepositoryTest {
 
-    private static final int EXPECTED_QUERIES_COUNT = 2;
     private static final int FIRST_BOOK_ID = 1;
 
     @Autowired
@@ -72,26 +70,10 @@ public class JpaBookCommentRepositoryTest {
         val expectedBookComments = dbBookComments.stream()
                 .filter(bc -> bc.getBook().getId() == FIRST_BOOK_ID).toList();
 
+        actualBookComments.forEach(bc -> bc.setBook((Book) Hibernate.unproxy(bc.getBook())));
+
         assertThat(actualBookComments).hasSize(expectedBookComments.size());
         assertThat(actualBookComments).usingRecursiveComparison().isEqualTo(expectedBookComments);
-    }
-
-    @DisplayName("должен загружать список всех комментариев по id книги с полной информацией за указанное количество запросов")
-    @Test
-    void shouldLoadAllCommentsByBookIdWithFullInfoInGivenQueryCount() {
-        SessionFactory sessionFactory = entityManager.getEntityManager().getEntityManagerFactory()
-                .unwrap(SessionFactory.class);
-        sessionFactory.getStatistics().setStatisticsEnabled(true);
-        sessionFactory.getStatistics().clear();
-
-        val bookComments = repositoryJpa.findAllByBookId(1);
-        assertThat(bookComments).isNotNull().hasSize(2)
-                .allMatch(bc -> !bc.getCommentText().equals(""))
-                .allMatch(bc -> !bc.getBook().getTitle().equals(""))
-                .allMatch(bc -> !bc.getBook().getAuthor().getFullName().equals(""))
-                .allMatch(bc -> bc.getBook().getGenres().size() > 0);
-
-        assertThat(sessionFactory.getStatistics().getPrepareStatementCount()).isEqualTo(EXPECTED_QUERIES_COUNT);
     }
 
     @DisplayName("должен корректно сохранять новый комментарий книги")
