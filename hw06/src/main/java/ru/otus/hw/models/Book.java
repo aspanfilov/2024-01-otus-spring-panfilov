@@ -15,8 +15,11 @@ import jakarta.persistence.NamedAttributeNode;
 import jakarta.persistence.NamedEntityGraph;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
@@ -26,7 +29,10 @@ import java.util.List;
 @Table(name = "books")
 @NamedEntityGraph(name = "book-author-entity-graph",
         attributeNodes = {@NamedAttributeNode("author")})
-@Data
+@Getter
+@Setter
+@EqualsAndHashCode(exclude = {"genres"})
+@ToString(exclude = {"genres"})
 @NoArgsConstructor
 @AllArgsConstructor
 public class Book {

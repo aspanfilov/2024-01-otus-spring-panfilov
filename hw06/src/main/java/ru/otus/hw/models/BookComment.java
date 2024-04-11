@@ -13,8 +13,11 @@ import jakarta.persistence.NamedEntityGraph;
 import jakarta.persistence.NamedSubgraph;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 @Entity
 @Table(name = "book_comments")
@@ -26,7 +29,10 @@ import lombok.NoArgsConstructor;
                 attributeNodes = {@NamedAttributeNode("author")})
         }
 )
-@Data
+@Getter
+@Setter
+@EqualsAndHashCode(exclude = {"book"})
+@ToString(exclude = {"book"})
 @NoArgsConstructor
 @AllArgsConstructor
 public class BookComment {
@@ -42,5 +48,4 @@ public class BookComment {
             fetch = FetchType.LAZY)
     @JoinColumn(name = "book_id")
     private Book book;
-
 }
