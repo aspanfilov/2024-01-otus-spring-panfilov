@@ -31,8 +31,8 @@ import java.util.List;
         attributeNodes = {@NamedAttributeNode("author")})
 @Getter
 @Setter
-@EqualsAndHashCode(exclude = {"genres"})
-@ToString(exclude = {"genres"})
+@EqualsAndHashCode(exclude = {"author", "genres"})
+@ToString(exclude = {"author", "genres"})
 @NoArgsConstructor
 @AllArgsConstructor
 public class Book {
@@ -45,7 +45,7 @@ public class Book {
     private String title;
 
     @ManyToOne(cascade = {CascadeType.PERSIST},
-            fetch = FetchType.EAGER)
+            fetch = FetchType.LAZY)
     @JoinColumn(name = "author_id")
     private Author author;
 
@@ -57,10 +57,4 @@ public class Book {
     @Fetch(FetchMode.SUBSELECT)
     private List<Genre> genres;
 
-//    @OneToMany(cascade = {CascadeType.ALL},
-//            fetch = FetchType.LAZY,
-//            orphanRemoval = true,
-//            mappedBy = "book")
-//    @JoinColumn(name = "book_id")
-//    private List<BookComments> bookComments;
 }

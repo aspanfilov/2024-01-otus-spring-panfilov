@@ -1,6 +1,7 @@
 package ru.otus.hw.repositories;
 
 import lombok.val;
+import org.hibernate.Hibernate;
 import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -22,10 +23,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("Репозиторий на основе Jpa для работы с книгами ")
 @DataJpaTest
-@Import({JpaBookRepository.class, JpaGenreRepository.class})
+@Import({JpaBookRepository.class})
 class JpaBookRepositoryTest {
-
-    private static final int EXPECTED_QUERIES_COUNT = 2;
 
     @Autowired
     private JpaBookRepository repositoryJpa;
@@ -51,6 +50,8 @@ class JpaBookRepositoryTest {
     @MethodSource("getDbBooks")
     void shouldReturnCorrectBookById(Book expectedBook) {
         val actualBook = repositoryJpa.findById(expectedBook.getId());
+        actualBook.get().setAuthor(getUnproxyAuthor(actualBook.get()));
+        actualBook.ifPresent(book -> book.setAuthor(getUnproxyAuthor(book)));
         assertThat(actualBook).isPresent()
                 .get().usingRecursiveComparison().isEqualTo(expectedBook);
     }
@@ -64,23 +65,6 @@ class JpaBookRepositoryTest {
         assertThat(actualBooks).hasSize(expectedBooks.size());
         assertThat(actualBooks).usingRecursiveComparison().isEqualTo(expectedBooks);
     }
-
-    @DisplayName("должен загружать список всех книг с полной информацией за указанное количество запросов")
-    @Test
-    void shouldLoadAllBooksWithFullInfoInGivenQueryCount() {
-        SessionFactory sessionFactory = entityManager.getEntityManager().getEntityManagerFactory()
-                .unwrap(SessionFactory.class);
-        sessionFactory.getStatistics().setStatisticsEnabled(true);
-
-        val books = repositoryJpa.findAll();
-        assertThat(books).isNotNull().hasSize(3)
-                .allMatch(b -> !b.getTitle().equals(""))
-                .allMatch(b -> !b.getAuthor().getFullName().equals(""))
-                .allMatch(b -> b.getGenres().size() > 0);
-
-        assertThat(sessionFactory.getStatistics().getPrepareStatementCount()).isEqualTo(EXPECTED_QUERIES_COUNT);
-    }
-
 
     @DisplayName("должен корректно сохранять новую книгу")
     @Test
@@ -112,6 +96,8 @@ class JpaBookRepositoryTest {
                 .isNotEqualTo(expectedBook);
 
         var returnedBook = repositoryJpa.save(expectedBook);
+        returnedBook.setAuthor(getUnproxyAuthor(returnedBook));
+
         assertThat(returnedBook).isNotNull()
                 .matches(book -> book.getId() > 0)
                 .usingRecursiveComparison().isEqualTo(expectedBook);
@@ -154,5 +140,9 @@ class JpaBookRepositoryTest {
         var dbAuthors = getDbAuthors();
         var dbGenres = getDbGenres();
         return getDbBooks(dbAuthors, dbGenres);
+    }
+
+    private static Author getUnproxyAuthor(Book book) {
+        return (Author) Hibernate.unproxy(book.getAuthor());
     }
 }

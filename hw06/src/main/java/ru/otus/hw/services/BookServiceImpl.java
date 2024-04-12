@@ -17,8 +17,8 @@ import java.util.Set;
 
 import static org.springframework.util.CollectionUtils.isEmpty;
 
-@RequiredArgsConstructor
 @Service
+@RequiredArgsConstructor
 public class BookServiceImpl implements BookService {
     private final AuthorRepository authorRepository;
 
@@ -28,7 +28,14 @@ public class BookServiceImpl implements BookService {
 
     @Transactional(readOnly = true)
     @Override
-    public Optional<Book> findById(long id) {
+    public Optional<BookDTO> findById(long id) {
+        var book = bookRepository.findById(id);
+        return book.map(BookMapper::toBookDTO);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public Optional<Book> findBookById(long id) {
         return bookRepository.findById(id);
     }
 
@@ -41,14 +48,16 @@ public class BookServiceImpl implements BookService {
 
     @Transactional
     @Override
-    public Book insert(String title, long authorId, Set<Long> genresIds) {
-        return save(0, title, authorId, genresIds);
+    public BookDTO insert(String title, long authorId, Set<Long> genresIds) {
+        Book book = save(0, title, authorId, genresIds);
+        return BookMapper.toBookDTO(book);
     }
 
     @Transactional
     @Override
-    public Book update(long id, String title, long authorId, Set<Long> genresIds) {
-        return save(id, title, authorId, genresIds);
+    public BookDTO update(long id, String title, long authorId, Set<Long> genresIds) {
+        Book book = save(id, title, authorId, genresIds);
+        return BookMapper.toBookDTO(book);
     }
 
     @Transactional

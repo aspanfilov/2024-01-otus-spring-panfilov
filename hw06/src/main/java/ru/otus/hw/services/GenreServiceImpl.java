@@ -10,8 +10,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-@RequiredArgsConstructor
 @Service
+@RequiredArgsConstructor
 public class GenreServiceImpl implements GenreService {
     private final GenreRepository genreRepository;
 

@@ -13,8 +13,8 @@ import ru.otus.hw.repositories.BookCommentRepository;
 import java.util.List;
 import java.util.Optional;
 
-@RequiredArgsConstructor
 @Service
+@RequiredArgsConstructor
 public class BookCommentServiceImpl implements BookCommentService {
     private final BookCommentRepository bookCommentRepository;
 
@@ -54,7 +54,7 @@ public class BookCommentServiceImpl implements BookCommentService {
     }
 
     private BookComment save(long id, long bookId, String commentText) {
-        Book book = bookService.findById(bookId)
+        Book book = bookService.findBookById(bookId)
                 .orElseThrow(() -> new EntityNotFoundException("Book with id %d not found".formatted(bookId)));
         var bookComment = new BookComment(id, commentText, book);
         return bookCommentRepository.save(bookComment);

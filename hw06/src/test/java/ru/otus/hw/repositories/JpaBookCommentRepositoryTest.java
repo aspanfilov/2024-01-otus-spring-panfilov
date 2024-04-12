@@ -56,8 +56,7 @@ public class JpaBookCommentRepositoryTest {
     void shouldReturnCorrectBookById(BookComment expectedBookComment) {
         val actualBookComment = repositoryJpa.findById(expectedBookComment.getId());
 
-        val unproxiedBook = (Book) Hibernate.unproxy(actualBookComment.get().getBook());
-        actualBookComment.get().setBook(unproxiedBook);
+        actualBookComment.ifPresent(this::unproxyLazyFields);
 
         assertThat(actualBookComment).isPresent()
                 .get().usingRecursiveComparison().isEqualTo(expectedBookComment);
@@ -70,7 +69,7 @@ public class JpaBookCommentRepositoryTest {
         val expectedBookComments = dbBookComments.stream()
                 .filter(bc -> bc.getBook().getId() == FIRST_BOOK_ID).toList();
 
-        actualBookComments.forEach(bc -> bc.setBook((Book) Hibernate.unproxy(bc.getBook())));
+        actualBookComments.forEach(this::unproxyLazyFields);
 
         assertThat(actualBookComments).hasSize(expectedBookComments.size());
         assertThat(actualBookComments).usingRecursiveComparison().isEqualTo(expectedBookComments);
@@ -153,5 +152,18 @@ public class JpaBookCommentRepositoryTest {
         var dbGenres = getDbGenres();
         var dbBooks = getDbBooks(dbAuthors, dbGenres);
         return getDbBookComment(dbBooks);
+    }
+
+    private static Book getUnproxiedBook(BookComment bookComment) {
+        return (Book) Hibernate.unproxy(bookComment.getBook());
+    }
+
+    private static Author getUnproxyAuthor(Book book) {
+        return (Author) Hibernate.unproxy(book.getAuthor());
+    }
+
+    private void unproxyLazyFields(BookComment bookComment) {
+        bookComment.setBook(getUnproxiedBook(bookComment));
+        bookComment.getBook().setAuthor(getUnproxyAuthor(bookComment.getBook()));
     }
 }

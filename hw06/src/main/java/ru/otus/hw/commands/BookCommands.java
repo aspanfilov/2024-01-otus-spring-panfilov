@@ -29,22 +29,22 @@ public class BookCommands {
     @ShellMethod(value = "Find book by id", key = "bbid")
     public String findBookById(long id) {
         return bookService.findById(id)
-                .map(bookConverter::bookToString)
+                .map(BookDTO::toString)
                 .orElse("Book with id %d not found".formatted(id));
     }
 
     // bins newBook 1 1,6
     @ShellMethod(value = "Insert book", key = "bins")
     public String insertBook(String title, long authorId, Set<Long> genresIds) {
-        var savedBook = bookService.insert(title, authorId, genresIds);
-        return bookConverter.bookToString(savedBook);
+        var savedBookDTO = bookService.insert(title, authorId, genresIds);
+        return savedBookDTO.toString();
     }
 
     // bupd 4 editedBook 3 2,5
     @ShellMethod(value = "Update book", key = "bupd")
     public String updateBook(long id, String title, long authorId, Set<Long> genresIds) {
-        var savedBook = bookService.update(id, title, authorId, genresIds);
-        return bookConverter.bookToString(savedBook);
+        var savedBookDTO = bookService.update(id, title, authorId, genresIds);
+        return savedBookDTO.toString();
     }
 
     // bdel 4
