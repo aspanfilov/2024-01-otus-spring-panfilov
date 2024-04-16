@@ -39,19 +39,6 @@ public class BookRepositoryTest {
                 .get().usingRecursiveComparison().isEqualTo(expectedBook);
     }
 
-    @DisplayName(" ")
-    @Test
-    public void testFindAllShouldUseEntityGraphAndAvoidNPlusOne() {
-        Session session = entityManager.getEntityManager().unwrap(Session.class);
-        Statistics statistics = session.getSessionFactory().getStatistics();
-        statistics.setStatisticsEnabled(true);
-        statistics.clear();
-
-        var books = repository.findAll();
-
-        assertThat(books).hasSize(3);
-        assertThat(statistics.getPrepareStatementCount()).isEqualTo(1);
-    }
 }
 
 

@@ -5,12 +5,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import ru.otus.hw.models.Author;
 import ru.otus.hw.models.Book;
 import ru.otus.hw.models.BookComment;
-import ru.otus.hw.models.Genre;
-
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -26,10 +22,8 @@ public class BookCommentRepositoryTest {
     @DisplayName(" проверка сохранения и извлечения сущности bookComment")
     @Test
     public void testBookCommentPersistence() {
-        var newBook = new Book(0, "new_book",
-                new Author(0, "new_author"),
-                List.of(new Genre(0, "new_genre")));
-        var expectedBookComment = new BookComment(0, "comment", newBook);
+        var book = entityManager.find(Book.class, 1);
+        var expectedBookComment = new BookComment(0, "comment", book);
 
         entityManager.persist(expectedBookComment);
 
