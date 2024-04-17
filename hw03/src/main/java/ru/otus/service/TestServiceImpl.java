@@ -7,13 +7,13 @@ import ru.otus.domain.Question;
 import ru.otus.domain.Student;
 import ru.otus.domain.TestResult;
 import ru.otus.exceptions.QuestionReadException;
-import ru.otus.service.IO.IOService;
+import ru.otus.service.IO.LocalizedIOService;
 
 @Service
 @RequiredArgsConstructor
 public class TestServiceImpl implements TestService {
 
-    private final IOService ioService;
+    private final LocalizedIOService ioService;
 
     private final QuestionDao questionDao;
 
@@ -28,21 +28,22 @@ public class TestServiceImpl implements TestService {
             questionDao.findAll().forEach(question ->
                     handleQuestion(question, testResult));
         } catch (QuestionReadException e) {
-            ioService.printLine(
-                    "An error occurred while accessing the question data. Please check the data source and try again");
+            ioService.printLineLocalized(
+                    "TestService.error.accessing.data");
         } catch (IllegalArgumentException e) {
-            ioService.printLine(
-                    "Maximum input attempts exceeded. The test has ended with some questions left unanswered"
+            ioService.printLineLocalized(
+                    "TestService.error.input.exceeded"
             );
         } catch (Exception e) {
-            ioService.printLine("An unexpected error has occurred");
+            ioService.printLineLocalized("TestService.error.unexpected");
         }
         return testResult;
     }
 
     private void greetStudent() {
         ioService.printLine("");
-        ioService.printFormattedLine("Please answer the questions below%n");
+        ioService.printLineLocalized("TestService.answer.the.questions");
+        ioService.printLine("");
     }
 
     private void handleQuestion(Question question, TestResult testResult) {
@@ -54,10 +55,9 @@ public class TestServiceImpl implements TestService {
     }
 
     private int askForAnswer(Question question) {
-        return ioService.readIntForRangeWithPrompt(1, question.answers().size(),
-                "Please input correct answer number",
-                String.format("A numeric value within the range from %d to %d is required. Please, try again.",
-                        1, question.answers().size()));
+        return ioService.readIntForRangeWithPromptLocalized(1, question.answers().size(),
+                "TestService.input.correct.answer",
+                "TestService.input.range.error");
     }
 
     private boolean isAnswerValid(Question question, int answerNumber) {

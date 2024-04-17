@@ -32,9 +32,10 @@ public class QuestionDaoCSV implements QuestionDao {
         try (CSVReader csvReader = getQuestionCSVReader()) {
             return parseQuestions(csvReader);
         } catch (IOException e) {
-            throw new QuestionReadException(String.format(
-                    "Failed to process the question file %s due to an I/O error",
-                    testFileNameProvider.getTestFileName()), e);
+            throw new QuestionReadException(
+                    "Failed to process the question file %s due to an I/O error"
+                            .formatted(testFileNameProvider.getTestFileName()),
+                    e);
         }
     }
 
@@ -60,8 +61,8 @@ public class QuestionDaoCSV implements QuestionDao {
         String testFileName = testFileNameProvider.getTestFileName();
         InputStream resourceStream = getClass().getClassLoader().getResourceAsStream(testFileName);
         if (resourceStream == null) {
-            throw new QuestionReadException(String.format(
-                    "Resource file %s not found", testFileName));
+            throw new QuestionReadException(
+                    "Resource file %s not found".formatted(testFileName));
         }
         return new InputStreamReader(resourceStream);
     }

@@ -12,6 +12,7 @@ import ru.otus.domain.Question;
 import ru.otus.domain.Student;
 import ru.otus.domain.TestResult;
 import ru.otus.service.IO.IOService;
+import ru.otus.service.IO.LocalizedIOService;
 import ru.otus.service.ResultServiceImpl;
 
 import static org.mockito.Mockito.verify;
@@ -25,7 +26,7 @@ public class ResultServiceImplTest {
     private TestConfig testConfig;
 
     @Mock
-    private IOService ioService;
+    private LocalizedIOService ioService;
 
     @Mock
     private Question anyQuestion;
@@ -49,7 +50,7 @@ public class ResultServiceImplTest {
 
         resultService.showResult(testResult);
 
-        verify(ioService).printLine("Congratulations! You passed test!");
+        verify(ioService).printLineLocalized("ResultService.passed.test");
     }
 
     @Test
@@ -59,6 +60,6 @@ public class ResultServiceImplTest {
 
         resultService.showResult(testResult);
 
-        verify(ioService).printLine("Sorry. You fail test.");
+        verify(ioService).printLineLocalized("ResultService.fail.test");
     }
 }

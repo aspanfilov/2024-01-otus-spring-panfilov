@@ -8,6 +8,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.otus.domain.Student;
 import ru.otus.service.IO.InputService;
+import ru.otus.service.IO.LocalizedIOService;
 import ru.otus.service.StudentServiceImpl;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -18,7 +19,7 @@ import static org.mockito.Mockito.when;
 public class StudentServiceImplTest {
 
     @Mock
-    private InputService inputService;
+    private LocalizedIOService inputService;
 
     @InjectMocks
     private StudentServiceImpl studentService;
@@ -26,9 +27,9 @@ public class StudentServiceImplTest {
     @Test
     @DisplayName("Корректно определяет текущего студента на основе ввода имени и фамилии")
     void shouldCorrectDetermineCurrentStudent() {
-        when(inputService.readStringWithPrompt("Please input your first name"))
+        when(inputService.readStringWithPromptLocalized("StudentService.input.first.name"))
                 .thenReturn("Ivan");
-        when(inputService.readStringWithPrompt("Please input your last name"))
+        when(inputService.readStringWithPromptLocalized("StudentService.input.last.name"))
                 .thenReturn("Ivanov");
 
         Student student = studentService.determineCurrentStudent();

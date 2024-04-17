@@ -1,4 +1,14 @@
-application:
-  test-file-name: questions.csv
-  right-answers-count-to-pass: 3
-  max-input-attempts: 10
+spring:
+  messages:
+    baseName: messages
+    encoding: UTF-8
+    fallbackToSystemLocale: false
+test:
+  rightAnswersCountToPass: 3
+  maxInputAttempts: 10
+  testFileName: questions.csv
+#  locale: en-US
+  locale: ru-RU
+  fileNameByLocaleTag:
+    ru-RU: questions_ru.csv
+    en-US: questions.csv

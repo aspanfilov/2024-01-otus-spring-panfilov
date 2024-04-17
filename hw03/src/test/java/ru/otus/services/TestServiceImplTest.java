@@ -12,6 +12,7 @@ import ru.otus.domain.Question;
 import ru.otus.domain.Student;
 import ru.otus.domain.TestResult;
 import ru.otus.service.IO.IOService;
+import ru.otus.service.IO.LocalizedIOService;
 import ru.otus.service.QuestionConverter;
 import ru.otus.service.TestServiceImpl;
 
@@ -28,7 +29,7 @@ import static org.mockito.Mockito.when;
 public class TestServiceImplTest {
 
     @Mock
-    private IOService ioService;
+    private LocalizedIOService ioService;
 
     @Mock
     private QuestionDao questionDao;
@@ -56,15 +57,15 @@ public class TestServiceImplTest {
                 .thenReturn(List.of(question));
         when(questionConverter.convertQuestionToString(question))
                 .thenReturn("formatted question text");
-        when(ioService.readIntForRangeWithPrompt(eq(1), eq(question.answers().size()),
-                eq("Please input correct answer number"), any()))
+        when(ioService.readIntForRangeWithPromptLocalized(eq(1), eq(question.answers().size()),
+                eq("TestService.input.correct.answer"), any()))
                 .thenReturn(1);
 
         TestResult testResult = testService.executeTestFor(anyStudent);
 
         verify(ioService).printLine("formatted question text");
-        verify(ioService).readIntForRangeWithPrompt(eq(1), eq(question.answers().size()),
-                eq("Please input correct answer number"), any());
+        verify(ioService).readIntForRangeWithPromptLocalized(eq(1), eq(question.answers().size()),
+                eq("TestService.input.correct.answer"), any());
         assertThat(testResult.getRightAnswersCount()).isEqualTo(1);
     }
 }
