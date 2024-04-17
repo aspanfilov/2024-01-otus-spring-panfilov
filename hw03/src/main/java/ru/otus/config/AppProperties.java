@@ -1,10 +1,10 @@
 package ru.otus.config;
 
 import lombok.Getter;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.bind.ConstructorBinding;
 
-@Component
+@ConfigurationProperties(prefix = "application")
 @Getter
 public class AppProperties implements TestFileNameProvider, TestConfig, IOConfig {
 
@@ -14,11 +14,12 @@ public class AppProperties implements TestFileNameProvider, TestConfig, IOConfig
 
     private final int maxInputAttempts;
 
-    public AppProperties(@Value("${application.test-file-name}") String testFileName,
-                         @Value("${application.right-answers-count-to-pass}") int rightAnswersCountToPass,
-                         @Value("${application.max-input-attempts}") int maxInputAttempts) {
+    @ConstructorBinding
+    public AppProperties(String testFileName, int rightAnswersCountToPass, int maxInputAttempts) {
         this.testFileName = testFileName;
         this.rightAnswersCountToPass = rightAnswersCountToPass;
         this.maxInputAttempts = maxInputAttempts;
     }
+
 }
+

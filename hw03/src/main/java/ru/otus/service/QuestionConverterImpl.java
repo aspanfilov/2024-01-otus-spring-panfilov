@@ -16,7 +16,7 @@ public class QuestionConverterImpl implements QuestionConverter {
 
         IntStream.range(0, question.answers().size())
                 .forEach(i -> builder.append(
-                        String.format("%d %s\n", i + 1, question.answers().get(i).text())));
+                        "%d %s\n".formatted(i + 1, question.answers().get(i).text())));
 
         return builder.toString();
     }

@@ -10,7 +10,7 @@ import ru.otus.domain.Student;
 import ru.otus.domain.TestResult;
 import ru.otus.service.ResultService;
 import ru.otus.service.StudentService;
-import ru.otus.service.TestRunnerServiceImpl;
+import ru.otus.service.TestRunnerService;
 import ru.otus.service.TestService;
 
 import static org.mockito.Mockito.verify;
@@ -30,7 +30,7 @@ public class TestRunnerServiceImplTest {
     private ResultService resultService;
 
     @InjectMocks
-    private TestRunnerServiceImpl testRunnerService;
+    private TestRunnerService testRunnerService;
 
     @DisplayName("Метод run должен корректно исполнять процесс тестирования")
     @Test

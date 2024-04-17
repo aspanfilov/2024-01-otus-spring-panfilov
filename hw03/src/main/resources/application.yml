@@ -1,0 +1,4 @@
+application:
+  test-file-name: questions.csv
+  right-answers-count-to-pass: 3
+  max-input-attempts: 10
