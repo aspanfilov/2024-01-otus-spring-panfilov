@@ -2,7 +2,7 @@
 
 --changeset Panfilov Artur:2024-04-16-0001-authors
 insert into authors(full_name)
-values ('Author_1'), ('Author_2'), ('Author_3');
+values ('Author_1'), ('Author_2'), ('Author_3'), ('Author_4');
 
 --changeset Panfilov Artur:2024-04-16-0001-genres
 insert into genres(name)

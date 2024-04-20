@@ -8,5 +8,8 @@ public class Application {
 
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
+
+        System.out.printf("%nЧтобы перейти на страницу сайта открывай: %n%s%n",
+                "http://localhost:8080");
     }
 }
