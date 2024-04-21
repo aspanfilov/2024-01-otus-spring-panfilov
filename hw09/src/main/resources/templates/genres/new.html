@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Genres</title>
+    <title>New Genre</title>
 
     <style>
         body {
@@ -57,52 +57,22 @@
         }
 
     </style>
-
 </head>
 <body>
 
 <nav>
     <a href="/" th:href="@{/}">Home</a> |
-    <a href="/books" th:href="@{/books}">Books</a> |
-    <a href="/authors" th:href="@{/authors}">Authors</a>
+    <a href="/genres" th:href="@{/genres}">Genres</a>
 </nav>
 
-<h3>Genres</h3>
+<h3>New Genre</h3>
 
-<table>
-    <thead>
-    <tr>
-        <th>ID</th>
-        <th>Name</th>
-        <th>Edit</th>
-        <th>Delete</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="genre : ${genres}" th:object="${genre}">
-        <td th:text="*{id}">1</td>
-        <td th:text="*{name}">John Doe</td>
-        <td>
-            <form th:method="GET" th:action="@{/genres/{id}(id=${genre.id})}">
-                <input type="submit" value="Edit">
-            </form>
-        </td>
-        <td>
-            <form th:method="DELETE" th:action="@{/genres/{id}(id=${genre.id})}">
-                <input type="submit" value="Delete">
-            </form>
-        </td>
-    </tr>
-    </tbody>
-</table>
-
-<hr/>
-
-<div>
-    <form method="GET" th:action="@{/genres/new}">
-        <input type="submit" value="Add New Genre">
-    </form>
-</div>
+<form th:method="POST" th:action="@{/genres}" th:object="${genre}">
+    <label for="name">Name:</label>
+    <input type="text" id="name" th:field="*{name}" placeholder="Enter genre's name">
+    <input type="submit" value="Create">
+    <div class="error-message" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+</form>
 
 </body>
 </html>

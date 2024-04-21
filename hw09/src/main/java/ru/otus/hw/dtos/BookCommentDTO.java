@@ -7,7 +7,7 @@ import lombok.Data;
 @Builder
 public class BookCommentDTO {
 
-    private long id;
+    private Long id;
 
     private String commentText;
 

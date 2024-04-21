@@ -71,7 +71,4 @@ public class AuthorController {
         authorService.deleteById(id);
         return "redirect:/authors";
     }
-
-    //todo Исключения обработать - проверить на удалении первого автора
-
 }

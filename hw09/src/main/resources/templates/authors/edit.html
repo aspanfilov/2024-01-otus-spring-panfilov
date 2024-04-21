@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Author</title>
@@ -71,7 +71,7 @@
 
 <nav>
     <a href="/" th:href="@{/}">Home</a> |
-    <a href="/books" th:href="@{/authors}">Authors</a>
+    <a href="/authors" th:href="@{/authors}">Authors</a>
 </nav>
 
 <h3>Author</h3>
@@ -99,7 +99,6 @@
         <input type="submit" value="Delete">
     </div>
 </form>
-
 
 </body>
 </html>
