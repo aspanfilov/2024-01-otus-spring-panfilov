@@ -2,25 +2,24 @@
 
 --changeset Panfilov Artur:2024-04-16-0001-authors
 insert into authors(full_name)
-values ('Author_1'), ('Author_2'), ('Author_3'), ('Author_4');
+values ('Федор Михайлович Достоевский'), ('Теодор Драйзер'), ('Брюс Эккель');
 
 --changeset Panfilov Artur:2024-04-16-0001-genres
 insert into genres(name)
-values ('Genre_1'), ('Genre_2'), ('Genre_3'),
-('Genre_4'), ('Genre_5'), ('Genre_6');
+values ('Классика'), ('Учебная'), ('Драма'),
+('Психология'), ('Политика'), ('Экономика');
 
 --changeset Panfilov Artur:2024-04-16-0001-books
 insert into books(title, author_id)
-values ('BookTitle_1', 1), ('BookTitle_2', 2), ('BookTitle_3', 3);
+values ('Бесы', 1), ('Братья Карамазовы', 1),
+       ('Финансист', 2), ('Американская трагедия', 2),
+       ('Философия Java', 3);
 
 --changeset Panfilov Artur:2024-04-16-0001-books_genres
 insert into books_genres(book_id, genre_id)
-values (1, 1),   (1, 2),
-(2, 3),   (2, 4),
-(3, 5),   (3, 6);
+values (1, 1), (1, 3), (1, 4), (1, 5),
+       (2, 1), (2, 3), (2, 4),
+       (3, 1), (3, 3), (3, 4), (3, 6),
+       (4, 1), (4, 3), (4, 4),
+       (5, 2), (5, 3);
 
---changeset Panfilov Artur:2024-04-16-0001-book_comments
-insert into book_comments(comment_text, book_id)
-values ('comment_1', 1), ('comment_2', 1),
-('comment_3', 2), ('comment_4', 2),
-('comment_5', 3), ('comment_6', 3);

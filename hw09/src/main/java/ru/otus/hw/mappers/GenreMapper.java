@@ -5,9 +5,9 @@ import ru.otus.hw.models.Genre;
 
 public class GenreMapper {
     public static GenreDTO toGenreDto(Genre genre) {
-        return GenreDTO.builder()
-                .id(genre.getId())
-                .name(genre.getName())
-                .build();
+        var genreDTO = new GenreDTO();
+        genreDTO.setId(genre.getId());
+        genreDTO.setName(genre.getName());
+        return genreDTO;
     }
 }

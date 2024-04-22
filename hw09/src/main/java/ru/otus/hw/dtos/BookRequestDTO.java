@@ -3,14 +3,14 @@ package ru.otus.hw.dtos;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import java.util.List;
+import java.util.Set;
 
 @Data
-@Builder
-public class BookDTO {
+@NoArgsConstructor
+public class BookRequestDTO {
 
     private Long id;
 
@@ -18,9 +18,8 @@ public class BookDTO {
     private String title;
 
     @NotNull(message = "author must be selected")
-    private AuthorDTO author;
+    private Long authorId;
 
     @NotEmpty(message = "at least one genre must be selected")
-    private List<GenreDTO> genres;
-
+    private Set<Long> genreIds;
 }
