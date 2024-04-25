@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
+import ru.otus.hw.controllers.rest.BookController;
 import ru.otus.hw.dtos.AuthorDTO;
 import ru.otus.hw.dtos.BookDTO;
 import ru.otus.hw.dtos.BookRequestDTO;

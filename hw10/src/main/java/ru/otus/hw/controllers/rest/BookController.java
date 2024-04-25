@@ -1,4 +1,4 @@
-package ru.otus.hw.controllers;
+package ru.otus.hw.controllers.rest;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
