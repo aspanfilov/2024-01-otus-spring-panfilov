@@ -9,13 +9,16 @@
             font-family: Arial, sans-serif;
             margin: 40px;
         }
+
         div {
             margin-top: 10px;
         }
+
         a {
             color: blue;
             text-decoration: none;
         }
+
         a:hover {
             text-decoration: underline;
         }
@@ -23,14 +26,17 @@
         table {
             border-collapse: collapse;
         }
+
         th, td {
             border: 1px solid #ddd;
             padding: 8px;
             text-align: left;
         }
+
         th {
             background-color: #f2f2f2;
         }
+
         input[readonly] {
             background-color: #f2f2f2;
         }
@@ -57,55 +63,89 @@
         }
 
     </style>
+
+    <script>
+        function createBook() {
+            const bookTitle = document.getElementById("title").value;
+            const bookAuthorId = document.getElementById("author").value;
+            const bookGenres = Array.from(document.getElementById("genres").selectedOptions).map(option => option.value);
+
+            const bookDto = {
+                title: bookTitle,
+                authorId: bookAuthorId,
+                genreIds: bookGenres
+            };
+
+            fetch(`/api/v1/books`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(bookDto)
+            }).then(response => {
+                if (response.ok) {
+                    window.location.href = "/books";
+                } else {
+                    response.json().then(data => {
+                        document.getElementById("error-title").textContent = data.title || "";
+                        document.getElementById("error-author").textContent = data.authorId || "";
+                        document.getElementById("error-genres").textContent = data.genreIds || "";
+                    })
+                }
+            }).catch(() => alert("An error occurred while creating the book."));
+        }
+
+    </script>
+
 </head>
 <body>
 
 <nav>
-    <a href="/" th:href="@{/}">Home</a> |
-    <a href="/books" th:href="@{/books}">Books</a>
+    <a href="/">Home</a> |
+    <a href="/books">Books</a>
 </nav>
 
 <h3>New Book</h3>
 
-<form th:method="POST" th:action="@{/books}" th:object="${bookRequest}">
+<div class="form-row">
+    <label for="title">Title:</label>
+    <input type="text" id="title" placeholder="Enter book's title"/>
+</div>
 
-    <div class="form-row">
-        <label for="title">Title:</label>
-        <input type="text" id="title" th:field="*{title}" placeholder="Enter book's title">
-    </div>
+<div id="error-title" class="error-message"></div>
 
-    <div class="error-message" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></div>
+<div class="form-row">
+    <label for="author">Author:</label>
+    <select id="author">
+        <option th:each="author : ${authors}"
+                th:value="${author.id}"
+                th:text="${author.fullName}">
+            очередной автор
+        </option>
+    </select>
+</div>
 
-    <div class="form-row">
-        <label for="author">Author:</label>
-        <select id="author" th:field="*{authorId}">
-            <option th:each="author : ${authors}"
-                    th:value="${author.id}"
-                    th:text="${author.fullName}">
-                Очередной автор
-            </option>
-        </select>
-    </div>
+<div id="error-author" class="error-message"></div>
 
-    <div class="error-message" th:if="${#fields.hasErrors('authorId')}" th:errors="*{authorId}"></div>
+<div class="form-row">
+    <label for="genres">Genres:</label>
+    <select id="genres" multiple>
+        <option th:each="genre : ${genres}"
+                th:value="${genre.id}"
+                th:text="${genre.name}">
+            очередной жанр
+        </option>
+    </select>
+</div>
 
-    <div class="form-row">
-        <label for="genres">Genres:</label>
-        <select id="genres" th:field="*{genreIds}" multiple>
-            <option th:each="genre : ${genres}"
-                    th:value="${genre.id}"
-                    th:text="${genre.name}">
-                Очередной жанр
-            </option>
-        </select>
-    </div>
+<div id="error-genres" class="error-message"></div>
 
-    <div class="error-message" th:if="${#fields.hasErrors('genreIds')}" th:errors="*{genreIds}"></div>
-
-    <input type="submit" value="Create">
-</form>
+<div class="button-group">
+    <button onclick="createBook()">Create</button>
+    <a href="/books">
+        <button type="button">Cancel</button>
+    </a>
+</div>
 
 </body>
 </html>
-
-

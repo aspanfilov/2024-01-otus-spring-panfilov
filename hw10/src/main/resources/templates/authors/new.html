@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>New Author</title>
@@ -57,22 +57,62 @@
         }
 
     </style>
+
+    <script>
+        function createAuthor() {
+            const authorFullName = document.getElementById("fullName").value;
+            const errorMessage = document.getElementById("error-message");
+            const authorDto = {
+                fullName: authorFullName
+            };
+
+            fetch("/api/v1/authors", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(authorDto)
+            }).then(response => {
+                if (response.ok) {
+                    window.location.href = "/authors";
+                } else {
+                    response.json().then(data => {
+                        if (data.fullName) {
+                            errorMessage.textContent = data.fullName;
+                        } else {
+                            alert("Error updating author.");
+                        }
+                    });
+                }
+            }).catch(() => {
+                alert("An error occurred while creating the author.");
+            });
+        }
+    </script>
+
 </head>
 <body>
 
 <nav>
-    <a href="/" th:href="@{/}">Home</a> |
-    <a href="/authors" th:href="@{/authors}">Authors</a>
+    <a href="/">Home</a> |
+    <a href="/authors">Authors</a>
 </nav>
 
 <h3>New Author</h3>
 
-<form th:method="POST" th:action="@{/authors}" th:object="${author}">
-    <label for="fullname">Full Name:</label>
-    <input type="text" id="fullname" th:field="*{fullName}" placeholder="Enter author's full name">
-    <input type="submit" value="Create">
-    <div class="error-message" th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}"></div>
-</form>
+<div class="form-row">
+    <label for="fullName">Full Name:</label>
+    <input type="text" id="fullName" placeholder="Enter author's full name"/>
+</div>
+
+<div id="error-message" class="error-message"></div>
+
+<div class="button-group">
+    <button onclick="createAuthor()">Create</button>
+    <a href="/authors">
+        <button type="button">Cancel</button>
+    </a>
+</div>
 
 </body>
 </html>
