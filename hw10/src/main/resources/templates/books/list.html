@@ -9,13 +9,16 @@
             font-family: Arial, sans-serif;
             margin: 40px;
         }
+
         div {
             margin-top: 10px;
         }
+
         a {
             color: blue;
             text-decoration: none;
         }
+
         a:hover {
             text-decoration: underline;
         }
@@ -23,14 +26,17 @@
         table {
             border-collapse: collapse;
         }
+
         th, td {
             border: 1px solid #ddd;
             padding: 8px;
             text-align: left;
         }
+
         th {
             background-color: #f2f2f2;
         }
+
         input[readonly] {
             background-color: #f2f2f2;
         }
@@ -79,6 +85,9 @@
                             <td>${book.author.fullName}</td>
                             <td>${genreNames}</td>
                             <td>
+                                <button onclick="bookComments(${book.id})">Comments</button>
+                            </td>
+                            <td>
                                 <button onclick="editBook(${book.id})">Edit</button>
                             </td>
                             <td>
@@ -90,6 +99,10 @@
                 });
         });
 
+        function bookComments(id) {
+            window.location.href = `/books/${id}/comments`;
+        }
+
         function editBook(id) {
             window.location.href = `/books/${id}`;
         }
@@ -98,9 +111,15 @@
             if (confirm("Are you sure you want to delete this book?")) {
                 fetch(`/api/v1/books/${id}`, {
                     method: 'DELETE'
-                }).then(() => {
-                    window.location.reload();
-                });
+                }).then(response => {
+                    if (response.ok) {
+                        window.location.reload();
+                    } else {
+                        return response.json().then(data => {
+                            alert(`Error deleting book: ${data.error || 'Unknown error'}`);
+                        });
+                    }
+                })
             }
         }
     </script>
@@ -123,6 +142,7 @@
         <th>Title</th>
         <th>Author</th>
         <th>Genres</th>
+        <th>Comments</th>
         <th>Edit</th>
         <th>Delete</th>
     </tr>

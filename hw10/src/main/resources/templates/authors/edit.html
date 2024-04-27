@@ -121,7 +121,15 @@
             if (confirm("Are you sure you want to delete this author?")) {
                 fetch(`/api/v1/authors/${authorId}`, {
                     method: 'DELETE'
-                }).then(() => window.location.href = "/authors");
+                }).then(response => {
+                    if (response.ok) {
+                        window.location.href = "/authors";
+                    } else {
+                        return response.json().then(data => {
+                            alert(`Error deleting author: ${data.error || 'Unknown error'}`);
+                        });
+                    }
+                })
             }
         }
 
@@ -146,7 +154,7 @@
 </div>
 
 <div class="form-row">
-    <label for="fullName">full name:</label>
+    <label for="fullName">Full Name:</label>
     <input type="text" id="fullName" placeholder="Enter author's full name"/>
 </div>
 

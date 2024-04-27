@@ -133,7 +133,15 @@
             if (confirm("Are you sure you want to delete this book?")) {
                 fetch(`/api/v1/books/${bookId}`, {
                     method: 'DELETE'
-                }).then(() => window.location.href = "/books")
+                }).then(response => {
+                    if (response.ok) {
+                        window.location.href = "/books";
+                    } else {
+                        return response.json().then(data => {
+                            alert(`Error deleting book: ${data.error || 'Unknown error'}`);
+                        });
+                    }
+                })
             }
         }
 
