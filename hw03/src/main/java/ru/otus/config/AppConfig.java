@@ -5,5 +5,5 @@ import org.springframework.context.annotation.Configuration;
 
 @EnableConfigurationProperties(AppProperties.class)
 @Configuration
-public class Config {
+public class AppConfig {
 }

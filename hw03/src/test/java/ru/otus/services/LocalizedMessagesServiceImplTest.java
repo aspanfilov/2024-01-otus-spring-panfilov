@@ -30,7 +30,7 @@ public class LocalizedMessagesServiceImplTest {
     private MessageSource messageSource;
 
     @InjectMocks
-    LocalizedMessagesServiceImpl localizedMessagesService;
+    private LocalizedMessagesServiceImpl localizedMessagesService;
 
     @BeforeEach
     void setUp() {
