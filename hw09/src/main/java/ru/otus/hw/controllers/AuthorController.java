@@ -8,9 +8,9 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import ru.otus.hw.dtos.AuthorDTO;
 import ru.otus.hw.exceptions.EntityNotFoundException;
 import ru.otus.hw.mappers.AuthorMapper;
@@ -56,7 +56,7 @@ public class AuthorController {
         return "authors/edit";
     }
 
-    @PatchMapping("/authors")
+    @PutMapping("/authors")
     public String updateAuthor(@Valid @ModelAttribute("author") AuthorDTO author,
                                BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {

@@ -74,7 +74,7 @@
 
 <h3>Genre</h3>
 
-<form th:method="PATCH" th:action="@{/genres}" th:object="${genre}">
+<form th:method="PUT" th:action="@{/genres}" th:object="${genre}">
     <div class="form-row">
         <label for="id">ID:</label>
         <input type="text" id="id" th:field="*{id}" readonly/>

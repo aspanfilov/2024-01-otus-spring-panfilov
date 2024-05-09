@@ -8,9 +8,9 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import ru.otus.hw.dtos.BookRequestDTO;
 import ru.otus.hw.exceptions.EntityNotFoundException;
 import ru.otus.hw.mappers.BookMapper;
@@ -74,7 +74,7 @@ public class BookController {
         return "books/edit";
     }
 
-    @PatchMapping("/books")
+    @PutMapping("/books")
     public String updateBook(@Valid @ModelAttribute("bookRequest") BookRequestDTO bookRequest,
                              BindingResult bindingResult,
                              Model model) {

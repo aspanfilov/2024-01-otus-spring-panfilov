@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import ru.otus.hw.dtos.GenreDTO;
 import ru.otus.hw.exceptions.EntityNotFoundException;
 import ru.otus.hw.mappers.GenreMapper;
@@ -56,7 +57,7 @@ public class GenreController {
         return "genres/edit";
     }
 
-    @PatchMapping("/genres")
+    @PutMapping("/genres")
     public String updateGenre(@Valid @ModelAttribute("genre") GenreDTO genre,
                               BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {

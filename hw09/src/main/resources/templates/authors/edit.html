@@ -76,7 +76,7 @@
 
 <h3>Author</h3>
 
-<form th:method="PATCH" th:action="@{/authors}" th:object="${author}">
+<form th:method="PUT" th:action="@{/authors}" th:object="${author}">
     <div class="form-row">
         <label for="id">ID:</label>
         <input type="text" id="id" th:field="*{id}" readonly/>
