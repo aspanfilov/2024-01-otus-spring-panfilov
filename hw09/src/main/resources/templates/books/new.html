@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>New Book</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+        }
+        div {
+            margin-top: 10px;
+        }
+        a {
+            color: blue;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+
+        table {
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        input[readonly] {
+            background-color: #f2f2f2;
+        }
+
+        .form-row {
+            display: flex;
+            align-items: center;
+        }
+
+        .form-row label {
+            width: 100px;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: flex-start;
+            gap: 10px;
+        }
+
+        .error-message {
+            color: red;
+            margin-top: 1px;
+            margin-bottom: 0;
+        }
+
+    </style>
+</head>
+<body>
+
+<nav>
+    <a href="/" th:href="@{/}">Home</a> |
+    <a href="/books" th:href="@{/books}">Books</a>
+</nav>
+
+<h3>New Book</h3>
+
+<form th:method="POST" th:action="@{/books}" th:object="${bookRequest}">
+
+    <div class="form-row">
+        <label for="title">Title:</label>
+        <input type="text" id="title" th:field="*{title}" placeholder="Enter book's title">
+    </div>
+
+    <div class="error-message" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></div>
+
+    <div class="form-row">
+        <label for="author">Author:</label>
+        <select id="author" th:field="*{authorId}">
+            <option th:each="author : ${authors}"
+                    th:value="${author.id}"
+                    th:text="${author.fullName}">
+                Очередной автор
+            </option>
+        </select>
+    </div>
+
+    <div class="error-message" th:if="${#fields.hasErrors('authorId')}" th:errors="*{authorId}"></div>
+
+    <div class="form-row">
+        <label for="genres">Genres:</label>
+        <select id="genres" th:field="*{genreIds}" multiple>
+            <option th:each="genre : ${genres}"
+                    th:value="${genre.id}"
+                    th:text="${genre.name}">
+                Очередной жанр
+            </option>
+        </select>
+    </div>
+
+    <div class="error-message" th:if="${#fields.hasErrors('genreIds')}" th:errors="*{genreIds}"></div>
+
+    <input type="submit" value="Create">
+</form>
+
+</body>
+</html>
+
+
