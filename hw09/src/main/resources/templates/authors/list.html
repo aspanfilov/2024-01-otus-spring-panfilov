@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Authors</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+        }
+        div {
+            margin-top: 10px;
+        }
+        a {
+            color: blue;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+
+        table {
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        input[readonly] {
+            background-color: #f2f2f2;
+        }
+
+        .form-row {
+            display: flex;
+            align-items: center;
+        }
+
+        .form-row label {
+            width: 100px;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: flex-start;
+            gap: 10px;
+        }
+
+        .error-message {
+            color: red;
+            margin-top: 1px;
+            margin-bottom: 0;
+        }
+
+    </style>
+
+</head>
+<body>
+
+<nav>
+    <a href="/" th:href="@{/}">Home</a> |
+    <a href="/books" th:href="@{/books}">Books</a> |
+    <a href="/genres" th:href="@{/genres}">Genres</a>
+</nav>
+
+<h3>Authors</h3>
+
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Full Name</th>
+        <th>Edit</th>
+        <th>Delete</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="author : ${authors}" th:object="${author}">
+        <td th:text="*{id}">1</td>
+        <td th:text="*{fullName}">John Doe</td>
+        <td>
+            <form th:method="GET" th:action="@{/authors/{id}(id=${author.id})}">
+                <input type="submit" value="Edit">
+            </form>
+        </td>
+        <td>
+            <form th:method="DELETE" th:action="@{/authors/{id}(id=${author.id})}">
+                <input type="submit" value="Delete">
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<hr/>
+
+<div>
+    <form method="GET" th:action="@{/authors/new}">
+        <input type="submit" value="Add New Author">
+    </form>
+</div>
+
+</body>
+</html>
