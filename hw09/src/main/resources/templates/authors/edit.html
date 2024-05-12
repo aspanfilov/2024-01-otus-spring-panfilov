@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Author</title>
+
+    <style>
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+        }
+
+        div {
+            margin-top: 10px;
+        }
+
+        a {
+            color: blue;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        table {
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        input[readonly] {
+            background-color: #f2f2f2;
+        }
+
+        .form-row {
+            display: flex;
+            align-items: center;
+        }
+
+        .form-row label {
+            width: 100px;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: flex-start;
+            gap: 10px;
+        }
+
+        .error-message {
+            color: red;
+            margin-top: 1px;
+            margin-bottom: 0;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<nav>
+    <a href="/" th:href="@{/}">Home</a> |
+    <a href="/authors" th:href="@{/authors}">Authors</a>
+</nav>
+
+<h3>Author</h3>
+
+<form th:method="PUT" th:action="@{/authors}" th:object="${author}">
+    <div class="form-row">
+        <label for="id">ID:</label>
+        <input type="text" id="id" th:field="*{id}" readonly/>
+    </div>
+
+    <div class="form-row">
+        <label for="fullname">Full Name:</label>
+        <input type="text" id="fullname" th:field="*{fullName}" placeholder="Enter author's full name">
+    </div>
+
+    <div class="error-message" th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}"></div>
+
+    <div class="button-group">
+        <input type="submit" value="Update">
+    </div>
+</form>
+
+<form th:method="DELETE" th:action="@{/authors/{id}(id=${author.id})}">
+    <div class="button-group">
+        <input type="submit" value="Delete">
+    </div>
+</form>
+
+</body>
+</html>
