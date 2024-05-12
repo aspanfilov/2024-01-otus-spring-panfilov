@@ -12,10 +12,10 @@
     </parent>
 
     <groupId>ru.otus</groupId>
-    <artifactId>hw03</artifactId>
+    <artifactId>hw03-spring-boot</artifactId>
     <version>1.0</version>
 
-    <name>hw03</name>
+    <name>hw03-spring-boot</name>
 
     <properties>
         <maven.compiler.target>17</maven.compiler.target>

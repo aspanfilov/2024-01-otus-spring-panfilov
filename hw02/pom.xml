@@ -5,9 +5,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>ru.otus</groupId>
-    <artifactId>hw02</artifactId>
+    <artifactId>hw02-annotation-based</artifactId>
     <version>1.0</version>
-    <name>hw02</name>
+    <name>hw02-annotation-based</name>
 
     <properties>
         <maven.compiler.target>17</maven.compiler.target>
