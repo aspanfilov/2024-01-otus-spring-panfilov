@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>New Author</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+        }
+        div {
+            margin-top: 10px;
+        }
+        a {
+            color: blue;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+
+        table {
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        input[readonly] {
+            background-color: #f2f2f2;
+        }
+
+        .form-row {
+            display: flex;
+            align-items: center;
+        }
+
+        .form-row label {
+            width: 100px;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: flex-start;
+            gap: 10px;
+        }
+
+        .error-message {
+            color: red;
+            margin-top: 1px;
+            margin-bottom: 0;
+        }
+
+    </style>
+
+    <script>
+        function createAuthor() {
+            const authorFullName = document.getElementById("fullName").value;
+            const errorMessage = document.getElementById("error-message");
+            const authorDto = {
+                fullName: authorFullName
+            };
+
+            fetch("/api/v1/authors", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(authorDto)
+            }).then(response => {
+                if (response.ok) {
+                    window.location.href = "/authors";
+                } else {
+                    response.json().then(data => {
+                        if (data.fullName) {
+                            errorMessage.textContent = data.fullName;
+                        } else {
+                            alert("Error updating author.");
+                        }
+                    });
+                }
+            }).catch(() => {
+                alert("An error occurred while creating the author.");
+            });
+        }
+    </script>
+
+</head>
+<body>
+
+<nav>
+    <a href="/">Home</a> |
+    <a href="/authors">Authors</a>
+</nav>
+
+<h3>New Author</h3>
+
+<div class="form-row">
+    <label for="fullName">Full Name:</label>
+    <input type="text" id="fullName" placeholder="Enter author's full name"/>
+</div>
+
+<div id="error-message" class="error-message"></div>
+
+<div class="button-group">
+    <button onclick="createAuthor()">Create</button>
+    <a href="/authors">
+        <button type="button">Cancel</button>
+    </a>
+</div>
+
+</body>
+</html>
