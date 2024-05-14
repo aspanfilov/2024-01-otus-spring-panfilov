@@ -6,8 +6,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.otus.hw.controllers.mvc.BookPageController;
 import ru.otus.hw.services.AuthorService;
 import ru.otus.hw.services.GenreService;
 
@@ -41,6 +41,7 @@ public class BookPageControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "user")
     @DisplayName("при запросе GET /books - должна вернуться страница списка")
     void testBooksListPage() throws Exception {
         mvc.perform(get("/books"))
@@ -49,6 +50,7 @@ public class BookPageControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "user")
     @DisplayName("при запросе GET /books/new - должна вернуться страница создания нового")
     void testNewAuthorPage() throws Exception {
         mvc.perform(get("/books/new"))
@@ -59,6 +61,7 @@ public class BookPageControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "user")
     @DisplayName("при запросе GET /books/{id} - должна вернуться страница редактирования")
     void testAuthorPage() throws Exception {
         mvc.perform(get("/books/{id}", BOOK_ID))
@@ -67,5 +70,26 @@ public class BookPageControllerTest {
                 .andExpect(model().attribute("bookId", BOOK_ID))
                 .andExpect(model().attributeExists("authors"))
                 .andExpect(model().attributeExists("genres"));
+    }
+
+    @Test
+    @DisplayName("при запросе GET /books без аутентификации - должен вернуть 401")
+    void testBooksListPageUnauthorized() throws Exception {
+        mvc.perform(get("/books"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @DisplayName("при запросе GET /books/new без аутентификации - должен вернуть 401")
+    void testNewAuthorPageUnauthorized() throws Exception {
+        mvc.perform(get("/books/new"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @DisplayName("при запросе GET /books/{id} без аутентификации - должен вернуть 401")
+    void testAuthorPageUnauthorized() throws Exception {
+        mvc.perform(get("/books/{id}", BOOK_ID))
+                .andExpect(status().isUnauthorized());
     }
 }

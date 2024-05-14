@@ -10,6 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.otus.hw.dtos.AuthorDTO;
 import ru.otus.hw.dtos.BookCommentDTO;
@@ -21,6 +24,8 @@ import ru.otus.hw.models.Author;
 import ru.otus.hw.models.Book;
 import ru.otus.hw.models.BookComment;
 import ru.otus.hw.models.Genre;
+import ru.otus.hw.models.User;
+import ru.otus.hw.security.CustomUserDetails;
 import ru.otus.hw.services.BookCommentService;
 
 import java.util.List;
@@ -29,6 +34,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -61,7 +67,6 @@ public class BookCommentControllerTest {
 
     @BeforeEach
     void setUp() {
-
         Author author = new Author(1L, "author");
         Genre genre = new Genre(1L, "genre");
         Book book = new Book(BOOK_ID, "book", author, List.of(genre));
@@ -83,6 +88,7 @@ public class BookCommentControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "user")
     @DisplayName("при запросе GET /api/v1/books/{bookId}/comments - должен вернуться список dto")
     void testGetBookComments() throws Exception {
         List<BookCommentDTO> bookCommentDTOs = List.of(bookCommentDTO);
@@ -101,6 +107,7 @@ public class BookCommentControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "user")
     @DisplayName("при запросе GET /api/v1/books/{bookid}/comments/{bookCommentId} - должен вернуть dto")
     void testGetBookComment() throws Exception {
         when(bookCommentService.findById(BOOK_COMMENT_ID)).thenReturn(Optional.of(bookCommentDTO));
@@ -117,6 +124,7 @@ public class BookCommentControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "user")
     @DisplayName("при запросе GET /api/v1/books/{bookid}/comments/{bookCommentId} с несуществующим ID - должен бросить исключение")
     void testGetBookComment_withNonExistentId() throws Exception {
         when(bookCommentService.findById(NON_EXISTENT_ID)).thenReturn(Optional.empty());
@@ -129,6 +137,7 @@ public class BookCommentControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "user")
     @DisplayName("при запросе POST /api/v1/books/{bookId}/comments - должен создать новый")
     void testCreateBookComment() throws Exception {
 
@@ -140,6 +149,7 @@ public class BookCommentControllerTest {
                     .thenReturn(bookCommentDTO);
 
             mvc.perform(post("/api/v1/books/{bookId}/comments", BOOK_ID)
+                            .with(csrf())
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(mapper.writeValueAsString(bookCommentDTO)))
                     .andExpect(status().isOk())
@@ -152,18 +162,21 @@ public class BookCommentControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "user")
     @DisplayName("при запросе POST /api/v1/books/{bookId}/comments с некорректными данными - должен вернуть статус ошибки")
     void testCreateBookComment_withValidationErrors() throws Exception {
 
         bookCommentDTO.setCommentText("");
 
         mvc.perform(post("/api/v1/books/{bookId}/comments", BOOK_ID)
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(bookCommentDTO)))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
+    @WithMockUser(username = "user")
     @DisplayName("при запросе PUT /api/v1/books/{bookId}/comments/{bookCommentId} - должен обновить")
     void testUpdateBookComment() throws Exception {
         try (MockedStatic<BookCommentMapper> mockedStatic = Mockito.mockStatic(BookCommentMapper.class)) {
@@ -174,6 +187,7 @@ public class BookCommentControllerTest {
                     .thenReturn(bookCommentDTO);
 
             mvc.perform(put("/api/v1/books/{bookId}/comments/{bookCommentId}", BOOK_ID, BOOK_COMMENT_ID)
+                            .with(csrf())
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(mapper.writeValueAsString(bookCommentDTO)))
                     .andExpect(status().isOk())
@@ -187,26 +201,73 @@ public class BookCommentControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "user")
     @DisplayName("при запросе PUT /api/v1/books/{bookId}/comments/{bookCommentId} с некорректными данными - должен вернуть статус ошибки")
     void testUpdateBookComment_withValidationErrors() throws Exception {
 
         bookCommentDTO.setCommentText("");
 
         mvc.perform(put("/api/v1/books/{bookId}/comments/{bookCommentId}", BOOK_ID, BOOK_COMMENT_ID)
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(bookCommentDTO)))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
+    @WithMockUser(username = "user")
     @DisplayName("при запросе DELETE /api/v1/books/{bookId}/comments/{bookCommentId} - должен удалить автора")
     void testDeleteAuthor() throws Exception {
 
         mvc.perform(delete("/api/v1/books/{bookId}/comments/{bookCommentId}", BOOK_ID, BOOK_COMMENT_ID)
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
 
         verify(bookCommentService).deleteById(bookCommentDTO.getId());
+    }
+
+    @Test
+    @DisplayName("при запросе GET /api/v1/books/{bookId}/comments без аутентификации - должен вернуть 401")
+    void testGetBookCommentsUnauthorized() throws Exception {
+        mvc.perform(get("/api/v1/books/{bookId}/comments", BOOK_ID))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @DisplayName("при запросе GET /api/v1/books/{bookid}/comments/{bookCommentId} без аутентификации - должен вернуть 401")
+    void testGetBookCommentUnauthorized() throws Exception {
+        mvc.perform(get("/api/v1/books/{bookid}/comments/{bookCommentId}", BOOK_ID, BOOK_COMMENT_ID))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @DisplayName("при запросе POST /api/v1/books/{bookId}/comments без аутентификации - должен вернуть 401")
+    void testCreateBookCommentUnauthorized() throws Exception {
+        mvc.perform(post("/api/v1/books/{bookId}/comments", BOOK_ID)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(bookCommentDTO))
+                        .with(csrf()))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @DisplayName("при запросе PUT /api/v1/books/{bookId}/comments/{bookCommentId} без аутентификации - должен вернуть 401")
+    void testUpdateBookCommentUnauthorized() throws Exception {
+        mvc.perform(put("/api/v1/books/{bookId}/comments/{bookCommentId}", BOOK_ID, BOOK_COMMENT_ID)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(bookCommentDTO))
+                        .with(csrf()))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @DisplayName("при запросе DELETE /api/v1/books/{bookId}/comments/{bookCommentId} без аутентификации - должен вернуть 401")
+    void testDeleteBookCommentUnauthorized() throws Exception {
+        mvc.perform(delete("/api/v1/books/{bookId}/comments/{bookCommentId}", BOOK_ID, BOOK_COMMENT_ID)
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnauthorized());
     }
 
 }

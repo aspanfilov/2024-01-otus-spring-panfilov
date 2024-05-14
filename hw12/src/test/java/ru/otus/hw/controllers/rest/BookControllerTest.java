@@ -10,6 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.otus.hw.dtos.AuthorDTO;
 import ru.otus.hw.dtos.BookCommentDTO;
@@ -23,6 +26,8 @@ import ru.otus.hw.models.Author;
 import ru.otus.hw.models.Book;
 import ru.otus.hw.models.BookComment;
 import ru.otus.hw.models.Genre;
+import ru.otus.hw.models.User;
+import ru.otus.hw.security.CustomUserDetails;
 import ru.otus.hw.services.BookCommentService;
 import ru.otus.hw.services.BookService;
 
@@ -35,6 +40,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -67,7 +73,6 @@ public class BookControllerTest {
 
     @BeforeEach
     void setUp() {
-
         Author author = new Author(1L, "author");
         Genre genre = new Genre(1L, "genre");
         book = new Book(BOOK_ID, "book", author, List.of(genre));
@@ -85,6 +90,7 @@ public class BookControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "user")
     @DisplayName("при запросе GET /api/v1/books - должен вернуться список dto авторов")
     void testGetBooks() throws Exception {
         List<BookDTO> bookDTOs = List.of(bookDTO);
@@ -102,6 +108,7 @@ public class BookControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "user")
     @DisplayName("при запросе GET /api/v1/books/{id} - должен вернуть dto книги")
     void testGetBook() throws Exception {
         when(bookService.findById(BOOK_ID)).thenReturn(Optional.of(bookDTO));
@@ -118,6 +125,7 @@ public class BookControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "user")
     @DisplayName("при запросе GET /api/v1/books/{id} с несуществующим ID - должен бросить исключение")
     void testGetBook_withNonExistentId() throws Exception {
         when(bookService.findById(NON_EXISTENT_ID)).thenReturn(Optional.empty());
@@ -130,6 +138,7 @@ public class BookControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "user")
     @DisplayName("при запросе POST /api/v1/books - должен создать нового автора")
     void testCreateBook() throws Exception {
 
@@ -143,6 +152,7 @@ public class BookControllerTest {
             mockedStatic.when(() -> BookMapper.toBookDTO(book)).thenReturn(bookDTO);
 
             mvc.perform(post("/api/v1/books")
+                            .with(csrf())
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(mapper.writeValueAsString(bookRequestDTO)))
                     .andExpect(status().isOk())
@@ -159,18 +169,21 @@ public class BookControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "user")
     @DisplayName("при запросе POST /api/v1/books с некорректными данными - должен вернуть статус ошибки")
     void testCreateBook_withValidationErrors() throws Exception {
 
         bookDTO.setTitle("");
 
         mvc.perform(post("/api/v1/books")
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(bookDTO)))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
+    @WithMockUser(username = "user")
     @DisplayName("при запросе PUT /api/v1/books/{id} - должен обновить автора")
     void testUpdateBook() throws Exception {
         try (MockedStatic<BookMapper> mockedStatic = Mockito.mockStatic(BookMapper.class)) {
@@ -184,6 +197,7 @@ public class BookControllerTest {
             mockedStatic.when(() -> BookMapper.toBookDTO(book)).thenReturn(bookDTO);
 
             mvc.perform(put("/api/v1/books/{id}", BOOK_ID)
+                            .with(csrf())
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(mapper.writeValueAsString(bookRequestDTO)))
                     .andExpect(status().isOk())
@@ -203,26 +217,73 @@ public class BookControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "user")
     @DisplayName("при запросе PUT /api/v1/books/{id} с некорректными данными - должен вернуть статус ошибки")
     void testUpdateBook_withValidationErrors() throws Exception {
 
         bookDTO.setTitle("");
 
         mvc.perform(put("/api/v1/books/{id}", bookDTO.getId())
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(bookDTO)))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
+    @WithMockUser(username = "user")
     @DisplayName("при запросе DELETE /books/{id} - должен удалить автора")
     void testDeleteBook() throws Exception {
 
         mvc.perform(delete("/api/v1/books/{id}", bookDTO.getId())
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
 
         verify(bookService).deleteById(bookDTO.getId());
+    }
+
+    @Test
+    @DisplayName("при запросе GET /api/v1/books без аутентификации - должен вернуть 401")
+    void testGetBooksUnauthorized() throws Exception {
+        mvc.perform(get("/api/v1/books"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @DisplayName("при запросе GET /api/v1/books/{id} без аутентификации - должен вернуть 401")
+    void testGetBookUnauthorized() throws Exception {
+        mvc.perform(get("/api/v1/books/{id}", BOOK_ID))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @DisplayName("при запросе POST /api/v1/books без аутентификации - должен вернуть 401")
+    void testCreateBookUnauthorized() throws Exception {
+        mvc.perform(post("/api/v1/books")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(bookRequestDTO))
+                        .with(csrf()))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @DisplayName("при запросе PUT /api/v1/books/{id} без аутентификации - должен вернуть 401")
+    void testUpdateBookUnauthorized() throws Exception {
+        mvc.perform(put("/api/v1/books/{id}", BOOK_ID)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(bookRequestDTO))
+                        .with(csrf()))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @DisplayName("при запросе DELETE /api/v1/books/{id} без аутентификации - должен вернуть 401")
+    void testDeleteBookUnauthorized() throws Exception {
+        mvc.perform(delete("/api/v1/books/{id}", BOOK_ID)
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnauthorized());
     }
 
 }

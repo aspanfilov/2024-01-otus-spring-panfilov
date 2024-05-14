@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.otus.hw.dtos.AuthorDTO;
 import ru.otus.hw.exceptions.EntityNotFoundException;
@@ -23,6 +24,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -57,6 +59,7 @@ public class AuthorControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "user")
     @DisplayName("при запросе GET /api/v1/authors - должен вернуться список dto авторов")
     void testGetAuthors() throws Exception {
         List<AuthorDTO> authorDTOs = List.of(authorDTO);
@@ -75,6 +78,7 @@ public class AuthorControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "user")
     @DisplayName("при запросе GET /api/v1/authors/{id} - должен вернуть dto автора")
     void testGetAuthor() throws Exception {
         when(authorService.findById(1L)).thenReturn(Optional.of(author));
@@ -91,6 +95,7 @@ public class AuthorControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "user")
     @DisplayName("при запросе GET /api/v1/authors/{id} с несуществующим ID - должен бросить исключение")
     void testGetAuthor_withNonExistentId() throws Exception {
         when(authorService.findById(NON_EXISTENT_ID)).thenReturn(Optional.empty());
@@ -103,6 +108,7 @@ public class AuthorControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "user")
     @DisplayName("при запросе POST /api/v1/authors - должен создать нового автора")
     void testCreateAuthor() throws Exception {
 
@@ -112,6 +118,7 @@ public class AuthorControllerTest {
             mockedStatic.when(() -> AuthorMapper.toAuthorDto(author)).thenReturn(authorDTO);
 
             mvc.perform(post("/api/v1/authors")
+                            .with(csrf())
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(mapper.writeValueAsString(authorDTO)))
                     .andExpect(status().isOk())
@@ -123,18 +130,21 @@ public class AuthorControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "user")
     @DisplayName("при запросе POST /api/v1/authors с некорректными данными - должен вернуть статус ошибки")
     void testCreateAuthor_withValidationErrors() throws Exception {
 
         authorDTO.setFullName("");
 
         mvc.perform(post("/api/v1/authors")
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(authorDTO)))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
+    @WithMockUser(username = "user")
     @DisplayName("при запросе PUT /api/v1/authors/{id} - должен обновить автора")
     void testUpdateAuthor() throws Exception {
         try (MockedStatic<AuthorMapper> mockedStatic = Mockito.mockStatic(AuthorMapper.class)) {
@@ -145,6 +155,7 @@ public class AuthorControllerTest {
                     .thenReturn(authorDTO);
 
             mvc.perform(put("/api/v1/authors/{id}", authorDTO.getId())
+                            .with(csrf())
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(mapper.writeValueAsString(authorDTO)))
                     .andExpect(status().isOk())
@@ -157,26 +168,73 @@ public class AuthorControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "user")
     @DisplayName("при запросе PUT /api/v1/authors/{id} с некорректными данными - должен вернуть статус ошибки")
     void testUpdateAuthor_withValidationErrors() throws Exception {
 
         authorDTO.setFullName("");
 
         mvc.perform(put("/api/v1/authors/{id}", authorDTO.getId())
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(authorDTO)))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
+    @WithMockUser(username = "user")
     @DisplayName("при запросе DELETE /authors/{id} - должен удалить автора")
     void testDeleteAuthor() throws Exception {
 
         mvc.perform(delete("/api/v1/authors/{id}", authorDTO.getId())
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
 
         verify(authorService).deleteById(authorDTO.getId());
+    }
+
+    @Test
+    @DisplayName("при запросе GET /api/v1/authors без аутентификации - должен вернуть 401")
+    void testGetAuthorsUnauthorized() throws Exception {
+        mvc.perform(get("/api/v1/authors"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @DisplayName("при запросе GET /api/v1/authors/{id} без аутентификации - должен вернуть 401")
+    void testGetAuthorUnauthorized() throws Exception {
+        mvc.perform(get("/api/v1/authors/1"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @DisplayName("при запросе POST /api/v1/authors без аутентификации - должен вернуть 401")
+    void testCreateAuthorUnauthorized() throws Exception {
+        mvc.perform(post("/api/v1/authors")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(authorDTO))
+                        .with(csrf()))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @DisplayName("при запросе PUT /api/v1/authors/{id} без аутентификации - должен вернуть 401")
+    void testUpdateAuthorUnauthorized() throws Exception {
+        mvc.perform(put("/api/v1/authors/{id}", authorDTO.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(authorDTO))
+                        .with(csrf()))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @DisplayName("при запросе DELETE /api/v1/authors/{id} без аутентификации - должен вернуть 401")
+    void testDeleteAuthorUnauthorized() throws Exception {
+        mvc.perform(delete("/api/v1/authors/{id}", authorDTO.getId())
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnauthorized());
     }
 
 }
