@@ -56,6 +56,12 @@
             margin-bottom: 0;
         }
 
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
     </style>
 
     <script>
@@ -110,9 +116,12 @@
 <body>
 
 <nav>
-    <a href="/">Home</a> |
-    <a href="/books">Books</a> |
-    <a href="/genres">Genres</a>
+    <div>
+        <a href="/">Home</a> |
+        <a href="/books">Books</a> |
+        <a href="/genres">Genres</a>
+    </div>
+    <a href="/logout">Logout</a>
 </nav>
 
 <h3>Authors</h3>

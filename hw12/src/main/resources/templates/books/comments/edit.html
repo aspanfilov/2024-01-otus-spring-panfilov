@@ -63,6 +63,12 @@
             margin-bottom: 0;
         }
 
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
     </style>
 
     <script>
@@ -148,9 +154,12 @@
 <body>
 
 <nav>
-    <a href="/">Home</a> |
-    <a href="/books">Books</a> |
-    <a th:href="@{/books/{bookId}/comments(bookId=${bookId})}">Comments</a>
+    <div>
+        <a href="/">Home</a> |
+        <a href="/books">Books</a> |
+        <a th:href="@{/books/{bookId}/comments(bookId=${bookId})}">Comments</a>
+    </div>
+    <a href="/logout">Logout</a>
 </nav>
 
 <h3>Book Comment</h3>

@@ -63,6 +63,12 @@
             margin-bottom: 0;
         }
 
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
     </style>
 
     <script>
@@ -140,8 +146,11 @@
 <body>
 
 <nav>
-    <a href="/">Home</a> |
-    <a href="/authors">Authors</a>
+    <div>
+        <a href="/">Home</a> |
+        <a href="/authors">Authors</a>
+    </div>
+    <a href="/logout">Logout</a>
 </nav>
 
 <h3>Author</h3>
