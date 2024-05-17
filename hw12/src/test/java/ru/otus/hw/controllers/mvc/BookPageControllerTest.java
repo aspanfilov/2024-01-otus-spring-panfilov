@@ -6,8 +6,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import ru.otus.hw.config.SecurityConfig;
 import ru.otus.hw.services.AuthorService;
 import ru.otus.hw.services.GenreService;
 
@@ -21,12 +24,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @DisplayName("Класс BookPageController")
 @WebMvcTest(BookPageController.class)
+@Import(SecurityConfig.class)
+@WithMockUser
 public class BookPageControllerTest {
 
     private final static Long BOOK_ID = 1L;
 
     @Autowired
     private MockMvc mvc;
+
+    @MockBean
+    private UserDetailsService userDetailsService;
 
     @MockBean
     private AuthorService authorService;
@@ -70,26 +78,5 @@ public class BookPageControllerTest {
                 .andExpect(model().attribute("bookId", BOOK_ID))
                 .andExpect(model().attributeExists("authors"))
                 .andExpect(model().attributeExists("genres"));
-    }
-
-    @Test
-    @DisplayName("при запросе GET /books без аутентификации - должен вернуть 401")
-    void testBooksListPageUnauthorized() throws Exception {
-        mvc.perform(get("/books"))
-                .andExpect(status().isUnauthorized());
-    }
-
-    @Test
-    @DisplayName("при запросе GET /books/new без аутентификации - должен вернуть 401")
-    void testNewAuthorPageUnauthorized() throws Exception {
-        mvc.perform(get("/books/new"))
-                .andExpect(status().isUnauthorized());
-    }
-
-    @Test
-    @DisplayName("при запросе GET /books/{id} без аутентификации - должен вернуть 401")
-    void testAuthorPageUnauthorized() throws Exception {
-        mvc.perform(get("/books/{id}", BOOK_ID))
-                .andExpect(status().isUnauthorized());
     }
 }

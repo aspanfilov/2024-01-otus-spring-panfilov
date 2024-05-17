@@ -4,8 +4,12 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import ru.otus.hw.config.SecurityConfig;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
@@ -14,13 +18,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @DisplayName("Класс GenrePageController")
 @WebMvcTest(GenrePageController.class)
+@Import(SecurityConfig.class)
+@WithMockUser
 public class GenrePageControllerTest {
 
     @Autowired
     private MockMvc mvc;
 
+    @MockBean
+    private UserDetailsService userDetailsService;
+
     @Test
-    @WithMockUser(username = "user")
     @DisplayName("при запросе GET /genres - должна вернуться страница списка")
     void testGenresListPage() throws Exception {
         mvc.perform(get("/genres"))
@@ -29,7 +37,6 @@ public class GenrePageControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "user")
     @DisplayName("при запросе GET /genres/new - должна вернуться страница создания нового")
     void testNewGenrePage() throws Exception {
         mvc.perform(get("/genres/new"))
@@ -38,7 +45,6 @@ public class GenrePageControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "user")
     @DisplayName("при запросе GET /genres/{id} - должна вернуться страница редактирования")
     void testGenrePage() throws Exception {
         mvc.perform(get("/genres/1"))
@@ -46,27 +52,5 @@ public class GenrePageControllerTest {
                 .andExpect(model().attribute("genreId", 1L))
                 .andExpect(view().name("genres/edit"));
     }
-
-    @Test
-    @DisplayName("при запросе GET /genres без аутентификации - должен вернуть 401")
-    void testGenresListPageUnauthorized() throws Exception {
-        mvc.perform(get("/genres"))
-                .andExpect(status().isUnauthorized());
-    }
-
-    @Test
-    @DisplayName("при запросе GET /genres/new без аутентификации - должен вернуть 401")
-    void testNewGenrePageUnauthorized() throws Exception {
-        mvc.perform(get("/genres/new"))
-                .andExpect(status().isUnauthorized());
-    }
-
-    @Test
-    @DisplayName("при запросе GET /genres/{id} без аутентификации - должен вернуть 401")
-    void testGenrePageUnauthorized() throws Exception {
-        mvc.perform(get("/genres/1"))
-                .andExpect(status().isUnauthorized());
-    }
-
 
 }

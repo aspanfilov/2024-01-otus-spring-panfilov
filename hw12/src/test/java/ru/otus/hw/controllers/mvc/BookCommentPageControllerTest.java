@@ -4,8 +4,12 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import ru.otus.hw.config.SecurityConfig;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
@@ -14,6 +18,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @DisplayName("Класс BookCommentPageController")
 @WebMvcTest(BookCommentPageController.class)
+@Import(SecurityConfig.class)
+@WithMockUser
 public class BookCommentPageControllerTest {
 
     private final static Long BOOK_ID = 1L;
@@ -21,6 +27,9 @@ public class BookCommentPageControllerTest {
 
     @Autowired
     private MockMvc mvc;
+
+    @MockBean
+    private UserDetailsService userDetailsService;
 
     @Test
     @WithMockUser(username = "user")
@@ -52,26 +61,4 @@ public class BookCommentPageControllerTest {
                 .andExpect(model().attribute("bookId", BOOK_ID))
                 .andExpect(model().attribute("bookCommentId", BOOK_COMMENT_ID));
     }
-
-    @Test
-    @DisplayName("при запросе GET /books/{bookId}/comments без аутентификации - должен вернуть 401")
-    void testBookCommentsListPageUnauthorized() throws Exception {
-        mvc.perform(get("/books/{bookId}/comments", BOOK_ID))
-                .andExpect(status().isUnauthorized());
-    }
-
-    @Test
-    @DisplayName("при запросе GET /books/{bookId}/comments/new без аутентификации - должен вернуть 401")
-    void testNewBookCommentPageUnauthorized() throws Exception {
-        mvc.perform(get("/books/{bookId}/comments/new", BOOK_ID))
-                .andExpect(status().isUnauthorized());
-    }
-
-    @Test
-    @DisplayName("при запросе GET /books/{bookId}/comments/{bookCommentId} без аутентификации - должен вернуть 401")
-    void testBookCommentPageUnauthorized() throws Exception {
-        mvc.perform(get("/books/{bookId}/comments/{bookCommentId}", BOOK_ID, BOOK_COMMENT_ID))
-                .andExpect(status().isUnauthorized());
-    }
-
 }

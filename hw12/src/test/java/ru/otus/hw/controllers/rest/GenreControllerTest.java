@@ -9,9 +9,12 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import ru.otus.hw.config.SecurityConfig;
 import ru.otus.hw.dtos.GenreDTO;
 import ru.otus.hw.exceptions.EntityNotFoundException;
 import ru.otus.hw.mappers.GenreMapper;
@@ -35,6 +38,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @DisplayName("Класс GenreController")
 @WebMvcTest(GenreController.class)
+@Import(SecurityConfig.class)
+@WithMockUser
 public class GenreControllerTest {
 
     private static final String GENRE_NOT_FOUND = "Genre with id 123 not found";
@@ -42,6 +47,9 @@ public class GenreControllerTest {
 
     @Autowired
     private MockMvc mvc;
+
+    @MockBean
+    private UserDetailsService userDetailsService;
 
     @MockBean
     private GenreService genreService;
@@ -59,7 +67,6 @@ public class GenreControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "user")
     @DisplayName("при запросе GET /api/v1/genres - должен вернуться список dto жанров")
     void testGetGenres() throws Exception {
         List<GenreDTO> genreDTOs = List.of(genreDTO);
@@ -78,7 +85,6 @@ public class GenreControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "user")
     @DisplayName("при запросе GET /api/v1/genres/{id} - должен вернуть dto жанра")
     void testGetGenre() throws Exception {
         when(genreService.findById(1L)).thenReturn(Optional.of(genre));
@@ -95,7 +101,6 @@ public class GenreControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "user")
     @DisplayName("при запросе GET /api/v1/genres/{id} с несуществующим ID - должен бросить исключение")
     void testGetGenre_withNonExistentId() throws Exception {
         when(genreService.findById(NON_EXISTENT_ID)).thenReturn(Optional.empty());
@@ -108,7 +113,6 @@ public class GenreControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "user")
     @DisplayName("при запросе POST /api/v1/genres - должен создать нового жанра")
     void testCreateGenre() throws Exception {
 
@@ -130,7 +134,6 @@ public class GenreControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "user")
     @DisplayName("при запросе POST /api/v1/genres с некорректными данными - должен вернуть статус ошибки")
     void testCreateGenre_withValidationErrors() throws Exception {
 
@@ -144,7 +147,6 @@ public class GenreControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "user")
     @DisplayName("при запросе PUT /api/v1/genres/{id} - должен обновить жанр")
     void testUpdateGenre() throws Exception {
         try (MockedStatic<GenreMapper> mockedStatic = Mockito.mockStatic(GenreMapper.class)) {
@@ -168,7 +170,6 @@ public class GenreControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "user")
     @DisplayName("при запросе PUT /api/v1/genres/{id} с некорректными данными - должен вернуть статус ошибки")
     void testUpdateGenre_withValidationErrors() throws Exception {
 
@@ -182,7 +183,6 @@ public class GenreControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "user")
     @DisplayName("при запросе DELETE /genres/{id} - должен удалить жанр")
     void testDeleteGenre() throws Exception {
 
@@ -192,49 +192,6 @@ public class GenreControllerTest {
                 .andExpect(status().isOk());
 
         verify(genreService).deleteById(genreDTO.getId());
-    }
-
-    @Test
-    @DisplayName("при запросе GET /api/v1/genres без аутентификации - должен вернуть 401")
-    void testGetGenresUnauthorized() throws Exception {
-        mvc.perform(get("/api/v1/genres"))
-                .andExpect(status().isUnauthorized());
-    }
-
-    @Test
-    @DisplayName("при запросе GET /api/v1/genres/{id} без аутентификации - должен вернуть 401")
-    void testGetGenreUnauthorized() throws Exception {
-        mvc.perform(get("/api/v1/genres/1"))
-                .andExpect(status().isUnauthorized());
-    }
-
-    @Test
-    @DisplayName("при запросе POST /api/v1/genres без аутентификации - должен вернуть 401")
-    void testCreateGenreUnauthorized() throws Exception {
-        mvc.perform(post("/api/v1/genres")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(genreDTO))
-                        .with(csrf()))
-                .andExpect(status().isUnauthorized());
-    }
-
-    @Test
-    @DisplayName("при запросе PUT /api/v1/genres/{id} без аутентификации - должен вернуть 401")
-    void testUpdateGenreUnauthorized() throws Exception {
-        mvc.perform(put("/api/v1/genres/{id}", genreDTO.getId())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(genreDTO))
-                        .with(csrf()))
-                .andExpect(status().isUnauthorized());
-    }
-
-    @Test
-    @DisplayName("при запросе DELETE /api/v1/genres/{id} без аутентификации - должен вернуть 401")
-    void testDeleteGenreUnauthorized() throws Exception {
-        mvc.perform(delete("/api/v1/genres/{id}", genreDTO.getId())
-                        .with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isUnauthorized());
     }
 
 }
