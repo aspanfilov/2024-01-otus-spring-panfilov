@@ -6,13 +6,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.Errors;
 import ru.otus.hw.dtos.UserDTO;
-import ru.otus.hw.models.User;
-import ru.otus.hw.services.UserService;
-
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -22,7 +19,7 @@ import static org.mockito.Mockito.when;
 public class UserValidatorTest {
 
     @Mock
-    private UserService userService;
+    private UserDetailsManager userDetailsManager;
 
     @InjectMocks
     private UserValidator userValidator;
@@ -47,7 +44,7 @@ public class UserValidatorTest {
         UserDTO userDTO = new UserDTO(null, "testuser", "password", "password");
         Errors errors = new BeanPropertyBindingResult(userDTO, "userDTO");
 
-        when(userService.findByUsername("testuser")).thenReturn(Optional.of(new User()));
+        when(userDetailsManager.userExists("testuser")).thenReturn(true);
 
         userValidator.validate(userDTO, errors);
 
@@ -63,7 +60,7 @@ public class UserValidatorTest {
         UserDTO userDTO = new UserDTO(null, "testuser", "password", "password");
         Errors errors = new BeanPropertyBindingResult(userDTO, "userDTO");
 
-        when(userService.findByUsername("testuser")).thenReturn(Optional.empty());
+        when(userDetailsManager.userExists("testuser")).thenReturn(false);
 
         userValidator.validate(userDTO, errors);
 
