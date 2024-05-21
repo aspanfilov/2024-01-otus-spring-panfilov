@@ -3,10 +3,12 @@ package ru.otus.hw.security;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import ru.otus.hw.models.User;
 
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Getter
@@ -16,7 +18,10 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return user.getAuthorityGroups().stream()
+                .flatMap(group -> group.getAuthorities().stream())
+                .map(authority -> new SimpleGrantedAuthority(authority.getName()))
+                .collect(Collectors.toSet());
     }
 
     @Override

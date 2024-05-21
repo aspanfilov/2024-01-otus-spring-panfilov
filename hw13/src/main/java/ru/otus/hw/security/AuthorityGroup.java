@@ -1,4 +1,4 @@
-package ru.otus.hw.models;
+package ru.otus.hw.security;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -12,35 +12,32 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.otus.hw.security.AuthorityGroup;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import java.util.Set;
 
 @Entity
-@Table(name = "users")
+@Table(name = "authority_groups")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class User {
+public class AuthorityGroup {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name = "username", unique = true, nullable = false)
-    private String username;
-
-    @Column(name = "password", unique = false, nullable = false)
-    private String password;
+    @Column(name = "name", unique = true, nullable = false)
+    private String name;
 
     @ManyToMany(cascade = {CascadeType.PERSIST},
             fetch = FetchType.EAGER)
-    @JoinTable(name = "users_authority_groups",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "authority_group_id"))
-    private Set<AuthorityGroup> authorityGroups;
+    @JoinTable(name = "authority_groups_authorities",
+            joinColumns = @JoinColumn(name = "authority_group_id"),
+            inverseJoinColumns = @JoinColumn(name = "authority_id"))
+    @Fetch(FetchMode.SUBSELECT)
+    private Set<Authority> authorities;
 }

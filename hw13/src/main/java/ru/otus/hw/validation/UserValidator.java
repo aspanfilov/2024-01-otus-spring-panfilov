@@ -1,17 +1,17 @@
 package ru.otus.hw.validation;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import ru.otus.hw.dtos.UserDTO;
-import ru.otus.hw.services.UserService;
 
 @Component
 @RequiredArgsConstructor
 public class UserValidator implements Validator {
 
-    private final UserService userService;
+    private final UserDetailsManager userDetailsManager;
 
     @Override
     public boolean supports(Class<?> clazz) {
@@ -33,7 +33,7 @@ public class UserValidator implements Validator {
     }
 
     private void validateUsername(UserDTO userDTO, Errors errors) {
-        if (userService.findByUsername(userDTO.getUsername()).isPresent()) {
+        if (userDetailsManager.userExists(userDTO.getUsername())) {
             errors.rejectValue("username", "Duplicate", "Username is already in use");
         }
     }
