@@ -14,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import ru.otus.hw.config.AppConfig;
 import ru.otus.hw.config.SecurityConfig;
 import ru.otus.hw.dtos.GenreDTO;
 import ru.otus.hw.exceptions.EntityNotFoundException;
@@ -38,7 +39,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @DisplayName("Класс GenreController")
 @WebMvcTest(GenreController.class)
-@Import(SecurityConfig.class)
+@Import({SecurityConfig.class, AppConfig.class})
 @WithMockUser
 public class GenreControllerTest {
 

@@ -1,7 +1,6 @@
 package ru.otus.hw.services;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -63,7 +62,6 @@ public class CustomUserDetailsService implements UserDetailsManager {
         User user = customUserDetails.getUser();
         if (user.getId() == 0) {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
-//            user.setPassword(user.getPassword());
         }
         userRepository.save(user);
     }

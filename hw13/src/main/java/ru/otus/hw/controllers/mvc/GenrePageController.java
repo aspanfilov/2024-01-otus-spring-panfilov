@@ -23,5 +23,4 @@ public class GenrePageController {
         model.addAttribute("genreId", id);
         return "genres/edit";
     }
-
 }

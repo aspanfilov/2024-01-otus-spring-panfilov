@@ -109,6 +109,8 @@
             }).then(response => {
                 if (response.ok) {
                     window.location.href = "/genres";
+                } else if (response.status === 403) {
+                    alert('You do not have permission to perform this action.');
                 } else {
                     response.json().then(data => {
                         if (data.name) {
@@ -129,8 +131,16 @@
             if (confirm("Are you sure you want to delete this genre?")) {
                 fetch(`/api/v1/genres/${genreId}`, {
                     method: 'DELETE'
-                }).then(() => {
-                    window.location.href = "/genres";
+                }).then(response => {
+                   if (response.ok) {
+                       window.location.href = "/genres";
+                   } else if (response.status === 403) {
+                       alert('You do not have permission to perform this action.');
+                   } else {
+                       return response.json().then(data => {
+                           alert(`Error deleting genre: ${data.error || 'Unknown error'}`);
+                       });
+                   }
                 });
             }
         }

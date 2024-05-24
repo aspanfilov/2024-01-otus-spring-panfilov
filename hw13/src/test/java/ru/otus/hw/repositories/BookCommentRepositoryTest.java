@@ -7,6 +7,11 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import ru.otus.hw.models.Book;
 import ru.otus.hw.models.BookComment;
+import ru.otus.hw.models.User;
+import ru.otus.hw.security.Authority;
+import ru.otus.hw.security.AuthorityGroup;
+
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -23,7 +28,9 @@ public class BookCommentRepositoryTest {
     @Test
     public void testBookCommentPersistence() {
         var book = entityManager.find(Book.class, 1);
-        var expectedBookComment = new BookComment(0, "comment", book);
+        var user = entityManager.find(User.class, 1L);
+
+        var expectedBookComment = new BookComment(0, "comment", book, user);
 
         entityManager.persist(expectedBookComment);
 

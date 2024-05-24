@@ -44,7 +44,7 @@ public class UserValidatorTest {
         UserDTO userDTO = new UserDTO(null, "testuser", "password", "password");
         Errors errors = new BeanPropertyBindingResult(userDTO, "userDTO");
 
-        when(userDetailsManager.userExists("testuser")).thenReturn(false);
+        when(userDetailsManager.userExists("testuser")).thenReturn(true);
 
         userValidator.validate(userDTO, errors);
 
@@ -60,7 +60,7 @@ public class UserValidatorTest {
         UserDTO userDTO = new UserDTO(null, "testuser", "password", "password");
         Errors errors = new BeanPropertyBindingResult(userDTO, "userDTO");
 
-        when(userDetailsManager.userExists("testuser")).thenReturn(true);
+        when(userDetailsManager.userExists("testuser")).thenReturn(false);
 
         userValidator.validate(userDTO, errors);
 

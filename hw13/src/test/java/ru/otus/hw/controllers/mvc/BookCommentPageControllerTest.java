@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import ru.otus.hw.config.AppConfig;
 import ru.otus.hw.config.SecurityConfig;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -18,7 +19,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @DisplayName("Класс BookCommentPageController")
 @WebMvcTest(BookCommentPageController.class)
-@Import(SecurityConfig.class)
+@Import({SecurityConfig.class, AppConfig.class})
 @WithMockUser
 public class BookCommentPageControllerTest {
 

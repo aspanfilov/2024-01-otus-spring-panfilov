@@ -30,5 +30,4 @@ public class BookCommentPageController {
         model.addAttribute("bookCommentId", bookCommentId);
         return "books/comments/edit";
     }
-
 }

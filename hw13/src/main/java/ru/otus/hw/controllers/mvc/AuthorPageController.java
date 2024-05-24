@@ -23,5 +23,4 @@ public class AuthorPageController {
         model.addAttribute("authorId", id);
         return "authors/edit";
     }
-
 }

@@ -16,6 +16,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import ru.otus.hw.config.AppConfig;
 import ru.otus.hw.config.SecurityConfig;
 import ru.otus.hw.dtos.AuthorDTO;
 import ru.otus.hw.dtos.BookCommentDTO;
@@ -28,11 +29,14 @@ import ru.otus.hw.models.Book;
 import ru.otus.hw.models.BookComment;
 import ru.otus.hw.models.Genre;
 import ru.otus.hw.models.User;
+import ru.otus.hw.security.Authority;
+import ru.otus.hw.security.AuthorityGroup;
 import ru.otus.hw.security.CustomUserDetails;
 import ru.otus.hw.services.BookCommentService;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
@@ -48,7 +52,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @DisplayName("Класс BookCommentController")
 @WebMvcTest(BookCommentController.class)
-@Import(SecurityConfig.class)
+@Import({SecurityConfig.class, AppConfig.class})
 @WithMockUser
 public class BookCommentControllerTest {
 
@@ -77,7 +81,10 @@ public class BookCommentControllerTest {
         Author author = new Author(1L, "author");
         Genre genre = new Genre(1L, "genre");
         Book book = new Book(BOOK_ID, "book", author, List.of(genre));
-        bookComment = new BookComment(BOOK_COMMENT_ID, "comment", book);
+        Authority authority = new Authority(1L, "AUTHORITY");
+        AuthorityGroup authorityGroup = new AuthorityGroup(1L, "GROUP", Set.of(authority));
+        User user = new User(1L, "username", "password", Set.of(authorityGroup));
+        bookComment = new BookComment(BOOK_COMMENT_ID, "comment", book, user);
 
         AuthorDTO authorDTO = new AuthorDTO(1L, "author");
         GenreDTO genreDTO = new GenreDTO(1L, "genre");

@@ -7,3 +7,5 @@ databaseChangeLog:
       file: db/changelog/changeset/version-4.0/2024-05-21--0003-create-table-authority_groups_authorities.yml
   - include:
       file: db/changelog/changeset/version-4.0/2024-05-21--0004-create-table-users_authority_groups.yml
+  - include:
+      file: db/changelog/changeset/version-4.0/2024-05-21--0005-alter-table-book_comments.yml

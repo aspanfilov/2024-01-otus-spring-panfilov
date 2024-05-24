@@ -123,6 +123,8 @@
             }).then(response => {
                 if (response.ok) {
                     window.location.href = "/books";
+                } else if (response.status === 403) {
+                    alert('You do not have permission to perform this action.');
                 } else {
                     response.json().then(data => {
                         document.getElementById("error-title").textContent = data.title || "";
@@ -142,6 +144,8 @@
                 }).then(response => {
                     if (response.ok) {
                         window.location.href = "/books";
+                    } else if (response.status === 403) {
+                        alert('You do not have permission to perform this action.');
                     } else {
                         return response.json().then(data => {
                             alert(`Error deleting book: ${data.error || 'Unknown error'}`);

@@ -11,6 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.validation.Errors;
+import ru.otus.hw.config.AppConfig;
 import ru.otus.hw.config.SecurityConfig;
 import ru.otus.hw.controllers.AuthController;
 import ru.otus.hw.dtos.UserDTO;
@@ -32,7 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @DisplayName("Класс AuthController")
 @WebMvcTest(AuthController.class)
-@Import(SecurityConfig.class)
+@Import({SecurityConfig.class, AppConfig.class})
 public class AuthControllerTest {
 
     @Autowired

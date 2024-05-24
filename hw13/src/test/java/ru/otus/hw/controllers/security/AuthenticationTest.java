@@ -13,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import ru.otus.hw.config.AppConfig;
 import ru.otus.hw.config.SecurityConfig;
 import ru.otus.hw.controllers.mvc.AuthorPageController;
 import ru.otus.hw.controllers.mvc.BookCommentPageController;
@@ -47,7 +48,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         GenreController.class,
         BookController.class,
         BookCommentController.class})
-@Import(SecurityConfig.class)
+@Import({SecurityConfig.class, AppConfig.class})
 public class AuthenticationTest {
 
     private static final String EXPECTED_REDIRECT_URL = "http://localhost/login";

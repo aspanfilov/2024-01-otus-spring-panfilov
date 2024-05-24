@@ -35,5 +35,4 @@ public class BookPageController {
         model.addAttribute("genres", genreService.findAll());
         return "books/edit";
     }
-
 }

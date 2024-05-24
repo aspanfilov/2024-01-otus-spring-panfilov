@@ -22,7 +22,6 @@ public class RegistrationServiceImpl implements RegistrationService {
 
     private final AuthorityGroupRepository authorityGroupRepository;
 
-
     @Transactional
     @Override
     public void register(UserDTO userDTO) {

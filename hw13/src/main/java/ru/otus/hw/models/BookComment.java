@@ -37,4 +37,9 @@ public class BookComment {
             fetch = FetchType.LAZY)
     @JoinColumn(name = "book_id")
     private Book book;
+
+    @ManyToOne(cascade = {},
+            fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 }
