@@ -15,4 +15,6 @@ public class BookCommentDTO {
 
     private BookDTO book;
 
+    private UserViewDTO user;
+
 }

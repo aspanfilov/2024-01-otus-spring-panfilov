@@ -23,3 +23,6 @@ spring:
 logging:
   level:
     ROOT: ERROR
+#    org.springframework.security: DEBUG
+#    org.springframework.security.web: DEBUG
+#    org.springframework.security.access: DEBUG

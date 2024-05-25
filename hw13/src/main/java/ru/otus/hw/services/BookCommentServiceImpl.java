@@ -1,6 +1,7 @@
 package ru.otus.hw.services;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,6 +47,7 @@ public class BookCommentServiceImpl implements BookCommentService {
     }
 
     @Transactional
+    @PreAuthorize("#bookCommentDTO.user.username == authentication.name or hasAuthority('COMMENT_WRITE')")
     @Override
     public BookCommentDTO update(long id, long bookId, String commentText) {
         User currentUser = getCurrentUser();

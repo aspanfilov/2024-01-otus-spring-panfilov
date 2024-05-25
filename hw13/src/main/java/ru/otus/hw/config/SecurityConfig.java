@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer;
@@ -14,6 +15,7 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity(prePostEnabled = true)
 @RequiredArgsConstructor
 public class SecurityConfig {
 
@@ -27,10 +29,10 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authorize -> {
                     authorize.requestMatchers("/login", "/registration", "/error").permitAll();
+                    authorizeBookCommentEndpoints(authorize);
                     authorizeBookEndpoints(authorize);
                     authorizeAuthorEndpoints(authorize);
                     authorizeGenreEndpoints(authorize);
-                    authorizeBookCommentEndpoints(authorize);
                     authorize.anyRequest().authenticated();
                 })
                 .formLogin(form -> form
@@ -51,6 +53,18 @@ public class SecurityConfig {
         authProvider.setUserDetailsService(userDetailsService);
         authProvider.setPasswordEncoder(passwordEncoder);
         return authProvider;
+    }
+
+    private void authorizeBookCommentEndpoints(
+            AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry authorize) {
+        authorize.requestMatchers(HttpMethod.GET, "/books/*/comments").hasAuthority("COMMENT_READ");
+        authorize.requestMatchers(HttpMethod.GET, "/books/*/comments/new").hasAuthority("COMMENT_WRITE");
+        authorize.requestMatchers(HttpMethod.GET, "/books/*/comments/*").hasAuthority("COMMENT_READ");
+
+        authorize.requestMatchers(HttpMethod.GET, "/api/v1/books/*/comments/**").hasAuthority("COMMENT_READ");
+        authorize.requestMatchers(HttpMethod.POST, "/api/v1/books/*/comments").hasAuthority("COMMENT_WRITE");
+        authorize.requestMatchers(HttpMethod.PUT, "/api/v1/books/*/comments/**").hasAuthority("COMMENT_WRITE");
+        authorize.requestMatchers(HttpMethod.DELETE, "/api/v1/books/*/comments/**").hasAuthority("COMMENT_DELETE");
     }
 
     private void authorizeBookEndpoints(
@@ -87,18 +101,6 @@ public class SecurityConfig {
         authorize.requestMatchers(HttpMethod.POST, "/api/v1/genres/**").hasAuthority("GENRE_WRITE");
         authorize.requestMatchers(HttpMethod.PUT, "/api/v1/genres/**").hasAuthority("GENRE_WRITE");
         authorize.requestMatchers(HttpMethod.DELETE, "/api/v1/genres/**").hasAuthority("GENRE_DELETE");
-    }
-
-    private void authorizeBookCommentEndpoints(
-            AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry authorize) {
-        authorize.requestMatchers(HttpMethod.GET, "/books/*/comments").hasAuthority("COMMENT_READ");
-        authorize.requestMatchers(HttpMethod.GET, "/books/*/comments/new").hasAuthority("COMMENT_WRITE");
-        authorize.requestMatchers(HttpMethod.GET, "/books/*/comments/*").hasAuthority("COMMENT_READ");
-
-        authorize.requestMatchers(HttpMethod.GET, "/api/v1/books/*/comments/**").hasAuthority("COMMENT_READ");
-        authorize.requestMatchers(HttpMethod.POST, "/api/v1/books/*/comments/**").hasAuthority("COMMENT_WRITE");
-        authorize.requestMatchers(HttpMethod.PUT, "/api/v1/books/*/comments/**").hasAuthority("COMMENT_WRITE");
-        authorize.requestMatchers(HttpMethod.DELETE, "/api/v1/books/*/comments/**").hasAuthority("COMMENT_DELETE");
     }
 
 }

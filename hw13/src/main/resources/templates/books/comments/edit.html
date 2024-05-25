@@ -103,6 +103,7 @@
                 .then(comment => {
                     document.getElementById("id").value = comment.id;
                     document.getElementById("commentText").value = comment.commentText;
+                    document.getElementById("username").value = comment.user.username;
                 });
         });
 
@@ -110,9 +111,11 @@
             const bookId = document.getElementById("bookId").value;
             const bookCommentId = document.getElementById("bookCommentId").value;
             const commentText = document.getElementById("commentText").value;
+            const username = document.getElementById("username").value;
             const errorMessage = document.getElementById("error-message");
             const bookCommentDto = {
                 commentText: commentText,
+                user: { username: username }
             };
 
             fetch(`/api/v1/books/${bookId}/comments/${bookCommentId}`, {
@@ -178,6 +181,7 @@
 
 <input type="hidden" id="bookId" th:value="${bookId}"/>
 <input type="hidden" id="bookCommentId" th:value="${bookCommentId}"/>
+<input type="hidden" id="username" th:value="${username}"/>
 
 <div class="form-row">
     <label for="id">ID:</label>

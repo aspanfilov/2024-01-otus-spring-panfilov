@@ -9,6 +9,7 @@ public class BookCommentMapper {
                 .id(bookComment.getId())
                 .commentText(bookComment.getCommentText())
                 .book(BookMapper.toBookDTO(bookComment.getBook()))
+                .user(UserMapper.toUserViewDTO(bookComment.getUser()))
                 .build();
     }
 }
