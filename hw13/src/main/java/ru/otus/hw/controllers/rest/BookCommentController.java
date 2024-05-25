@@ -36,14 +36,14 @@ public class BookCommentController {
     @PostMapping("/api/v1/books/{bookId}/comments")
     public BookCommentDTO createBookComment(@PathVariable("bookId") Long bookId,
                                             @RequestBody @Valid BookCommentDTO bookCommentDTO) {
-        return bookCommentService.insert(bookId, bookCommentDTO.getCommentText());
+        return bookCommentService.insert(bookCommentDTO);
     }
 
     @PutMapping("/api/v1/books/{bookId}/comments/{bookCommentId}")
     public BookCommentDTO updateBookComment(@PathVariable("bookId") Long bookId,
                                             @PathVariable("bookCommentId") Long bookCommentId,
                                             @RequestBody @Valid BookCommentDTO bookCommentDTO) {
-        return bookCommentService.update(bookCommentId, bookId, bookCommentDTO.getCommentText());
+        return bookCommentService.update(bookCommentId, bookCommentDTO);
     }
 
     @DeleteMapping("/api/v1/books/{bookId}/comments/{bookCommentId}")

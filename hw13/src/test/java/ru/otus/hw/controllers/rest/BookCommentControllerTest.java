@@ -9,19 +9,15 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.otus.hw.config.AppConfig;
-import ru.otus.hw.config.SecurityConfig;
 import ru.otus.hw.dtos.AuthorDTO;
 import ru.otus.hw.dtos.BookCommentDTO;
 import ru.otus.hw.dtos.BookDTO;
 import ru.otus.hw.dtos.GenreDTO;
+import ru.otus.hw.dtos.UserViewDTO;
 import ru.otus.hw.exceptions.EntityNotFoundException;
 import ru.otus.hw.mappers.BookCommentMapper;
 import ru.otus.hw.models.Author;
@@ -31,7 +27,6 @@ import ru.otus.hw.models.Genre;
 import ru.otus.hw.models.User;
 import ru.otus.hw.security.Authority;
 import ru.otus.hw.security.AuthorityGroup;
-import ru.otus.hw.security.CustomUserDetails;
 import ru.otus.hw.services.BookCommentService;
 
 import java.util.List;
@@ -52,7 +47,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @DisplayName("Класс BookCommentController")
 @WebMvcTest(BookCommentController.class)
-@Import({SecurityConfig.class, AppConfig.class})
 @WithMockUser
 public class BookCommentControllerTest {
 
@@ -94,10 +88,15 @@ public class BookCommentControllerTest {
                 .author(authorDTO)
                 .genres(List.of(genreDTO))
                 .build();
+        UserViewDTO userViewDTO = UserViewDTO.builder()
+                .id(1L)
+                .username("admin")
+                .build();
         bookCommentDTO = BookCommentDTO.builder()
                 .id(BOOK_COMMENT_ID)
                 .commentText("comment")
                 .book(bookDTO)
+                .user(userViewDTO)
                 .build();
     }
 
@@ -153,7 +152,7 @@ public class BookCommentControllerTest {
 
         try (MockedStatic<BookCommentMapper> mockedStatic = Mockito.mockStatic(BookCommentMapper.class)) {
 
-            when(bookCommentService.insert(BOOK_ID, bookCommentDTO.getCommentText()))
+            when(bookCommentService.insert(bookCommentDTO))
                     .thenReturn(bookCommentDTO);
             mockedStatic.when(() -> BookCommentMapper.toBookCommentDTO(bookComment))
                     .thenReturn(bookCommentDTO);
@@ -167,7 +166,7 @@ public class BookCommentControllerTest {
                     .andExpect(jsonPath("$.commentText").value(bookComment.getCommentText()))
                     .andExpect(jsonPath("$.book").value(bookComment.getBook()));
 
-            verify(bookCommentService).insert(BOOK_ID, bookCommentDTO.getCommentText());
+            verify(bookCommentService).insert(bookCommentDTO);
         }
     }
 
@@ -189,7 +188,7 @@ public class BookCommentControllerTest {
     void testUpdateBookComment() throws Exception {
         try (MockedStatic<BookCommentMapper> mockedStatic = Mockito.mockStatic(BookCommentMapper.class)) {
 
-            when(bookCommentService.update(BOOK_COMMENT_ID, BOOK_ID, bookCommentDTO.getCommentText()))
+            when(bookCommentService.update(BOOK_COMMENT_ID, bookCommentDTO))
                     .thenReturn(bookCommentDTO);
             mockedStatic.when(() -> BookCommentMapper.toBookCommentDTO(bookComment))
                     .thenReturn(bookCommentDTO);
@@ -204,7 +203,7 @@ public class BookCommentControllerTest {
                     .andExpect(jsonPath("$.commentText").value(bookComment.getCommentText()))
                     .andExpect(jsonPath("$.book").value(bookComment.getBook()));
 
-            verify(bookCommentService).update(BOOK_COMMENT_ID, BOOK_ID, bookCommentDTO.getCommentText());
+            verify(bookCommentService).update(BOOK_COMMENT_ID, bookCommentDTO);
         }
     }
 

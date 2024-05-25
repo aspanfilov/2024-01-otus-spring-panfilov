@@ -8,12 +8,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import ru.otus.hw.mappers.BookCommentMapper;
+import ru.otus.hw.repositories.BookCommentRepository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DisplayName("Тестирование оптимизации запросов в BookService")
+@DisplayName("Тестирование оптимизации запросов в BookCommentService")
 @DataJpaTest
-@Import({BookCommentServiceImpl.class, BookCommentMapper.class, BookServiceImpl.class})
+@Import({BookCommentServiceImpl.class, BookCommentMapper.class, BookServiceImpl.class, UserServiceImpl.class})
 public class BookCommentServiceQueryOptimizationTest {
 
     private static final long FIRST_BOOK_ID = 1;

@@ -95,6 +95,7 @@
             const commentText = document.getElementById("commentText").value;
             const errorMessage = document.getElementById("error-message");
             const bookCommentDto = {
+                book: { id: bookId },
                 commentText: commentText,
             };
 

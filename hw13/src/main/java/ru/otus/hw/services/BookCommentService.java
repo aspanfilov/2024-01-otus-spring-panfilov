@@ -10,9 +10,9 @@ public interface BookCommentService {
 
     Optional<BookCommentDTO> findById(long id);
 
-    BookCommentDTO insert(long bookId, String commentText);
+    BookCommentDTO insert(BookCommentDTO bookCommentDTO);
 
-    BookCommentDTO update(long id, long bookId, String commentText);
+    BookCommentDTO update(long id, BookCommentDTO bookCommentDTO);
 
     void deleteById(long id);
 }

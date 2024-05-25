@@ -40,21 +40,29 @@ public class BookCommentServiceImpl implements BookCommentService {
 
     @Transactional
     @Override
-    public BookCommentDTO insert(long bookId, String commentText) {
+    public BookCommentDTO insert(BookCommentDTO commentDTO) {
         User currentUser = getCurrentUser();
+        Long bookId = commentDTO.getBook().getId();
+        String commentText = commentDTO.getCommentText();
+
         BookComment bookComment = save(0, bookId, commentText, currentUser);
         return BookCommentMapper.toBookCommentDTO(bookComment);
     }
 
+    @PreAuthorize("#commentDTO.user.username == authentication.name")
     @Transactional
-    @PreAuthorize("#bookCommentDTO.user.username == authentication.name or hasAuthority('COMMENT_WRITE')")
     @Override
-    public BookCommentDTO update(long id, long bookId, String commentText) {
+    public BookCommentDTO update(long id, BookCommentDTO commentDTO) {
         User currentUser = getCurrentUser();
+        Long bookId = commentDTO.getBook().getId();
+        String commentText = commentDTO.getCommentText();
+
         BookComment bookComment = save(id, bookId, commentText, currentUser);
+
         return BookCommentMapper.toBookCommentDTO(bookComment);
     }
 
+    @PreAuthorize("@bookCommentServiceImpl.isCommentOwner(#id, authentication.name)")
     @Transactional
     @Override
     public void deleteById(long id) {
@@ -72,5 +80,11 @@ public class BookCommentServiceImpl implements BookCommentService {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         return userService.findByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException("User %s not found".formatted(username)));
+    }
+
+    public boolean isCommentOwner(long commentId, String username) {
+        return bookCommentRepository.findById(commentId)
+                .map(comment -> comment.getUser().getUsername().equals(username))
+                .orElse(false);
     }
 }

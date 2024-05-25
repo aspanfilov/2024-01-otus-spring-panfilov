@@ -9,36 +9,24 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.otus.hw.config.AppConfig;
-import ru.otus.hw.config.SecurityConfig;
 import ru.otus.hw.dtos.AuthorDTO;
-import ru.otus.hw.dtos.BookCommentDTO;
 import ru.otus.hw.dtos.BookDTO;
 import ru.otus.hw.dtos.BookRequestDTO;
 import ru.otus.hw.dtos.GenreDTO;
 import ru.otus.hw.exceptions.EntityNotFoundException;
-import ru.otus.hw.mappers.AuthorMapper;
 import ru.otus.hw.mappers.BookMapper;
 import ru.otus.hw.models.Author;
 import ru.otus.hw.models.Book;
-import ru.otus.hw.models.BookComment;
 import ru.otus.hw.models.Genre;
-import ru.otus.hw.models.User;
-import ru.otus.hw.security.CustomUserDetails;
-import ru.otus.hw.services.BookCommentService;
 import ru.otus.hw.services.BookService;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
@@ -55,7 +43,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @DisplayName("Класс BookController")
 @WebMvcTest(BookController.class)
-@Import({SecurityConfig.class, AppConfig.class})
 @WithMockUser
 public class BookControllerTest {
 
