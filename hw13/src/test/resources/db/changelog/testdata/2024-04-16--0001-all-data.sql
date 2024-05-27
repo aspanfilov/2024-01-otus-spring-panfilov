@@ -4,6 +4,7 @@
 insert into users(username, password)
 values  ('admin', '$2a$10$6yWetu/cAlk.1bO6NOpoXOtQoUmGWFWUj6guuW6Yd/uVJry1NCs0S'), --admin, admin
         ('user1', '$2a$10$S/1TxBk8sre6omde3HvPHOmO7GFpAfdiOoZEK5Q4SVZkFxxTDez9u'), --user1, user1
+        ('user2', '$2a$10$xKrOs2jnGr/jmADau0CxpOMxo.9UyOnZddYNIp0Ea6D9CHq0/ItKW'), --user2, user2
         ('guest', '$2a$10$.yiLvIB17fl2jVziVZ9mV.xDSuOGvjOkeEkvZyFHaLGsV1AFANtOW'); --guest, guest
 
 --changeset Panfilov Artur:2024-05-21-0002-authority_groups
@@ -12,7 +13,7 @@ values ('ADMIN'), ('USER'), ('GUEST');
 
 --changeset Panfilov Artur:2024-05-23-0003-users_authority_groups
 insert into users_authority_groups (user_id, authority_group_id)
-values (1, 1), (2, 2), (3, 3);
+values (1, 1), (2, 2), (3, 2), (4, 3);
 
 --changeset Panfilov Artur:2024-05-21-0004-authorities
 insert into authorities (name)
@@ -61,7 +62,7 @@ values (1, 1),   (1, 2),
 
 --changeset Panfilov Artur:2024-04-16-0010-book_comments
 insert into book_comments(comment_text, book_id, user_id)
-values ('comment_1', 1, 1), ('comment_2', 1, 2),
+values ('comment_1', 1, 2), ('comment_2', 1, 3),
        ('comment_3', 2, 2), ('comment_4', 2, 2),
        ('comment_5', 3, 2), ('comment_6', 3, 2),
        ('comment_7', 3, 2), ('comment_8', 3, 2);
