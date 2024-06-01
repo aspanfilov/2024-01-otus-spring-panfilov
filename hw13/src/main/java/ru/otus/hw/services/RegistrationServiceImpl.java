@@ -10,7 +10,7 @@ import ru.otus.hw.models.User;
 import ru.otus.hw.repositories.AuthorityGroupRepository;
 import ru.otus.hw.security.AuthorityGroup;
 import ru.otus.hw.security.CustomUserDetails;
-import ru.otus.hw.security.UserRole;
+import ru.otus.hw.security.AuthorityGroupRole;
 
 import java.util.Set;
 
@@ -30,7 +30,7 @@ public class RegistrationServiceImpl implements RegistrationService {
             throw new IllegalArgumentException("User already exists");
         }
 
-        AuthorityGroup guest = authorityGroupRepository.findByName(UserRole.GUEST.name())
+        AuthorityGroup guest = authorityGroupRepository.findByName(AuthorityGroupRole.GUEST.name())
                 .orElseThrow(() -> new EntityNotFoundException("Authority group GUEST not found"));
 
         User user = User.builder()
