@@ -1,0 +1,34 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-table-users
+      author: Panfilov Artur
+      changes:
+        - tagDatabase:
+            tag: version-3.0
+        - createTable:
+            tableName: users
+            remarks: пользователи приложения
+            columns:
+              - column:
+                  name: id
+                  remarks: Уникальный идентификатор записи
+                  type: bigserial
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: pk_users
+                    nullable: false
+              - column:
+                  name: username
+                  remarks: логин
+                  type: VARCHAR(255)
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: password
+                  remarks: пароль
+                  type: VARCHAR(255)
+                  constraints:
+                    unique: false
+                    nullable: false
