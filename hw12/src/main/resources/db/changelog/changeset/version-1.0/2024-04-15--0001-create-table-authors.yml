@@ -1,0 +1,26 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-table-authors
+      author: Panfilov Artur
+      changes:
+        - tagDatabase:
+            tag: version-1.0
+        - createTable:
+            tableName: authors
+            remarks: Справочник авторов
+            columns:
+              - column:
+                  name: id
+                  remarks: Уникальный идентификатор записи
+                  type: bigserial
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: pk_author
+                    nullable: false
+              - column:
+                  name: full_name
+                  remarks: полное имя автора
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
