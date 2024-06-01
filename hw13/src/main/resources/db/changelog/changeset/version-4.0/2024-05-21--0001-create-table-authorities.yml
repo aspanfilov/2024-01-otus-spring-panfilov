@@ -1,0 +1,27 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-table-authorities
+      author: Panfilov Artur
+      changes:
+        - tagDatabase:
+            tag: version-4.0
+        - createTable:
+            tableName: authorities
+            remarks: Справочник полномочий
+            columns:
+              - column:
+                  name: id
+                  remarks: Уникальный идентификатор записи
+                  type: bigserial
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: pk_authority
+                    nullable: false
+              - column:
+                  name: name
+                  remarks: наименование полномочия
+                  type: VARCHAR(255)
+                  constraints:
+                    unique: true
+                    nullable: false

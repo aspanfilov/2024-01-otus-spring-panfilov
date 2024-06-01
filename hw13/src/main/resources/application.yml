@@ -1,0 +1,23 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:maindb
+    username: sa
+  liquibase:
+    enabled: true
+  jpa:
+    generate-ddl: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true
+    show-sql: true
+  h2:
+    console:
+      path: /h2-console
+      settings:
+        web-allow-others: true
+
+logging:
+  level:
+    ROOT: ERROR

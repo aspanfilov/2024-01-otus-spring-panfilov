@@ -1,0 +1,49 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-table-users_authority_groups
+      author: Panfilov Artur
+      changes:
+        - tagDatabase:
+            tag: version-4.0
+        - createTable:
+            tableName: users_authority_groups
+            remarks: таблица связей многие ко многим пользователей и групп полномочий
+            columns:
+              - column:
+                  name: user_id
+                  remarks: ссылка на пользователя (внешний ключ)
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: pk_user_authority_group_2
+                    nullable: false
+              - column:
+                  name: authority_group_id
+                  remarks: ссылка на группу полномочий (внешний ключ)
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: pk_user_authority_group_2
+                    nullable: false
+        - addForeignKeyConstraint:
+            constraintName: users_authority_groups_user_id_fk
+            baseTableName: users_authority_groups
+            baseColumnNames: user_id
+            referencedTableName: users
+            referencedColumnNames: id
+            deferrable: false
+            initiallyDeferred: false
+            onDelete: CASCADE
+            onUpdate: NO ACTION
+            validate: true
+        - addForeignKeyConstraint:
+            constraintName: users_authority_groups_authority_group_id_fk
+            baseTableName: users_authority_groups
+            baseColumnNames: authority_group_id
+            referencedTableName: authority_groups
+            referencedColumnNames: id
+            deferrable: false
+            initiallyDeferred: false
+            onDelete: CASCADE
+            onUpdate: NO ACTION
+            validate: true
