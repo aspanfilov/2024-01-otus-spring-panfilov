@@ -1,5 +1,5 @@
 package ru.otus.hw.security;
 
-public enum UserRole {
+public enum AuthorityGroupRoles {
     GUEST, USER, ADMIN
 }
