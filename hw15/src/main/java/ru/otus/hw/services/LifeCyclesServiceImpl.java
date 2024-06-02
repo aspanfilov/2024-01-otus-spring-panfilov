@@ -3,9 +3,8 @@ package ru.otus.hw.services;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.otus.hw.mortal.domain.Person;
 import ru.otus.hw.divine.domain.Soul;
-import ru.otus.hw.mortal.factories.PersonFactory;
+import ru.otus.hw.domain.Intention;
 
 import java.util.concurrent.ForkJoinPool;
 
@@ -14,19 +13,16 @@ import java.util.concurrent.ForkJoinPool;
 @Slf4j
 public class LifeCyclesServiceImpl implements LifeCyclesService {
 
-    private static final int PERSONS_LIMIT = 5;
+    private static final int LIFE_LIMIT = 5;
 
     private final LifeGateway lifeGateway;
-
-    private final PersonFactory personFactory;
 
     @Override
     public void startLifeCycleGenerator() {
         ForkJoinPool pool = ForkJoinPool.commonPool();
-        for (int i = 0; i < PERSONS_LIMIT; i++) {
+        for (int i = 0; i < LIFE_LIMIT; i++) {
             pool.execute(() -> {
-                Person person = personFactory.createPerson();
-                Soul soul = lifeGateway.process(person);
+                Soul soul = lifeGateway.execute(new Intention());
                 log.info("!!! {} {}: ДУША ЧЕЛОВЕКА ОТПРАВЛЕНА В {}:",
                         soul.getUsedPerson().getId(),
                         soul.getUsedPerson().getName(),

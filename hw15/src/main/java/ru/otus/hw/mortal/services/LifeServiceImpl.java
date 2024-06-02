@@ -8,6 +8,7 @@ import ru.otus.hw.mortal.domain.DeedType;
 import ru.otus.hw.mortal.domain.Person;
 import ru.otus.hw.mortal.domain.PersonLife;
 import ru.otus.hw.mortal.factories.DeedFactory;
+import ru.otus.hw.mortal.factories.PersonFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,11 +25,13 @@ public class LifeServiceImpl implements LifeService {
 
     private static final Random RANDOM = new Random();
 
+    private final PersonFactory personFactory;
+
     private final DeedFactory deedFactory;
 
     @Override
-    public PersonLife liveLife(Person person) {
-
+    public PersonLife liveLife() {
+        Person person = personFactory.createPerson();
         log.info(">>> {} {}: НОВЫЙ ЧЕЛОВЕК РОДИЛСЯ (-)",
                 person.getId(), person.getName());
 
@@ -49,7 +52,6 @@ public class LifeServiceImpl implements LifeService {
                 person.getId(), person.getName(),
                 countDeeds(deeds, DeedType.GOOD),
                 countDeeds(deeds, DeedType.BAD));
-
         return new PersonLife(person, deeds);
     }
 
