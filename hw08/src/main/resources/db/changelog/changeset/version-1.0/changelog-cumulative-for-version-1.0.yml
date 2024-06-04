@@ -1,9 +1,0 @@
-databaseChangeLog:
-  - include:
-      file: db/changelog/changeset/version-1.0/2024-04-15--0001-create-table-authors.yml
-  - include:
-      file: db/changelog/changeset/version-1.0/2024-04-15--0002-create-table-genres.yml
-  - include:
-      file: db/changelog/changeset/version-1.0/2024-04-15--0003-create-table-books.yml
-  - include:
-      file: db/changelog/changeset/version-1.0/2024-04-15--0004-create-table-books_genres.yml

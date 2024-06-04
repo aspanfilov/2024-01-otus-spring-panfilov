@@ -18,13 +18,15 @@ public class AuthorCommands {
 
     @ShellMethod(value = "Find all authors", key = "aa")
     public String findAllAuthors() {
+
         return authorService.findAll().stream()
                 .map(authorConverter::authorToString)
                 .collect(Collectors.joining("," + System.lineSeparator()));
+
     }
 
     @ShellMethod(value = "Find author by id", key = "abid")
-    public String findAuthorById(long id) {
+    public String findAuthorById(String id) {
         return authorService.findById(id)
                 .map(authorConverter::authorToString)
                 .orElse("Author with id %d not found".formatted(id));
@@ -39,14 +41,14 @@ public class AuthorCommands {
 
     // aupd 3, editedAuthor
     @ShellMethod(value = "Update author", key = "aupd")
-    public String updateAuthor(long id, String fullName) {
+    public String updateAuthor(String id, String fullName) {
         var savedAuthor = authorService.update(id, fullName);
         return authorConverter.authorToString(savedAuthor);
     }
 
     // adel 2
     @ShellMethod(value = "Delete author by id", key = "adel")
-    public void deleteAuthor(long id) {
+    public void deleteAuthor(String id) {
         authorService.deleteById(id);
     }
 

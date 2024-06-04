@@ -1,10 +1,10 @@
 package ru.otus.hw.models;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.data.mongodb.core.mapping.FieldType;
@@ -12,13 +12,10 @@ import org.springframework.data.mongodb.core.mapping.FieldType;
 import java.util.List;
 
 @Document(collection = "books")
-//@Getter
-//@Setter
-//@EqualsAndHashCode(exclude = {"author", "genres"})
-//@ToString(exclude = {"author", "genres"})
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Book {
     @Id
     private String id;

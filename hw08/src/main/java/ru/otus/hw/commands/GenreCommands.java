@@ -25,14 +25,14 @@ public class GenreCommands {
     }
 
     @ShellMethod(value = "Find all genres by ids", key = "agbid")
-    public String findAllGenresByIds(Set<Long> ids) {
+    public String findAllGenresByIds(Set<String> ids) {
         return genreService.findAllByIds(ids).stream()
                 .map(genreConverter::genreToString)
                 .collect(Collectors.joining("," + System.lineSeparator()));
     }
 
     @ShellMethod(value = "Find genre by id", key = "gbid")
-    public String findGenreById(long id) {
+    public String findGenreById(String id) {
         return genreService.findById(id)
                 .map(genreConverter::genreToString)
                 .orElse("Genre with id %d not found".formatted(id));
@@ -47,14 +47,14 @@ public class GenreCommands {
 
     // gupd 3, editedGenre
     @ShellMethod(value = "Update genre", key = "gupd")
-    public String updateGenre(long id, String fullName) {
+    public String updateGenre(String id, String fullName) {
         var savedGenre = genreService.update(id, fullName);
         return genreConverter.genreToString(savedGenre);
     }
 
     // gdel 2
     @ShellMethod(value = "Delete genre by id", key = "gdel")
-    public void deleteGenre(long id) {
+    public void deleteGenre(String id) {
         genreService.deleteById(id);
     }
 }

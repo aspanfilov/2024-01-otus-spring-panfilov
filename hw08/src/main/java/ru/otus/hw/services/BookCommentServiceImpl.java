@@ -2,10 +2,7 @@ package ru.otus.hw.services;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import ru.otus.hw.dtos.BookCommentDTO;
 import ru.otus.hw.exceptions.EntityNotFoundException;
-import ru.otus.hw.mappers.BookCommentMapper;
 import ru.otus.hw.models.Book;
 import ru.otus.hw.models.BookComment;
 import ru.otus.hw.repositories.BookCommentRepository;
@@ -20,41 +17,35 @@ public class BookCommentServiceImpl implements BookCommentService {
 
     private final BookService bookService;
 
-    @Transactional(readOnly = true)
     @Override
-    public List<BookCommentDTO> findAllByBookId(long bookId) {
+    public List<BookComment> findAllByBookId(String bookId) {
         bookService.findById(bookId);
-        return bookCommentRepository.findAllByBookId(bookId).stream().map(BookCommentMapper::toBookCommentDTO).toList();
+        return bookCommentRepository.findAllByBookId(bookId).stream()
+                .toList();
     }
 
-    @Transactional(readOnly = true)
     @Override
-    public Optional<BookCommentDTO> findById(long id) {
-        return bookCommentRepository.findById(id).map(BookCommentMapper::toBookCommentDTO);
+    public Optional<BookComment> findById(String id) {
+        return bookCommentRepository.findById(id);
     }
 
-    @Transactional
     @Override
-    public BookCommentDTO insert(long bookId, String commentText) {
-        BookComment bookComment = save(0, bookId, commentText);
-        return BookCommentMapper.toBookCommentDTO(bookComment);
+    public BookComment insert(String bookId, String commentText) {
+        return save(null, bookId, commentText);
     }
 
-    @Transactional
     @Override
-    public BookCommentDTO update(long id, long bookId, String commentText) {
-        BookComment bookComment = save(id, bookId, commentText);
-        return BookCommentMapper.toBookCommentDTO(bookComment);
+    public BookComment update(String id, String bookId, String commentText) {
+        return save(id, bookId, commentText);
     }
 
-    @Transactional
     @Override
-    public void deleteById(long id) {
+    public void deleteById(String id) {
         bookCommentRepository.deleteById(id);
     }
 
-    private BookComment save(long id, long bookId, String commentText) {
-        Book book = bookService.findBookById(bookId)
+    private BookComment save(String id, String bookId, String commentText) {
+        Book book = bookService.findById(bookId)
                 .orElseThrow(() -> new EntityNotFoundException("Book with id %d not found".formatted(bookId)));
         var bookComment = new BookComment(id, commentText, book);
         return bookCommentRepository.save(bookComment);

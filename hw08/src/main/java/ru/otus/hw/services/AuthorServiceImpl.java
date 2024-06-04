@@ -40,7 +40,6 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Override
     public void deleteById(String id) {
-        //todo повесить слушателей которые будут проверять есть ли у этого автора книги
         authorRepository.deleteById(id);
     }
 }

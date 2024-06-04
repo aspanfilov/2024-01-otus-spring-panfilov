@@ -1,28 +1,24 @@
 package ru.otus.hw.converters;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import ru.otus.hw.exceptions.JsonConversationException;
 import ru.otus.hw.models.Book;
-
-import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
 public class BookConverter {
-    private final AuthorConverter authorConverter;
 
-    private final GenreConverter genreConverter;
+    private final ObjectMapper objectMapper;
 
     public String bookToString(Book book) {
-        var genresString = book.getGenres().stream()
-                .map(genreConverter::genreToString)
-                .map("{%s}"::formatted)
-                .collect(Collectors.joining(", "));
-        return "Id: %d, title: %s, author: {%s}, genres: [%s]".formatted(
-                book.getId(),
-                book.getTitle(),
-                authorConverter.authorToString(book.getAuthor()),
-                genresString);
+        try {
+            return objectMapper.writeValueAsString(book);
+        } catch (JsonProcessingException e) {
+            throw new JsonConversationException("Error converting book to JSON", e);
+        }
     }
 }
 

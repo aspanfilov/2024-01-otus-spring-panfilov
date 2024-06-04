@@ -10,9 +10,10 @@ public class BookCommentConverter {
     private final BookConverter bookConverter;
 
     public String bookCommentToString(BookComment bookComment) {
-        return "Id: %d, commentText: %s, book: {%s}".formatted(
+        return "Id: %s, commentText: %s, book: %s".formatted(
                 bookComment.getId(),
                 bookComment.getCommentText(),
-                bookConverter.bookToString(bookComment.getBook()));
+                bookComment.getBook().getId());
+//                bookConverter.bookToString(bookComment.getBook()));
     }
 }

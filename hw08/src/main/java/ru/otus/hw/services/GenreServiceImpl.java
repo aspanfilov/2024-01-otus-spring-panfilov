@@ -41,7 +41,6 @@ public class GenreServiceImpl implements GenreService {
 
     @Override
     public void deleteById(String id) {
-        //todo повесить слушателей которые будут проверять есть ли у этого жанра книги
         genreRepository.deleteById(id);
     }
 
