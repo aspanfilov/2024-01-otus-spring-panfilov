@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.context.annotation.Import;
 import ru.otus.hw.events.MongoBookCascadeDeleteListener;
 import ru.otus.hw.events.MongoBookCascadeSaveEventsListener;
@@ -11,7 +12,6 @@ import ru.otus.hw.models.Author;
 import ru.otus.hw.models.Book;
 import ru.otus.hw.models.BookComment;
 import ru.otus.hw.models.Genre;
-import ru.otus.hw.repositories.AbstractRepositoryTest;
 import ru.otus.hw.repositories.BookCommentRepository;
 import ru.otus.hw.repositories.BookRepository;
 
@@ -19,9 +19,10 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@DataMongoTest
 @DisplayName("класс BookRepository")
 @Import({MongoBookCascadeSaveEventsListener.class, MongoBookCascadeDeleteListener.class})
-public class BookRepositoryWithListenersTest extends AbstractRepositoryTest {
+public class BookRepositoryWithListenersTest {
 
     @Autowired
     private BookRepository bookRepository;

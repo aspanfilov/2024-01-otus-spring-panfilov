@@ -3,12 +3,12 @@ package ru.otus.hw.repositories.events;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.context.annotation.Import;
 import ru.otus.hw.events.MongoAuthorCascadeDeleteListener;
 import ru.otus.hw.models.Author;
 import ru.otus.hw.models.Book;
 import ru.otus.hw.models.Genre;
-import ru.otus.hw.repositories.AbstractRepositoryTest;
 import ru.otus.hw.repositories.AuthorRepository;
 import ru.otus.hw.repositories.BookRepository;
 import ru.otus.hw.repositories.GenreRepository;
@@ -17,9 +17,10 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+@DataMongoTest
 @DisplayName("класс AuthorRepository")
 @Import(MongoAuthorCascadeDeleteListener.class)
-public class AuthorRepositoryWithListenersTest extends AbstractRepositoryTest {
+public class AuthorRepositoryWithListenersTest {
 
     @Autowired
     private AuthorRepository authorRepository;
