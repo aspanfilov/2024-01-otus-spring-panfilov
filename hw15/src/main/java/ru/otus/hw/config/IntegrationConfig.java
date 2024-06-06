@@ -15,6 +15,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import ru.otus.hw.divine.domain.Destination;
 import ru.otus.hw.divine.domain.Soul;
 import ru.otus.hw.mappers.KarmaConverter;
+import ru.otus.hw.mortal.services.LifeService;
 
 @Configuration
 @EnableConfigurationProperties(AppProps.class)
@@ -64,13 +65,15 @@ public class IntegrationConfig {
     }
 
     @Bean
-    public IntegrationFlow lifeFlow() {
+    public IntegrationFlow lifeFlow(LifeService lifeService) {
 
         return IntegrationFlow.from(lifeChannel())
-                .handle("lifeService", "liveLife")
+                //Пример обращения к сервису через внедренный бин
+                .handle(lifeService, "liveLife")
                 .split("payload.deeds")
                 .transform(KarmaConverter::deedToKarmaPoint)
                 .aggregate()
+                //Пример обращения к сервису через строковое имя
                 .handle("judgementService", "judgePersonKarmaBaggage")
                 .<Soul, Destination>route(Soul::getDestination, mapping -> mapping
                         .subFlowMapping(Destination.HEAVEN, sf -> sf
