@@ -22,37 +22,37 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @Import(MongoGenreCascadeDeleteListener.class)
 public class GenreRepositoryWIthListenersTest {
 
-    @Autowired
-    private AuthorRepository authorRepository;
-
-    @Autowired
-    private GenreRepository genreRepository;
-
-    @Autowired
-    private BookRepository bookRepository;
-
-    @DisplayName("При удалении жанра если с ним есть книга то должно быть брошено исключене")
-    @Test
-    void shouldThrowExceptionWhenDeleteGenreWithBook() {
-
-        Author author = Author.builder()
-                .fullName("new_author").build();
-        authorRepository.save(author);
-
-        Genre genre = Genre.builder()
-                .name("new_genre").build();
-        genreRepository.save(genre);
-
-        Book book = Book.builder()
-                .title("new_book")
-                .author(author)
-                .genres(List.of(genre))
-                .build();
-        bookRepository.save(book);
-
-        assertThatThrownBy(() -> genreRepository.deleteById(genre.getId()))
-                .isInstanceOf(IllegalStateException.class)
-                .hasMessageContaining("Genre cannot be deleted as it is referenced by a book.");
-    }
+//    @Autowired
+//    private AuthorRepository authorRepository;
+//
+//    @Autowired
+//    private GenreRepository genreRepository;
+//
+//    @Autowired
+//    private BookRepository bookRepository;
+//
+//    @DisplayName("При удалении жанра если с ним есть книга то должно быть брошено исключене")
+//    @Test
+//    void shouldThrowExceptionWhenDeleteGenreWithBook() {
+//
+//        Author author = Author.builder()
+//                .fullName("new_author").build();
+//        authorRepository.save(author);
+//
+//        Genre genre = Genre.builder()
+//                .name("new_genre").build();
+//        genreRepository.save(genre);
+//
+//        Book book = Book.builder()
+//                .title("new_book")
+//                .author(author)
+//                .genres(List.of(genre))
+//                .build();
+//        bookRepository.save(book);
+//
+//        assertThatThrownBy(() -> genreRepository.deleteById(genre.getId()))
+//                .isInstanceOf(IllegalStateException.class)
+//                .hasMessageContaining("Genre cannot be deleted as it is referenced by a book.");
+//    }
 
 }

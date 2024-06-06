@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.mongodb.core.MongoOperations;
 import ru.otus.hw.events.MongoBookCascadeDeleteListener;
 import ru.otus.hw.events.MongoBookCascadeSaveEventsListener;
 import ru.otus.hw.models.Author;
@@ -28,7 +29,7 @@ public class BookRepositoryWithListenersTest {
     private BookRepository bookRepository;
 
     @Autowired
-    private BookCommentRepository bookCommentRepository;
+    private MongoOperations mongoOperations;
 
     private Book book;
 
@@ -66,11 +67,11 @@ public class BookRepositoryWithListenersTest {
                 .commentText("new_comment")
                 .book(actualBook)
                 .build();
-        var actualComment = bookCommentRepository.save(comment);
+        var actualComment = mongoOperations.save(comment);
 
         bookRepository.deleteById(book.getId());
 
-        assertThat(bookCommentRepository.findById(actualComment.getId())).isEmpty();
+        assertThat(mongoOperations.findById(actualComment.getId(), BookComment.class)).isNull();
     }
 
 
