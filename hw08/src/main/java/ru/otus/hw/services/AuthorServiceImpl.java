@@ -8,7 +8,6 @@ import ru.otus.hw.repositories.BookRepository;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service

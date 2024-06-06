@@ -10,7 +10,6 @@ import ru.otus.hw.repositories.BookCommentRepository;
 import ru.otus.hw.repositories.BookRepository;
 import ru.otus.hw.repositories.GenreRepository;
 
-import java.beans.Transient;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
