@@ -27,3 +27,10 @@ create table books_genres
     primary key (book_id, genre_id)
 );
 
+create table book_comments
+(
+    id        bigserial,
+    comment_text      varchar(255),
+    book_id   bigint references books (id) on delete cascade,
+    primary key (id)
+);

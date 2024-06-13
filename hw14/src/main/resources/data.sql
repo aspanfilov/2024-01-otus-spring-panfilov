@@ -33,9 +33,39 @@ values ('Genre_1'), ('Genre_2'), ('Genre_3'),
        ('Genre_28'), ('Genre_29'), ('Genre_30');
 
 insert into books(title, author_id)
-values ('BookTitle_1', 1), ('BookTitle_2', 2), ('BookTitle_3', 3);
+values ('BookTitle_1', 1), ('BookTitle_2', 2), ('BookTitle_3', 3),
+       ('BookTitle_4', 4), ('BookTitle_5', 5), ('BookTitle_6', 6),
+       ('BookTitle_7', 7), ('BookTitle_8', 8), ('BookTitle_9', 9),
+       ('BookTitle_10', 10), ('BookTitle_11', 11), ('BookTitle_12', 12),
+       ('BookTitle_13', 13), ('BookTitle_14', 14), ('BookTitle_15', 15),
+       ('BookTitle_16', 16), ('BookTitle_17', 17), ('BookTitle_18', 18),
+       ('BookTitle_19', 19), ('BookTitle_20', 20), ('BookTitle_21', 21);
 
 insert into books_genres(book_id, genre_id)
 values (1, 1),   (1, 2),
        (2, 3),   (2, 4),
-       (3, 5),   (3, 6);
+       (3, 5),   (3, 6),
+       (4, 7), (4, 8),
+       (5, 9), (5, 10),
+       (6, 11), (6, 12),
+       (7, 13), (7, 14),
+       (8, 15), (8, 16),
+       (9, 17), (9, 18),
+       (10, 19), (10, 20),
+       (11, 21), (11, 22),
+       (12, 23), (12, 24),
+       (13, 25), (13, 26),
+       (14, 27), (14, 28),
+       (15, 29), (15, 30);
+
+insert into book_comments(comment_text, book_id)
+values ('Comment_1', 1), ('Comment_2', 2), ('Comment_3', 3),
+       ('Comment_4', 4), ('Comment_5', 5), ('Comment_6', 6),
+       ('Comment_7', 7), ('Comment_8', 8), ('Comment_9', 9),
+       ('Comment_10', 10), ('Comment_11', 11), ('Comment_12', 12),
+       ('Comment_13', 13), ('Comment_14', 13), ('Comment_15', 13),
+       ('Comment_16', 14), ('Comment_17', 14), ('Comment_18', 14),
+       ('Comment_19', 15), ('Comment_20', 15), ('Comment_21', 15),
+       ('Comment_22', 16), ('Comment_23', 16), ('Comment_24', 16),
+       ('Comment_25', 17), ('Comment_26', 17), ('Comment_27', 17),
+       ('Comment_28', 18), ('Comment_29', 18), ('Comment_30', 18);

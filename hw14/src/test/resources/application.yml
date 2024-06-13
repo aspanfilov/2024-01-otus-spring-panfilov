@@ -6,15 +6,13 @@ spring:
 
   shell:
     interactive:
-      enabled: true
-    noninteractive:
       enabled: false
     command:
       version:
         enabled: false
 
   datasource:
-    url: jdbc:h2:mem:SpringBatchExampleDB
+    url: jdbc:h2:mem:testdb
     driverClassName: org.h2.Driver
     username: sa
     password:
@@ -39,14 +37,13 @@ spring:
     init:
       mode: always
       schema-locations: schema.sql
-      data-locations: data.sql
+      data-locations: testdata.sql
 
   data:
     mongodb:
       host: localhost
-#      port: 0
-      port: 27017
-      database: SpringBatchExampleDB
+      port: 0
+      database: SpringBatchTestExampleDB
 
 de:
   flapdoodle:

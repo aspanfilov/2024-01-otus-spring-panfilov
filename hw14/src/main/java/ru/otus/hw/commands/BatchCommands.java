@@ -27,9 +27,11 @@ public class BatchCommands {
     @SuppressWarnings("unused")
     @ShellMethod(value = "startMigrationJobWithJobLauncher", key = "sm")
     public void startMigrationJobWithJobLauncher() throws Exception {
-        JobExecution execution = jobLauncher.run(libraryMigrationJob,
-                new JobParametersBuilder().toJobParameters());
-        System.out.println(execution);
+        JobExecution jobExecution = jobLauncher.run(libraryMigrationJob,
+                new JobParametersBuilder()
+                        .addLong("time", System.currentTimeMillis())
+                        .toJobParameters());
+        System.out.println(jobExecution);
     }
 
     @ShellMethod(value = "showInfo", key = "i")

@@ -11,19 +11,19 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "books")
+@Table(name = "book_comments")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class SqlBook {
+public class SqlBookComment {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name = "title", unique = false, nullable = false)
-    private String title;
+    @Column(name = "comment_text", unique = false, nullable = false)
+    private String commentText;
 
-    @Column(name = "author_id", nullable = false)
-    private long authorId;
+    @Column(name = "book_id")
+    private long bookId;
 }

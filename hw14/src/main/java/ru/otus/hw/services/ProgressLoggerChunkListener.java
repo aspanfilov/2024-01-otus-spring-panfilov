@@ -4,33 +4,48 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.ChunkListener;
 import org.springframework.batch.core.scope.context.ChunkContext;
+import ru.otus.hw.config.JobConfig;
 
 public class ProgressLoggerChunkListener<T> implements ChunkListener {
 
-    //CHUNK и STEP передавать из пропертей
-
-    private static final Logger logger = LoggerFactory.getLogger("Batch");
+    private static final Logger LOGGER = LoggerFactory.getLogger(JobConfig.LOGGER_NAME);
 
     private int totalItems;
 
-    private long processedItems = 0;
+    private int progressStep;
 
-    public ProgressLoggerChunkListener(int totalItems) {
+    private String entityName;
+
+    private int lastLoggedProgressPercentage = 0;
+
+    public ProgressLoggerChunkListener(int totalItems, int progressStep, String entityName) {
         this.totalItems = totalItems;
+        this.progressStep = progressStep;
+        this.entityName = entityName;
     }
 
     @Override
     public void afterChunk(ChunkContext context) {
 
-        long chunkSize = 2;
-
-        processedItems += chunkSize;
+        int processedItems = (int) context.getStepContext().getStepExecution().getWriteCount();
 
         int progressPercentage = (int) ((processedItems / (double) totalItems) * 100);
 
-        if (progressPercentage / 10 > (processedItems - chunkSize) / (double) totalItems * 10) {
-            //возможно в многопоточке передавать все снаружи в том числе и именование энтити для которого выводится прогресс
-            logger.info("Прогресс: {}% ({} из {})", progressPercentage, processedItems, totalItems);
+        if (progressPercentage >= lastLoggedProgressPercentage + progressStep) {
+            LOGGER.info("...перенос {}: {}% ({} из {})",
+                    entityName,
+                    progressPercentage,
+                    processedItems,
+                    totalItems);
+            lastLoggedProgressPercentage = progressPercentage / progressStep * progressStep;
+        }
+
+        resetProgressPercentageIfComplete();
+    }
+
+    private void resetProgressPercentageIfComplete() {
+        if (lastLoggedProgressPercentage == 100) {
+            lastLoggedProgressPercentage = 0;
         }
     }
 
