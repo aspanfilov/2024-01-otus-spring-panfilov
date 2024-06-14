@@ -8,7 +8,7 @@ import ru.otus.hw.config.JobConfig;
 
 public class ProgressLoggerChunkListener<T> implements ChunkListener {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(JobConfig.LOGGER_NAME);
+    private final Logger logger = LoggerFactory.getLogger(JobConfig.LOGGER_NAME);
 
     private int totalItems;
 
@@ -32,7 +32,7 @@ public class ProgressLoggerChunkListener<T> implements ChunkListener {
         int progressPercentage = (int) ((processedItems / (double) totalItems) * 100);
 
         if (progressPercentage >= lastLoggedProgressPercentage + progressStep) {
-            LOGGER.info("...перенос {}: {}% ({} из {})",
+            logger.info("...перенос {}: {}% ({} из {})",
                     entityName,
                     progressPercentage,
                     processedItems,

@@ -33,8 +33,6 @@ import ru.otus.hw.services.ProgressLoggerChunkListener;
 
 import java.util.List;
 
-import static org.hibernate.id.factory.IdGenFactoryLogging.LOGGER_NAME;
-
 @Configuration
 public class StepConfig {
 
@@ -46,7 +44,7 @@ public class StepConfig {
 
     public static final String COMMENTS = "comments";
 
-    private final Logger logger = LoggerFactory.getLogger(LOGGER_NAME);
+    private final Logger logger = LoggerFactory.getLogger(JobConfig.LOGGER_NAME);
 
     @Autowired
     private AppProps appProps;
@@ -241,7 +239,6 @@ public class StepConfig {
             }
         };
     }
-
 
 
 }
