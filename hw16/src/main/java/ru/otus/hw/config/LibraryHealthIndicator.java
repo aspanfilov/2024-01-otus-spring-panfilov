@@ -4,9 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.stereotype.Component;
-import ru.otus.hw.repositories.AuthorRepository;
-import ru.otus.hw.repositories.BookRepository;
-import ru.otus.hw.repositories.GenreRepository;
+import ru.otus.hw.services.AuthorService;
+import ru.otus.hw.services.BookService;
+import ru.otus.hw.services.GenreService;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,17 +15,17 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class LibraryHealthIndicator implements HealthIndicator {
 
-    private final AuthorRepository authorRepository;
+    private final AuthorService authorService;
 
-    private final GenreRepository genreRepository;
+    private final GenreService genreService;
 
-    private final BookRepository bookRepository;
+    private final BookService bookService;
 
     @Override
     public Health health() {
-        long authorCount = authorRepository.count();
-        long genreCount = genreRepository.count();
-        long bookCount = bookRepository.count();
+        long authorCount = authorService.getCount();
+        long genreCount = genreService.getCount();
+        long bookCount = bookService.getCount();
 
         Map<String, Object> details = new HashMap<>();
 

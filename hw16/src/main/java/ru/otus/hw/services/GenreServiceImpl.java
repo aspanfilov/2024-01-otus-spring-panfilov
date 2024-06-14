@@ -55,4 +55,11 @@ public class GenreServiceImpl implements GenreService {
         var genre = new Genre(id, name);
         return genreRepository.save(genre);
     }
+
+    @Transactional(readOnly = true)
+    @Override
+    public long getCount() {
+        return genreRepository.count();
+    }
+
 }

@@ -81,4 +81,10 @@ public class BookServiceImpl implements BookService {
         var book = new Book(id, title, author, genres);
         return bookRepository.save(book);
     }
+
+    @Transactional(readOnly = true)
+    @Override
+    public long getCount() {
+        return bookRepository.count();
+    }
 }

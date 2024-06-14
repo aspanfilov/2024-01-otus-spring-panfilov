@@ -18,4 +18,6 @@ public interface GenreService {
     Genre update(long id, String name);
 
     void deleteById(long id);
+
+    long getCount();
 }
