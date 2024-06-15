@@ -32,8 +32,10 @@ management:
   endpoints:
     web:
       exposure:
-        include: "health, info, metrics, logfile"
+        include: "health, info, metrics, loggers, logfile"
   endpoint:
+    logfile:
+      external-file: hw16/logs/app.log
     health:
       show-details: always
   health:
