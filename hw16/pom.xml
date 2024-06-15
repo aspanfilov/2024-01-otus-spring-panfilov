@@ -103,13 +103,13 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
             <plugin>
-                <groupId>pl.project13.maven</groupId>
-                <artifactId>git-commit-id-plugin-core</artifactId>
-                <version>4.9.10</version>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>3.2.4</version>
                 <executions>
                     <execution>
                         <goals>
-                            <goal>revision</goal>
+                            <goal>build-info</goal>
                         </goals>
                     </execution>
                 </executions>

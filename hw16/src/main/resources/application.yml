@@ -42,3 +42,7 @@ management:
     defaults:
       enabled: true
 
+info:
+  build:
+    location: classpath:/META-INF/build-info.properties
+
