@@ -5,16 +5,19 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
+import ru.otus.hw.BaseContainerTest;
 import ru.otus.hw.mappers.BookMapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("Тестирование оптимизации запросов в BookService")
 @DataJpaTest
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Import({BookServiceImpl.class, BookMapper.class})
-public class BookServiceQueryOptimizationTest {
+public class BookServiceQueryOptimizationTest extends BaseContainerTest {
 
     private static final long FIRST_BOOK_ID = 1;
     private static final int BOOKS_COUNT = 3;

@@ -48,4 +48,10 @@ public class AuthorServiceImpl implements AuthorService {
     public void deleteById(long id) {
         authorRepository.deleteById(id);
     }
+
+    @Transactional(readOnly = true)
+    @Override
+    public long getCount() {
+        return authorRepository.count();
+    }
 }

@@ -9,6 +9,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import ru.otus.hw.BaseContainerTest;
 import ru.otus.hw.dtos.AuthorDTO;
 import ru.otus.hw.dtos.BookCommentDTO;
 import ru.otus.hw.dtos.BookDTO;
@@ -23,7 +24,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DisplayName("Класс BookCommentService")
 @SpringBootTest
-public class BookCommentServiceAuthzTest {
+public class BookCommentServiceAuthzTest extends BaseContainerTest {
 
     @Autowired
     private BookCommentService bookCommentService;
@@ -36,6 +37,8 @@ public class BookCommentServiceAuthzTest {
 
     @BeforeEach
     void setUp() {
+
+        super.resetData();
 
         AuthorDTO authorDTO = new AuthorDTO(1L, "author");
         GenreDTO genreDTO = new GenreDTO(1L, "genre");

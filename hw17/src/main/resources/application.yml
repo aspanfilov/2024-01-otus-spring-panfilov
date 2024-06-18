@@ -1,7 +1,7 @@
 spring:
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/postgres
+    url: jdbc:postgresql://localhost:5432/library
     username: postgres
     password: postgres
 
@@ -17,6 +17,23 @@ spring:
         format_sql: true
     show-sql: true
 
-logging:
-  level:
-    ROOT: ERROR
+  jmx:
+    enabled: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health, info, metrics, loggers, logfile"
+  endpoint:
+    logfile:
+      external-file: hw16/logs/app.log
+    health:
+      show-details: always
+  health:
+    defaults:
+      enabled: true
+
+info:
+  build:
+    location: classpath:/META-INF/build-info.properties

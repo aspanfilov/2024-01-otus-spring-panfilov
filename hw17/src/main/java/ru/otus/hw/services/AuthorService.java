@@ -15,4 +15,6 @@ public interface AuthorService {
     Author update(long id, String name);
 
     void deleteById(long id);
+
+    long getCount();
 }
