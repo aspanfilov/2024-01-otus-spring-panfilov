@@ -11,28 +11,21 @@ import ru.otus.hw.models.sql.SqlBook;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
 public class BookProcessor implements ItemProcessor<SqlBook, MongoBook> {
 
-    private final Map<Long, MongoAuthor> authorsCache;
-
-    private final Map<Long, MongoGenre> genresCache;
-
-    private final Map<Long, List<Long>> booksGenresCache;
-
-    private final Map<Long, MongoBook> booksCache;
+    private final CacheService cacheService;
 
     @Override
     public MongoBook process(SqlBook book) {
-        MongoAuthor mongoAuthor = authorsCache.get(book.getAuthorId());
+        MongoAuthor mongoAuthor = cacheService.getAuthorsCache().get(book.getAuthorId());
 
         List<MongoGenre> mongoGenres = new ArrayList<>();
-        if (booksGenresCache.containsKey(book.getId())) {
-            mongoGenres = booksGenresCache.get(book.getId()).stream()
-                    .map(genresCache::get).toList();
+        if (cacheService.getBooksGenresCache().containsKey(book.getId())) {
+            mongoGenres = cacheService.getBooksGenresCache().get(book.getId()).stream()
+                    .map(cacheService.getGenresCache()::get).toList();
         }
 
         MongoBook mongoBook = MongoBook.builder()
@@ -42,7 +35,7 @@ public class BookProcessor implements ItemProcessor<SqlBook, MongoBook> {
                 .genres(mongoGenres)
                 .build();
 
-        booksCache.put(book.getId(), mongoBook);
+        cacheService.getBooksCache().put(book.getId(), mongoBook);
 
         return mongoBook;
     }

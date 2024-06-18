@@ -7,20 +7,18 @@ import org.springframework.stereotype.Service;
 import ru.otus.hw.models.mongo.MongoGenre;
 import ru.otus.hw.models.sql.SqlGenre;
 
-import java.util.Map;
-
 @Service
 @RequiredArgsConstructor
 public class GenreProcessor implements ItemProcessor<SqlGenre, MongoGenre> {
 
-    private final Map<Long, MongoGenre> genresCache;
+    private final CacheService cacheService;
 
     @Override
     public MongoGenre process(SqlGenre sqlGenre) {
 
         String id = new ObjectId().toString();
         MongoGenre mongoGenre = new MongoGenre(id, sqlGenre.getName());
-        genresCache.put(sqlGenre.getId(), mongoGenre);
+        cacheService.getGenresCache().put(sqlGenre.getId(), mongoGenre);
 
         return mongoGenre;
     }
