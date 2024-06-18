@@ -17,7 +17,7 @@ public class BookCommentProcessor implements ItemProcessor<SqlBookComment, Mongo
     @Override
     public MongoBookComment process(SqlBookComment sqlBookComment) {
 
-        MongoBook mongoBook = cacheService.getBooksCache().get(sqlBookComment.getBookId());
+        MongoBook mongoBook = cacheService.getBook(sqlBookComment.getBookId());
 
         return MongoBookComment.builder()
                 .id(new ObjectId().toString())

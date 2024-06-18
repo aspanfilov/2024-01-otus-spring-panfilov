@@ -18,7 +18,7 @@ public class GenreProcessor implements ItemProcessor<SqlGenre, MongoGenre> {
 
         String id = new ObjectId().toString();
         MongoGenre mongoGenre = new MongoGenre(id, sqlGenre.getName());
-        cacheService.getGenresCache().put(sqlGenre.getId(), mongoGenre);
+        cacheService.putGenre(sqlGenre.getId(), mongoGenre);
 
         return mongoGenre;
     }

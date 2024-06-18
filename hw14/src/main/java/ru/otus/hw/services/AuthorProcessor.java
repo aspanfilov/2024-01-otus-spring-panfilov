@@ -18,7 +18,7 @@ public class AuthorProcessor implements ItemProcessor<SqlAuthor, MongoAuthor> {
 
         String id = new ObjectId().toString();
         MongoAuthor mongoAuthor = new MongoAuthor(id, sqlAuthor.getFullName());
-        cacheService.getAuthorsCache().put(sqlAuthor.getId(), mongoAuthor);
+        cacheService.putAuthor(sqlAuthor.getId(), mongoAuthor);
 
         return mongoAuthor;
     }

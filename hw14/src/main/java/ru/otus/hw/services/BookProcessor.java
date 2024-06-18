@@ -20,12 +20,12 @@ public class BookProcessor implements ItemProcessor<SqlBook, MongoBook> {
 
     @Override
     public MongoBook process(SqlBook book) {
-        MongoAuthor mongoAuthor = cacheService.getAuthorsCache().get(book.getAuthorId());
+        MongoAuthor mongoAuthor = cacheService.getAuthor(book.getAuthorId());
 
         List<MongoGenre> mongoGenres = new ArrayList<>();
-        if (cacheService.getBooksGenresCache().containsKey(book.getId())) {
-            mongoGenres = cacheService.getBooksGenresCache().get(book.getId()).stream()
-                    .map(cacheService.getGenresCache()::get).toList();
+        if (cacheService.hasBookGenres(book.getId())) {
+            mongoGenres = cacheService.getBookGenres(book.getId()).stream()
+                    .map(cacheService::getGenre).toList();
         }
 
         MongoBook mongoBook = MongoBook.builder()
@@ -35,7 +35,7 @@ public class BookProcessor implements ItemProcessor<SqlBook, MongoBook> {
                 .genres(mongoGenres)
                 .build();
 
-        cacheService.getBooksCache().put(book.getId(), mongoBook);
+        cacheService.putBook(book.getId(), mongoBook);
 
         return mongoBook;
     }

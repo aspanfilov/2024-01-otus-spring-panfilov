@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.otus.hw.models.sql.SqlBooksGenres;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -21,10 +20,7 @@ public class BooksGenresCacheLoaderService {
                 .createQuery("select bg from SqlBooksGenres bg", SqlBooksGenres.class)
                 .getResultList();
 
-        booksGenres.forEach(bg -> {
-            cacheService.getBooksGenresCache().computeIfAbsent(bg.getBookId(), k -> new ArrayList<>())
-                    .add(bg.getGenreId());
-        });
+        booksGenres.forEach(bg -> cacheService.addGenreToBook(bg.getBookId(), bg.getGenreId()));
     }
 
 }
