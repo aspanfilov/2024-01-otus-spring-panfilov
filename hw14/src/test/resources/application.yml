@@ -1,0 +1,68 @@
+spring:
+
+  batch:
+    job:
+      enabled: false
+
+  shell:
+    interactive:
+      enabled: false
+    command:
+      version:
+        enabled: false
+
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driverClassName: org.h2.Driver
+    username: sa
+    password:
+
+  jpa:
+    generate-ddl: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true
+    show-sql: false
+
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+      settings:
+        web-allow-others: true
+
+  sql:
+    init:
+      mode: always
+      schema-locations: schema.sql
+      data-locations: testdata.sql
+
+  data:
+    mongodb:
+      host: localhost
+      port: 0
+      database: SpringBatchTestExampleDB
+
+de:
+  flapdoodle:
+    mongodb:
+      embedded:
+        version: 4.0.2
+
+mongock:
+  runner-type: "InitializingBean"
+  mongo-db:
+    write-concern:
+      journal: false
+    read-concern: local
+
+logging:
+  level:
+    ROOT: ERROR
+    Batch: INFO
+
+app:
+  chunk-size: 10
+  progress-log-step-percentage: 10
