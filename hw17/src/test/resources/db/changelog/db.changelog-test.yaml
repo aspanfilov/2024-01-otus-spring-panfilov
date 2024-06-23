@@ -1,0 +1,12 @@
+databaseChangeLog:
+  - include:
+      file: classpath:db/changelog/changeset/version-1.0/changelog-cumulative-for-version-1.0.yml
+  - include:
+      file: classpath:db/changelog/changeset/version-2.0/changelog-cumulative-for-version-2.0.yml
+  - include:
+      file: classpath:db/changelog/changeset/version-3.0/changelog-cumulative-for-version-3.0.yml
+  - include:
+      file: classpath:db/changelog/changeset/version-4.0/changelog-cumulative-for-version-4.0.yml
+  - includeAll:
+      path: classpath:db/changelog/testdata/
+

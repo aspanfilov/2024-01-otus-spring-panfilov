@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Registration</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+        }
+
+        div {
+            margin-top: 10px;
+        }
+
+        a {
+            color: blue;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        table {
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        input[readonly] {
+            background-color: #f2f2f2;
+        }
+
+        .form-row {
+            display: flex;
+            align-items: center;
+        }
+
+        .form-row label {
+            width: 100px;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: flex-start;
+            gap: 10px;
+        }
+
+        .error-message {
+            color: red;
+            margin-top: 1px;
+            margin-bottom: 0;
+        }
+
+    </style>
+</head>
+<body>
+
+<h3>Registration</h3>
+
+<form method="POST" th:action="@{/registration}" th:object="${userDTO}">
+    <div class="form-row">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" placeholder="Enter username" th:field="*{username}" required/>
+    </div>
+    <div class="error-message" th:if="${#fields.hasErrors('username')}">
+        <span th:errors="*{username}"></span>
+    </div>
+    <div class="form-row">
+        <label for="password">Password: </label>
+        <input type="password" id="password" name="password" placeholder="Enter password" th:field="*{password}"
+               required/>
+    </div>
+    <div class="error-message" th:if="${#fields.hasErrors('password')}">
+        <span th:errors="*{password}"></span>
+    </div>
+    <div class="form-row">
+        <label for="confirmPassword">Confirm Password: </label>
+        <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm password"
+               th:field="*{confirmPassword}" required/>
+    </div>
+    <div class="error-message" th:if="${#fields.hasErrors('confirmPassword')}">
+        <span th:errors="*{confirmPassword}"></span>
+    </div>
+
+    <div>
+        <input type="submit" value="Register"/>
+    </div>
+
+    <div>
+        <a th:href="@{/auth/login}">Login</a>
+    </div>
+
+</form>
+
+</body>
+</html>

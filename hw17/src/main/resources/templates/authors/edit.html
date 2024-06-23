@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Author</title>
+
+    <style>
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+        }
+
+        div {
+            margin-top: 10px;
+        }
+
+        a {
+            color: blue;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        table {
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        input[readonly] {
+            background-color: #f2f2f2;
+        }
+
+        .form-row {
+            display: flex;
+            align-items: center;
+        }
+
+        .form-row label {
+            width: 100px;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: flex-start;
+            gap: 10px;
+        }
+
+        .error-message {
+            color: red;
+            margin-top: 1px;
+            margin-bottom: 0;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const authorId = document.getElementById("authorId").value;
+
+            fetch(`/api/v1/authors/${authorId}`)
+                .then(response => {
+                    if (response.ok) {
+                        return response.json();
+                    } else if (response.status === 404) {
+                        window.location.href = "/error/404";
+                    } else {
+                        window.location.href = "/error/500";
+                    }
+                })
+                .then(author => {
+                    document.getElementById("id").value = author.id;
+                    document.getElementById("fullName").value = author.fullName;
+                });
+        });
+
+        function updateAuthor() {
+            const authorId = document.getElementById("authorId").value;
+            const authorFullName = document.getElementById("fullName").value;
+            const errorMessage = document.getElementById("error-message");
+            const authorDto = {
+                id: authorId,
+                fullName: authorFullName
+            };
+
+            fetch(`/api/v1/authors/${authorId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(authorDto)
+            }).then(response => {
+                if (response.ok) {
+                    window.location.href = "/authors";
+                } else if (response.status === 403) {
+                    alert('You do not have permission to perform this action.');
+                } else {
+                    response.json().then(data => {
+                        if (data.fullName) {
+                            errorMessage.textContent = data.fullName;
+                        } else {
+                            alert("Error updating author.");
+                        }
+                    })
+                }
+            }).catch(() => alert("An error occurred while updating the author."));
+        }
+
+        function deleteAuthor() {
+            const authorId = document.getElementById("authorId").value;
+
+            if (confirm("Are you sure you want to delete this author?")) {
+                fetch(`/api/v1/authors/${authorId}`, {
+                    method: 'DELETE'
+                }).then(response => {
+                    if (response.ok) {
+                        window.location.href = "/authors";
+                    } else if (response.status === 403) {
+                        alert('You do not have permission to perform this action.');
+                    } else {
+                        return response.json().then(data => {
+                            alert(`Error deleting author: ${data.error || 'Unknown error'}`);
+                        });
+                    }
+                })
+            }
+        }
+
+    </script>
+
+</head>
+
+<body>
+
+<nav>
+    <div>
+        <a href="/">Home</a> |
+        <a href="/authors">Authors</a>
+    </div>
+    <a href="/logout">Logout</a>
+</nav>
+
+<h3>Author</h3>
+
+<input type="hidden" id="authorId" th:value="${authorId}"/>
+
+<div class="form-row">
+    <label for="id">ID:</label>
+    <input type="text" id="id" readonly/>
+</div>
+
+<div class="form-row">
+    <label for="fullName">Full Name:</label>
+    <input type="text" id="fullName" placeholder="Enter author's full name"/>
+</div>
+
+<div id="error-message" class="error-message"></div>
+
+<div class="button-group">
+    <button onclick="updateAuthor()">Update</button>
+    <button onclick="deleteAuthor()">Delete</button>
+</div>
+
+</body>
+</html>
