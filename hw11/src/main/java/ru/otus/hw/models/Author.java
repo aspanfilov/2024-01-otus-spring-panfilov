@@ -26,9 +26,4 @@ public class Author {
         this.fullName = fullName;
     }
 
-//    public Author(@JsonProperty("full_name") String fullName) {
-//        this(null, fullName);
-//    }
-
-
 }

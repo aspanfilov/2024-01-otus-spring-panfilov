@@ -1,7 +1,9 @@
 package ru.otus.hw.controllers.rest;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,8 +20,6 @@ import ru.otus.hw.repositories.AuthorRepository;
 @RestController
 @RequiredArgsConstructor
 public class AuthorController {
-
-    //todo прикрутить валидацию с помощью @Valid как она была раньше
 
     private final AuthorRepository authorRepository;
 
@@ -40,7 +40,7 @@ public class AuthorController {
     }
 
     @PostMapping("/api/v1/authors")
-    public Mono<ResponseEntity<AuthorDTO>> createAuthor(@RequestBody Mono<AuthorDTO> authorDTO) {
+    public Mono<ResponseEntity<AuthorDTO>> createAuthor(@RequestBody @Valid Mono<AuthorDTO> authorDTO) {
 
         return authorDTO
                 .map(AuthorMapper::toNewEntity)
@@ -51,7 +51,7 @@ public class AuthorController {
 
     @PutMapping("/api/v1/authors/{id}")
     public Mono<ResponseEntity<AuthorDTO>> updateAuthor(@PathVariable("id") Long id,
-                                                        @RequestBody Mono<AuthorDTO> authorDTO) {
+                                                        @RequestBody @Valid Mono<AuthorDTO> authorDTO) {
         return authorRepository.findById(id)
                 .flatMap(existingAuthor -> authorDTO
                         .map(AuthorMapper::toEntity)

@@ -7,7 +7,7 @@ import ru.otus.hw.mappers.BookMapper;
 
 @DisplayName("Тестирование оптимизации запросов в BookService")
 @DataJpaTest
-@Import({BookServiceImpl.class, BookMapper.class})
+//@Import({BookServiceImpl.class, BookMapper.class})
 public class BookServiceQueryOptimizationTest {
 
 //    private static final long FIRST_BOOK_ID = 1;

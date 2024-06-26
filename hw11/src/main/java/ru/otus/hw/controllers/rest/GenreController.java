@@ -1,5 +1,6 @@
 package ru.otus.hw.controllers.rest;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,8 +20,6 @@ import ru.otus.hw.repositories.GenreRepository;
 @RequiredArgsConstructor
 public class GenreController {
 
-    //todo прикрутить валидацию с помощью @Valid как она была раньше
-
     private final GenreRepository genreRepository;
 
     @GetMapping("/api/v1/genres")
@@ -38,7 +37,7 @@ public class GenreController {
     }
 
     @PostMapping("/api/v1/genres")
-    public Mono<ResponseEntity<GenreDTO>> createGenre(@RequestBody Mono<GenreDTO> genreDTO) {
+    public Mono<ResponseEntity<GenreDTO>> createGenre(@RequestBody @Valid Mono<GenreDTO> genreDTO) {
         return genreDTO
                 .map(GenreMapper::toNewEntity)
                 .flatMap(genreRepository::save)
@@ -48,7 +47,7 @@ public class GenreController {
 
     @PutMapping("/api/v1/genres/{id}")
     public Mono<ResponseEntity<GenreDTO>> updateGenre(@PathVariable("id") Long id,
-                                                      @RequestBody Mono<GenreDTO> genreDTO) {
+                                                      @RequestBody @Valid Mono<GenreDTO> genreDTO) {
         return genreRepository.findById(id)
                 .flatMap(existingGenre -> genreDTO
                         .map(GenreMapper::toEntity)
