@@ -21,7 +21,7 @@ public class Genre {
     private final String name;
 
     @PersistenceCreator
-    private Genre(Long id, String name) {
+    public Genre(Long id, String name) {
         this.id = id;
         this.name = name;
     }

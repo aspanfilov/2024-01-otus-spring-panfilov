@@ -2,6 +2,7 @@ package ru.otus.hw.models;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.annotation.Id;
@@ -17,8 +18,6 @@ import java.util.List;
 @EqualsAndHashCode(exclude = {"author", "genres"})
 @ToString(exclude = {"author", "genres"})
 public class Book {
-    //todo пересмотреть состав модели (удалить transient?)
-    //todo также для всех моделей ненужны setter-ы так как поля final
 
     @Id
     @Column(value = "id")
@@ -28,6 +27,7 @@ public class Book {
     @NotNull
     private final String title;
 
+    //todo попробовать удалить это поле
     @Column("author_id")
     @NotNull
     private final Long authorId;
@@ -36,13 +36,8 @@ public class Book {
     private final Author author;
 
     @Transient
-    private final List<BookGenreRef> bookGenreRefs;
-
-    @Transient
-    private final List<Genre> genres;
-
-    @Transient
-    private final List<String> genresNames;
+    @Setter
+    private List<Genre> genres;
 
     @PersistenceCreator
     public Book(Long id, @NotNull String title, @NotNull Long authorId) {
@@ -50,8 +45,15 @@ public class Book {
         this.title = title;
         this.authorId = authorId;
         this.author = null;
-        this.bookGenreRefs = null;
         this.genres = null;
-        this.genresNames = null;
     }
+
+    public Book(Long id, @NotNull String title, @NotNull Long authorId, Author author) {
+        this.id = id;
+        this.title = title;
+        this.authorId = authorId;
+        this.author = author;
+        this.genres = null;
+    }
+
 }

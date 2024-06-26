@@ -79,8 +79,9 @@
             }).then(response => response.json())
                 .then(book => {
                     const bookTitle = book.title;
+                    const bookAuthor = book.author.fullName;
 
-                    document.querySelector('h3').textContent = `Comments: ${bookTitle}`;
+                    document.querySelector('h3').textContent = `Comments: ${bookAuthor} - ${bookTitle}`;
                 });
 
             fetch(`/api/v1/books/${bookId}/comments/${bookCommentId}`)

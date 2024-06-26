@@ -13,6 +13,6 @@ public class BookCommentDTO {
     @NotBlank(message = "comment cannot be blank")
     private String commentText;
 
-    private BookDetailDTO book;
+    private Long bookId;
 
 }

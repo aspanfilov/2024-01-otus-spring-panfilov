@@ -10,28 +10,33 @@ import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ru.otus.hw.dtos.BookDetailDTO;
-import ru.otus.hw.dtos.BookReferenceDTO;
+import ru.otus.hw.models.Author;
+import ru.otus.hw.models.Book;
+import ru.otus.hw.models.Genre;
 
 import java.util.List;
-import java.util.Set;
 
 @Repository
 @RequiredArgsConstructor
 public class BookRepositoryCustomImpl implements BookRepositoryCustom {
 
-    //todo требуется рефакторинг запросу - удалить соединение жанров
     private static final String SQL_BOOK_BY_ID = """
             SELECT
                 b.id,
                 b.title,
                 b.author_id,
-                json_agg(g.id) as genre_ids
+                a.full_name as author_full_name
             FROM books b
             LEFT JOIN authors a on b.author_id = a.id
-            LEFT JOIN books_genres bg ON b.id = bg.book_id
+            WHERE b.id = $1""";
+
+    private static final String SQL_GENRES_BY_BOOK_ID = """
+            SELECT
+                g.id,
+                g.name
+            FROM books_genres bg
                 INNER JOIN genres g ON bg.genre_id = g.id
-            WHERE b.id = $1
-            GROUP BY b.id, b.title, b.author_id, a.full_name""";
+            WHERE bg.book_id = $1""";
 
     private static final String SQL_ALL_BOOKS = """
             SELECT
@@ -57,20 +62,33 @@ public class BookRepositoryCustomImpl implements BookRepositoryCustom {
                         .flatMap(result -> result.map(this::mapToBookDetailDto)));
     }
 
-//    @Override
-//    public Mono<BookReferenceDTO> findById(Long id) {
-//        return template.getDatabaseClient().sql(SQL_BOOK_BY_ID)
-//                .bind("id", id)
-//                .map(this::mapToBookReferenceDto)
-//                .first();
-//    }
-
     @Override
-    public Mono<BookReferenceDTO> findById(Long id) {
+    public Mono<Book> findById(Long id) {
+        return Mono.zip(
+                fetchBookById(id),
+                fetchGenresForBook(id),
+                (book, genres) -> {
+                    book.setGenres(genres);
+                    return book;
+                });
+    }
+
+    private Mono<Book> fetchBookById(Long id) {
         return template.getDatabaseClient().inConnection(connection ->
-                Mono.from(connection.createStatement(SQL_BOOK_BY_ID).bind(0, id).execute())
-                        .flatMapMany(result -> result.map(this::mapToBookReferenceDto))
+                Mono.from(connection.createStatement(SQL_BOOK_BY_ID)
+                                .bind(0, id)
+                                .execute())
+                        .flatMapMany(result -> result.map(this::mapToBook))
                         .next());
+    }
+
+    private Mono<List<Genre>> fetchGenresForBook(Long bookId) {
+        return template.getDatabaseClient().inConnection(connection ->
+                Mono.from(connection.createStatement(SQL_GENRES_BY_BOOK_ID)
+                                .bind(0, bookId)
+                                .execute())
+                        .flatMapMany(result -> result.map(this::mapToGenre))
+                        .collectList());
     }
 
     private BookDetailDTO mapToBookDetailDto(Readable selectedRecord) {
@@ -89,19 +107,21 @@ public class BookRepositoryCustomImpl implements BookRepositoryCustom {
         }
     }
 
-    private BookReferenceDTO mapToBookReferenceDto(Readable selectedRecord) {
-        var bookGenresAsText = selectedRecord.get("genre_ids", String.class);
-        try {
-            Set<Long> bookGenres = objectMapper.readValue(bookGenresAsText, new TypeReference<>() {
-            });
-            return BookReferenceDTO.builder()
-                    .id(selectedRecord.get("id", Long.class))
-                    .title(selectedRecord.get("title", String.class))
-                    .authorId(selectedRecord.get("author_id", Long.class))
-                    .genreIds(bookGenres)
-                    .build();
-        } catch (JsonProcessingException e) {
-            throw new IllegalArgumentException("genres:" + bookGenresAsText + " parsing error:" + e);
-        }
+    private Book mapToBook(Readable selectedRecord) {
+        return new Book(
+                selectedRecord.get("id", Long.class),
+                selectedRecord.get("title", String.class),
+                selectedRecord.get("author_id", Long.class),
+                Author.builder()
+                        .id(selectedRecord.get("author_id", Long.class))
+                        .fullName(selectedRecord.get("author_full_name", String.class))
+                        .build());
+    }
+
+    private Genre mapToGenre(Readable row) {
+        return new Genre(
+                row.get("id", Long.class),
+                row.get("name", String.class)
+        );
     }
 }

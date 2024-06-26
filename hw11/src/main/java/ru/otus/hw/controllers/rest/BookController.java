@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import ru.otus.hw.dtos.BookBasicDto;
 import ru.otus.hw.dtos.BookDetailDTO;
 import ru.otus.hw.dtos.BookReferenceDTO;
 import ru.otus.hw.mappers.BookMapper;
@@ -38,25 +39,17 @@ public class BookController {
     public Flux<BookDetailDTO> getBooks() {
         return bookRepositoryCustom.findAll();
     }
-//todo удалить
-
-//    @GetMapping("/api/v1/books/{id}")
-//    public Mono<ResponseEntity<BookDetailDTO>> getBook(@PathVariable("id") Long id) {
-//        return bookRepositoryCustom.findById(id)
-//                .map(ResponseEntity::ok)
-//                .switchIfEmpty(Mono.just(ResponseEntity.notFound().build()));
-//    }
 
     @GetMapping("/api/v1/books/{id}")
-    public Mono<ResponseEntity<BookReferenceDTO>> getBook(@PathVariable("id") Long id) {
+    public Mono<ResponseEntity<Book>> getBook(@PathVariable("id") Long id) {
         return bookRepositoryCustom.findById(id)
                 .map(ResponseEntity::ok)
                 .switchIfEmpty(Mono.just(ResponseEntity.notFound().build()));
     }
 
     @PostMapping("/api/v1/books")
-    public Mono<ResponseEntity<Book>> createBook(@RequestBody @Valid Mono<BookReferenceDTO> bookRequestDto) {
-        return bookRequestDto.flatMap(bookRequest -> {
+    public Mono<ResponseEntity<BookBasicDto>> createBook(@RequestBody @Valid Mono<BookReferenceDTO> bookReferenceDTO) {
+        return bookReferenceDTO.flatMap(bookRequest -> {
             Book book = BookMapper.toEntity(bookRequest);
             return bookRepository.save(book)
                     .flatMap(savedBook -> {
@@ -67,14 +60,15 @@ public class BookController {
                                 .flatMap(bookGenreRefRepository::save)
                                 .then(Mono.just(savedBook));
                     })
+                    .map(BookMapper::toBookBasicDto)
                     .map(ResponseEntity::ok);
         });
     }
 
     @PutMapping("/api/v1/books/{id}")
-    public Mono<ResponseEntity<Book>> updateBook(@PathVariable Long id,
-                                                 @RequestBody @Valid Mono<BookReferenceDTO>  bookRequestDto) {
-        return bookRequestDto.flatMap(bookRequest ->
+    public Mono<ResponseEntity<BookBasicDto>> updateBook(@PathVariable Long id,
+                                                 @RequestBody @Valid Mono<BookReferenceDTO>  bookReferenceDTO) {
+        return bookReferenceDTO.flatMap(bookRequest ->
                 bookRepository.findById(id)
                         .flatMap(existingBook -> {
                             Book updatedBook = BookMapper.toEntity(bookRequest);
@@ -85,6 +79,7 @@ public class BookController {
                                                     .flatMap(bookGenreRefRepository::save))
                                             .then(Mono.just(savedBook)));
                         })
+                        .map(BookMapper::toBookBasicDto)
                         .map(ResponseEntity::ok)
                         .switchIfEmpty(Mono.just(ResponseEntity.notFound().build())));
     }

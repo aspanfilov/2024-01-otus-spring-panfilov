@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import ru.otus.hw.dtos.BookCommentDTO;
 import ru.otus.hw.models.BookComment;
 import ru.otus.hw.repositories.BookCommentRepository;
 
@@ -35,10 +36,8 @@ public class BookCommentController {
 
     @PostMapping("/api/v1/books/{bookId}/comments")
     public Mono<ResponseEntity<BookComment>> createBookComment(@PathVariable("bookId") Long bookId,
-                                                               @RequestBody @Valid Mono<BookComment> bookComment) {
-        //todo при открытии страницы комментариев к книге должна отображаться инфа по книге
-
-        return bookComment.flatMap(bc -> {
+                                                               @RequestBody @Valid Mono<BookCommentDTO> bookCommentDto) {
+        return bookCommentDto.flatMap(bc -> {
                     BookComment newBookComment = new BookComment(null, bc.getCommentText(), bookId);
                     return bookCommentRepository.save(newBookComment);
                 })
@@ -48,8 +47,8 @@ public class BookCommentController {
     @PutMapping("/api/v1/books/{bookId}/comments/{bookCommentId}")
     public Mono<ResponseEntity<BookComment>> updateBookComment(@PathVariable("bookId") Long bookId,
                                                                @PathVariable("bookCommentId") Long bookCommentId,
-                                                               @RequestBody @Valid Mono<BookComment> bookComment) {
-        return bookComment.flatMap(bc -> bookCommentRepository.findById(bookCommentId)
+                                                               @RequestBody @Valid Mono<BookCommentDTO> bookCommentDto) {
+        return bookCommentDto.flatMap(bc -> bookCommentRepository.findById(bookCommentId)
                         .flatMap(existingBookComment -> {
                             BookComment updatedBookComment = new BookComment(bookCommentId, bc.getCommentText(), bookId);
                             return bookCommentRepository.save(updatedBookComment);

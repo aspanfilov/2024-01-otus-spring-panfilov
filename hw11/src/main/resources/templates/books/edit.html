@@ -81,10 +81,10 @@
                 .then(book => {
                     document.getElementById("id").value = book.id;
                     document.getElementById("title").value = book.title;
-                    document.getElementById("author").value = book.authorId;
+                    document.getElementById("author").value = book.author.id;
 
                     const genresSelect = document.getElementById("genres");
-                    const selectedGenreIds = new Set(book.genreIds);
+                    const selectedGenreIds = new Set(book.genres.map(genre => genre.id));
 
                     for (let i = 0; i < genresSelect.options.length; i++) {
                         const optionValue = parseInt(genresSelect.options[i].value);
