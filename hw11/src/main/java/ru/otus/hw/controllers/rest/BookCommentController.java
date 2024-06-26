@@ -1,5 +1,6 @@
 package ru.otus.hw.controllers.rest;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -34,7 +35,7 @@ public class BookCommentController {
 
     @PostMapping("/api/v1/books/{bookId}/comments")
     public Mono<ResponseEntity<BookComment>> createBookComment(@PathVariable("bookId") Long bookId,
-                                                               @RequestBody Mono<BookComment> bookComment) {
+                                                               @RequestBody @Valid Mono<BookComment> bookComment) {
         //todo при открытии страницы комментариев к книге должна отображаться инфа по книге
 
         return bookComment.flatMap(bc -> {
@@ -47,7 +48,7 @@ public class BookCommentController {
     @PutMapping("/api/v1/books/{bookId}/comments/{bookCommentId}")
     public Mono<ResponseEntity<BookComment>> updateBookComment(@PathVariable("bookId") Long bookId,
                                                                @PathVariable("bookCommentId") Long bookCommentId,
-                                                               @RequestBody Mono<BookComment> bookComment) {
+                                                               @RequestBody @Valid Mono<BookComment> bookComment) {
         return bookComment.flatMap(bc -> bookCommentRepository.findById(bookCommentId)
                         .flatMap(existingBookComment -> {
                             BookComment updatedBookComment = new BookComment(bookCommentId, bc.getCommentText(), bookId);

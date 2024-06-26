@@ -14,6 +14,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ru.otus.hw.dtos.GenreDTO;
 import ru.otus.hw.mappers.GenreMapper;
+import ru.otus.hw.models.Genre;
 import ru.otus.hw.repositories.GenreRepository;
 
 @RestController
@@ -23,36 +24,31 @@ public class GenreController {
     private final GenreRepository genreRepository;
 
     @GetMapping("/api/v1/genres")
-    public Flux<GenreDTO> getGenres() {
-        return genreRepository.findAll()
-                .map(GenreMapper::toDto);
+    public Flux<Genre> getGenres() {
+        return genreRepository.findAll();
     }
 
     @GetMapping("/api/v1/genres/{id}")
-    public Mono<ResponseEntity<GenreDTO>> getGenre(@PathVariable("id") Long id) {
+    public Mono<ResponseEntity<Genre>> getGenre(@PathVariable("id") Long id) {
         return genreRepository.findById(id)
-                .map(GenreMapper::toDto)
                 .map(ResponseEntity::ok)
                 .switchIfEmpty(Mono.just(ResponseEntity.notFound().build()));
     }
 
     @PostMapping("/api/v1/genres")
-    public Mono<ResponseEntity<GenreDTO>> createGenre(@RequestBody @Valid Mono<GenreDTO> genreDTO) {
+    public Mono<ResponseEntity<Genre>> createGenre(@RequestBody @Valid Mono<GenreDTO> genreDTO) {
         return genreDTO
                 .map(GenreMapper::toNewEntity)
                 .flatMap(genreRepository::save)
-                .map(GenreMapper::toDto)
                 .map(ResponseEntity::ok);
     }
 
     @PutMapping("/api/v1/genres/{id}")
-    public Mono<ResponseEntity<GenreDTO>> updateGenre(@PathVariable("id") Long id,
+    public Mono<ResponseEntity<Genre>> updateGenre(@PathVariable("id") Long id,
                                                       @RequestBody @Valid Mono<GenreDTO> genreDTO) {
         return genreRepository.findById(id)
-                .flatMap(existingGenre -> genreDTO
-                        .map(GenreMapper::toEntity)
+                .then(genreDTO.map(GenreMapper::toEntity)
                         .flatMap(genreRepository::save)
-                        .map(GenreMapper::toDto)
                         .map(ResponseEntity::ok))
                 .switchIfEmpty(Mono.just(ResponseEntity.notFound().build()));
     }

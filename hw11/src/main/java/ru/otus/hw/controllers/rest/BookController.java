@@ -1,5 +1,6 @@
 package ru.otus.hw.controllers.rest;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -54,7 +55,7 @@ public class BookController {
     }
 
     @PostMapping("/api/v1/books")
-    public Mono<ResponseEntity<Book>> createBook(@RequestBody Mono<BookReferenceDTO> bookRequestDto) {
+    public Mono<ResponseEntity<Book>> createBook(@RequestBody @Valid Mono<BookReferenceDTO> bookRequestDto) {
         return bookRequestDto.flatMap(bookRequest -> {
             Book book = BookMapper.toEntity(bookRequest);
             return bookRepository.save(book)
@@ -72,7 +73,7 @@ public class BookController {
 
     @PutMapping("/api/v1/books/{id}")
     public Mono<ResponseEntity<Book>> updateBook(@PathVariable Long id,
-                                                 @RequestBody Mono<BookReferenceDTO> bookRequestDto) {
+                                                 @RequestBody @Valid Mono<BookReferenceDTO>  bookRequestDto) {
         return bookRequestDto.flatMap(bookRequest ->
                 bookRepository.findById(id)
                         .flatMap(existingBook -> {

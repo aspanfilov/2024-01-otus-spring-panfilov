@@ -35,7 +35,6 @@ public class Book {
     @Transient
     private final Author author;
 
-    //    @MappedCollection(idColumn = "book_id")
     @Transient
     private final List<BookGenreRef> bookGenreRefs;
 
