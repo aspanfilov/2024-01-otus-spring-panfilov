@@ -21,7 +21,7 @@ public class Author {
     private final String fullName;
 
     @PersistenceCreator
-    private Author(Long id, String fullName) {
+    public Author(Long id, String fullName) {
         this.id = id;
         this.fullName = fullName;
     }

@@ -21,15 +21,6 @@ spring:
     user: ${spring.datasource.username}
     password: ${spring.datasource.password}
 
-#  jpa:
-#    generate-ddl: false
-#    hibernate:
-#      ddl-auto: validate
-#    properties:
-#      hibernate:
-#        format_sql: true
-#    show-sql: true
-
 logging:
   level:
     ROOT: ERROR
