@@ -1,4 +1,4 @@
-package ru.otus.hw.dtos;
+package ru.otus.hw.dtos.book;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

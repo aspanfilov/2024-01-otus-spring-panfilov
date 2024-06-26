@@ -28,15 +28,11 @@ public class BookComment {
     @NotNull
     private final Long bookId;
 
-//    @Transient
-//    private final Book book;
-
     @PersistenceCreator
     public BookComment(Long id, String commentText, Long bookId) {
         this.id = id;
         this.commentText = commentText;
         this.bookId = bookId;
-//        this.book = null;
     }
 
 }

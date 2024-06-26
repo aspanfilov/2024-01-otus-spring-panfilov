@@ -2,8 +2,6 @@ package ru.otus.hw.services;
 
 import org.junit.jupiter.api.DisplayName;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.context.annotation.Import;
-import ru.otus.hw.mappers.BookCommentMapper;
 
 @DisplayName("Тестирование оптимизации запросов в BookService")
 @DataJpaTest

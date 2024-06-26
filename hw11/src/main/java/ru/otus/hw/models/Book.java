@@ -27,7 +27,6 @@ public class Book {
     @NotNull
     private final String title;
 
-    //todo попробовать удалить это поле
     @Column("author_id")
     @NotNull
     private final Long authorId;

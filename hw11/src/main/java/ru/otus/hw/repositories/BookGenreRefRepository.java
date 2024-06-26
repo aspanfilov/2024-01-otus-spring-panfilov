@@ -6,7 +6,5 @@ import ru.otus.hw.models.BookGenreRef;
 
 public interface BookGenreRefRepository extends ReactiveCrudRepository<BookGenreRef, Long> {
 
-    Flux<BookGenreRef> findAllByBookId(Long bookId);
-
     Flux<Void> deleteByBookId(Long bookId);
 }
