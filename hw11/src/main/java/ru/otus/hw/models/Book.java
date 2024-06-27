@@ -1,5 +1,8 @@
 package ru.otus.hw.models;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,6 +20,7 @@ import java.util.List;
 @Getter
 @EqualsAndHashCode(exclude = {"author", "genres"})
 @ToString(exclude = {"author", "genres"})
+@Builder
 public class Book {
 
     @Id
@@ -39,7 +43,9 @@ public class Book {
     private List<Genre> genres;
 
     @PersistenceCreator
-    public Book(Long id, @NotNull String title, @NotNull Long authorId) {
+    public Book(@JsonProperty("id") Long id,
+                @JsonProperty("title") @NotNull String title,
+                @JsonProperty("authorId") @NotNull Long authorId) {
         this.id = id;
         this.title = title;
         this.authorId = authorId;
@@ -47,12 +53,17 @@ public class Book {
         this.genres = null;
     }
 
-    public Book(Long id, @NotNull String title, @NotNull Long authorId, Author author) {
+    @JsonCreator
+    public Book(@JsonProperty("id") Long id,
+                @JsonProperty("title") @NotNull String title,
+                @JsonProperty("authorId") @NotNull Long authorId,
+                @JsonProperty("author") Author author,
+                @JsonProperty("genres") List<Genre> genres) {
         this.id = id;
         this.title = title;
         this.authorId = authorId;
         this.author = author;
-        this.genres = null;
+        this.genres = genres;
     }
 
 }

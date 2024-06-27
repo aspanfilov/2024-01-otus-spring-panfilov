@@ -3,44 +3,60 @@ package ru.otus.hw.controllers.mvc;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.reactive.server.WebTestClient;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("Класс AuthorPageController")
-@WebMvcTest(AuthorPageController.class)
+@WebFluxTest(AuthorPageController.class)
 public class AuthorPageControllerTest {
 
-//    @Autowired
-//    private MockMvc mvc;
-//
-//    @Test
-//    @DisplayName("при запросе GET /authors - должна вернуться страница списка")
-//    void testAuthorsListPage() throws Exception {
-//        mvc.perform(get("/authors"))
-//                .andExpect(status().isOk())
-//                .andExpect(view().name("authors/list"));
-//    }
-//
-//    @Test
-//    @DisplayName("при запросе GET /authors/new - должна вернуться страница создания нового")
-//    void testNewAuthorPage() throws Exception {
-//        mvc.perform(get("/authors/new"))
-//                .andExpect(status().isOk())
-//                .andExpect(view().name("authors/new"));
-//    }
-//
-//    @Test
-//    @DisplayName("при запросе GET /authors/{id} - должна вернуться страница редактирования")
-//    void testAuthorPage() throws Exception {
-//        mvc.perform(get("/authors/1"))
-//                .andExpect(status().isOk())
-//                .andExpect(model().attribute("authorId", 1L))
-//                .andExpect(view().name("authors/edit"));
-//    }
+    @Autowired
+    private WebTestClient webTestClient;
+
+    @Test
+    @DisplayName("при запросе GET /authors - должна вернуться страница списка авторов")
+    void testAuthorsListPage() {
+        webTestClient.get().uri("/authors")
+                .accept(MediaType.TEXT_HTML)
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentTypeCompatibleWith(MediaType.TEXT_HTML)
+                .expectBody(String.class)
+                .consumeWith(response -> {
+                    assertThat(response.getResponseBody()).contains("id=\"authorsListPage\"");
+                });
+    }
+
+
+    @Test
+    @DisplayName("при запросе GET /authors/new - должна вернуться страница создания нового")
+    void testNewAuthorPage() {
+        webTestClient.get().uri("/authors/new")
+                .accept(MediaType.TEXT_HTML)
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentTypeCompatibleWith(MediaType.TEXT_HTML)
+                .expectBody(String.class)
+                .consumeWith(response -> {
+                    assertThat(response.getResponseBody()).contains("id=\"newAuthorPage\"");
+                });
+    }
+
+    @Test
+    @DisplayName("при запросе GET /authors/{id} - должна вернуться страница редактирования")
+    void testAuthorPage() {
+        webTestClient.get().uri("/authors/{id}", 1L)
+                .accept(MediaType.TEXT_HTML)
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentTypeCompatibleWith(MediaType.TEXT_HTML)
+                .expectBody(String.class)
+                .consumeWith(response -> {
+                    assertThat(response.getResponseBody()).contains("id=\"editAuthorPage\"");
+                });
+    }
 
 }

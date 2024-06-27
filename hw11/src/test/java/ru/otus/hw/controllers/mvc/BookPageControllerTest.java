@@ -1,57 +1,71 @@
 package ru.otus.hw.controllers.mvc;
 
 import org.junit.jupiter.api.DisplayName;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.reactive.server.WebTestClient;
+import ru.otus.hw.repositories.AuthorRepository;
+import ru.otus.hw.repositories.GenreRepository;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("Класс BookPageController")
-@WebMvcTest(BookPageController.class)
+@WebFluxTest(BookPageController.class)
 public class BookPageControllerTest {
 
-//    private final static Long BOOK_ID = 1L;
-//
-//    @Autowired
-//    private MockMvc mvc;
-//
-//    @MockBean
-//    private AuthorService authorService;
-//
-//    @MockBean
-//    private GenreService genreService;
-//
-//    @BeforeEach
-//    void setUp() {
-//        when(authorService.findAll()).thenReturn(Collections.emptyList());
-//        when(genreService.findAll()).thenReturn(Collections.emptyList());
-//    }
-//
-//    @Test
-//    @DisplayName("при запросе GET /books - должна вернуться страница списка")
-//    void testBooksListPage() throws Exception {
-//        mvc.perform(get("/books"))
-//                .andExpect(status().isOk())
-//                .andExpect(view().name("books/list"));
-//    }
-//
-//    @Test
-//    @DisplayName("при запросе GET /books/new - должна вернуться страница создания нового")
-//    void testNewAuthorPage() throws Exception {
-//        mvc.perform(get("/books/new"))
-//                .andExpect(status().isOk())
-//                .andExpect(view().name("books/new"))
-//                .andExpect(model().attributeExists("authors"))
-//                .andExpect(model().attributeExists("genres"));
-//    }
-//
-//    @Test
-//    @DisplayName("при запросе GET /books/{id} - должна вернуться страница редактирования")
-//    void testAuthorPage() throws Exception {
-//        mvc.perform(get("/books/{id}", BOOK_ID))
-//                .andExpect(status().isOk())
-//                .andExpect(view().name("books/edit"))
-//                .andExpect(model().attribute("bookId", BOOK_ID))
-//                .andExpect(model().attributeExists("authors"))
-//                .andExpect(model().attributeExists("genres"));
-//    }
+    private final static Long BOOK_ID = 1L;
+
+    @Autowired
+    private WebTestClient webTestClient;
+
+    @MockBean
+    private AuthorRepository authorRepository;
+
+    @MockBean
+    private GenreRepository genreRepository;
+
+    @Test
+    @DisplayName("при запросе GET /books - должна вернуться страница списка")
+    void testBooksListPage() {
+        webTestClient.get().uri("/books")
+                .accept(MediaType.TEXT_HTML)
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentTypeCompatibleWith(MediaType.TEXT_HTML)
+                .expectBody(String.class)
+                .consumeWith(response -> {
+                    assertThat(response.getResponseBody()).contains("id=\"booksListPage\"");
+                });
+    }
+
+    @Test
+    @DisplayName("при запросе GET /books/new - должна вернуться страница создания нового")
+    void testNewAuthorPage() {
+        webTestClient.get().uri("/books/new")
+                .accept(MediaType.TEXT_HTML)
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentTypeCompatibleWith(MediaType.TEXT_HTML)
+                .expectBody(String.class)
+                .consumeWith(response -> {
+                    assertThat(response.getResponseBody()).contains("id=\"newBookPage\"");
+                });
+    }
+
+    @Test
+    @DisplayName("при запросе GET /books/{id} - должна вернуться страница редактирования")
+    void testAuthorPage() {
+        webTestClient.get().uri("/books/{id}", BOOK_ID)
+                .accept(MediaType.TEXT_HTML)
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentTypeCompatibleWith(MediaType.TEXT_HTML)
+                .expectBody(String.class)
+                .consumeWith(response -> {
+                    assertThat(response.getResponseBody()).contains("id=\"editBookPage\"");
+                });
+    }
 }

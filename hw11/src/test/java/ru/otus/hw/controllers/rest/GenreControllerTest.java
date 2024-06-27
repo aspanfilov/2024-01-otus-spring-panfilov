@@ -1,162 +1,152 @@
 package ru.otus.hw.controllers.rest;
 
 import org.junit.jupiter.api.DisplayName;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
+import org.springframework.data.relational.core.query.Criteria;
+import org.springframework.data.relational.core.query.Query;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.reactive.server.WebTestClient;
+import reactor.test.StepVerifier;
+import ru.otus.hw.AbstractDataResetTest;
+import ru.otus.hw.dtos.GenreDTO;
+import ru.otus.hw.models.Genre;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.verify;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @DisplayName("Класс GenreController")
-@WebMvcTest(GenreController.class)
-public class GenreControllerTest {
+public class GenreControllerTest extends AbstractDataResetTest {
 
-//    private static final String GENRE_NOT_FOUND = "Genre with id 123 not found";
-//    private static final Long NON_EXISTENT_ID = 123L;
-//
-//    @Autowired
-//    private MockMvc mvc;
-//
-//    @MockBean
-//    private GenreService genreService;
-//
-//    @Autowired
-//    private ObjectMapper mapper;
-//
-//    private Genre genre;
-//    private GenreDTO genreDTO;
-//
-//    @BeforeEach
-//    void setUp() {
-//        genre = new Genre(1L, "genre1");
-//        genreDTO = new GenreDTO(1L, "genre1");
-//    }
-//
-//    @Test
-//    @DisplayName("при запросе GET /api/v1/genres - должен вернуться список dto жанров")
-//    void testGetGenres() throws Exception {
-//        List<GenreDTO> genreDTOs = List.of(genreDTO);
-//        List<Genre> genres = List.of(genre);
-//
-//        when(genreService.findAll()).thenReturn(genres);
-//
-//        try (MockedStatic<GenreMapper> mockedStatic = Mockito.mockStatic(GenreMapper.class)) {
-//            mockedStatic.when(() -> GenreMapper.toGenreDto(genre)).thenReturn(genreDTO);
-//
-//            mvc.perform(get("/api/v1/genres"))
-//                    .andExpect(status().isOk())
-//                    .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-//                    .andExpect(content().json(mapper.writeValueAsString(genreDTOs)));
-//        }
-//    }
-//
-//    @Test
-//    @DisplayName("при запросе GET /api/v1/genres/{id} - должен вернуть dto жанра")
-//    void testGetGenre() throws Exception {
-//        when(genreService.findById(1L)).thenReturn(Optional.of(genre));
-//
-//        try (MockedStatic<GenreMapper> mockedStatic = Mockito.mockStatic(GenreMapper.class)) {
-//
-//            mockedStatic.when(() -> GenreMapper.toGenreDto(genre)).thenReturn(genreDTO);
-//
-//            mvc.perform(get("/api/v1/genres/1"))
-//                    .andExpect(status().isOk())
-//                    .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-//                    .andExpect(content().json(mapper.writeValueAsString(genreDTO)));
-//        }
-//    }
-//
-//    @Test
-//    @DisplayName("при запросе GET /api/v1/genres/{id} с несуществующим ID - должен бросить исключение")
-//    void testGetGenre_withNonExistentId() throws Exception {
-//        when(genreService.findById(NON_EXISTENT_ID)).thenReturn(Optional.empty());
-//
-//        mvc.perform(get("/api/v1/genres/{id}", NON_EXISTENT_ID))
-//                .andExpect(status().isNotFound())
-//                .andExpect(result -> assertThat(result.getResolvedException())
-//                        .isInstanceOf(EntityNotFoundException.class)
-//                        .hasMessage(GENRE_NOT_FOUND));
-//    }
-//
-//    @Test
-//    @DisplayName("при запросе POST /api/v1/genres - должен создать нового жанра")
-//    void testCreateGenre() throws Exception {
-//
-//        try (MockedStatic<GenreMapper> mockedStatic = Mockito.mockStatic(GenreMapper.class)) {
-//
-//            when(genreService.insert(genreDTO.getName())).thenReturn(genre);
-//            mockedStatic.when(() -> GenreMapper.toGenreDto(genre)).thenReturn(genreDTO);
-//
-//            mvc.perform(post("/api/v1/genres")
-//                            .contentType(MediaType.APPLICATION_JSON)
-//                            .content(mapper.writeValueAsString(genreDTO)))
-//                    .andExpect(status().isOk())
-//                    .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-//                    .andExpect(jsonPath("$.name").value(genre.getName()));
-//
-//            verify(genreService).insert(genreDTO.getName());
-//        }
-//    }
-//
-//    @Test
-//    @DisplayName("при запросе POST /api/v1/genres с некорректными данными - должен вернуть статус ошибки")
-//    void testCreateGenre_withValidationErrors() throws Exception {
-//
-//        genreDTO.setName("");
-//
-//        mvc.perform(post("/api/v1/genres")
-//                        .contentType(MediaType.APPLICATION_JSON)
-//                        .content(mapper.writeValueAsString(genreDTO)))
-//                .andExpect(status().isBadRequest());
-//    }
-//
-//    @Test
-//    @DisplayName("при запросе PUT /api/v1/genres/{id} - должен обновить жанр")
-//    void testUpdateGenre() throws Exception {
-//        try (MockedStatic<GenreMapper> mockedStatic = Mockito.mockStatic(GenreMapper.class)) {
-//
-//            when(genreService.update(genreDTO.getId(), genreDTO.getName()))
-//                    .thenReturn(genre);
-//            mockedStatic.when(() -> GenreMapper.toGenreDto(genre))
-//                    .thenReturn(genreDTO);
-//
-//            mvc.perform(put("/api/v1/genres/{id}", genreDTO.getId())
-//                            .contentType(MediaType.APPLICATION_JSON)
-//                            .content(mapper.writeValueAsString(genreDTO)))
-//                    .andExpect(status().isOk())
-//                    .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-//                    .andExpect(jsonPath("$.id").value(genre.getId()))
-//                    .andExpect(jsonPath("$.name").value(genre.getName()));
-//
-//            verify(genreService).update(genreDTO.getId(), genreDTO.getName());
-//        }
-//    }
-//
-//    @Test
-//    @DisplayName("при запросе PUT /api/v1/genres/{id} с некорректными данными - должен вернуть статус ошибки")
-//    void testUpdateGenre_withValidationErrors() throws Exception {
-//
-//        genreDTO.setName("");
-//
-//        mvc.perform(put("/api/v1/genres/{id}", genreDTO.getId())
-//                        .contentType(MediaType.APPLICATION_JSON)
-//                        .content(mapper.writeValueAsString(genreDTO)))
-//                .andExpect(status().isBadRequest());
-//    }
-//
-//    @Test
-//    @DisplayName("при запросе DELETE /genres/{id} - должен удалить жанр")
-//    void testDeleteGenre() throws Exception {
-//
-//        mvc.perform(delete("/api/v1/genres/{id}", genreDTO.getId())
-//                        .contentType(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isOk());
-//
-//        verify(genreService).deleteById(genreDTO.getId());
-//    }
+    @Autowired
+    private WebTestClient webTestClient;
+
+    @Autowired
+    private R2dbcEntityTemplate r2dbcEntityTemplate;
+
+    @Test
+    @DisplayName("при запросе GET /api/v1/genres - должен вернуться список dto жанров")
+    void testGetGenres() {
+        webTestClient.get().uri("/api/v1/genres")
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                .returnResult(Genre.class)
+                .getResponseBody()
+                .as(StepVerifier::create)
+                .expectNextMatches(genre -> genre.getName().equals("Genre_1"))
+                .expectNextMatches(genre -> genre.getName().equals("Genre_2"))
+                .expectNextMatches(genre -> genre.getName().equals("Genre_3"))
+                .expectNextMatches(genre -> genre.getName().equals("Genre_4"))
+                .expectNextMatches(genre -> genre.getName().equals("Genre_5"))
+                .expectNextMatches(genre -> genre.getName().equals("Genre_6"))
+                .expectComplete()
+                .verify();
+    }
+
+    @Test
+    @DisplayName("при запросе GET /api/v1/genres/{id} - должен вернуть dto жанра")
+    void testGetGenre() {
+        webTestClient.get().uri("/api/v1/genres/1")
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                .returnResult(Genre.class)
+                .getResponseBody()
+                .as(StepVerifier::create)
+                .consumeNextWith(genre -> {
+                    assertThat(genre).isNotNull();
+                    assertThat(genre.getId()).isEqualTo(1L);
+                    assertThat(genre.getName()).isEqualTo("Genre_1");
+                })
+                .expectComplete()
+                .verify();
+    }
+
+    @Test
+    @DisplayName("при запросе GET /api/v1/genres/{id} с несуществующим ID - должен вернуть 404")
+    void testGetGenreByNonExistentId() {
+        webTestClient.get().uri("/api/v1/genres/{id}", 123)
+                .exchange()
+                .expectStatus().isNotFound();
+    }
+
+    @Test
+    @DisplayName("при запросе POST /api/v1/genres - должен создать новый жанр")
+    void testCreateGenre() {
+        GenreDTO newGenre = new GenreDTO(null, "New Genre");
+
+        webTestClient.post().uri("/api/v1/genres")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(newGenre)
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                .returnResult(Genre.class)
+                .getResponseBody()
+                .as(StepVerifier::create)
+                .consumeNextWith(expectedGenre -> {
+                    assertThat(expectedGenre).isNotNull();
+                    assertThat(expectedGenre.getName()).isEqualTo("New Genre");
+
+                    r2dbcEntityTemplate
+                            .selectOne(Query.query(Criteria.where("id").is(expectedGenre.getId())), Genre.class)
+                            .as(StepVerifier::create)
+                            .consumeNextWith(actualGenre -> {
+                                assertThat(actualGenre).isNotNull();
+                                assertThat(actualGenre.getId()).isEqualTo(expectedGenre.getId());
+                                assertThat(actualGenre.getName()).isEqualTo("New Genre");
+                            })
+                            .verifyComplete();
+                })
+                .expectComplete()
+                .verify();
+    }
+
+    @Test
+    @DisplayName("при запросе PUT /api/v1/genres/{id} - должен обновить жанр")
+    void testUpdateGenre() {
+        GenreDTO updatedGenre = new GenreDTO(1L, "Updated Genre");
+
+        webTestClient.put().uri("/api/v1/genres/{id}", 1)
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(updatedGenre)
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                .returnResult(Genre.class)
+                .getResponseBody()
+                .as(StepVerifier::create)
+                .consumeNextWith(genre -> {
+                    assertThat(genre).isNotNull();
+                    assertThat(genre.getId()).isEqualTo(1);
+                    assertThat(genre.getName()).isEqualTo("Updated Genre");
+                })
+                .expectComplete()
+                .verify();
+
+        r2dbcEntityTemplate
+                .selectOne(Query.query(Criteria.where("id").is(1)), Genre.class)
+                .as(StepVerifier::create)
+                .consumeNextWith(genre -> {
+                    assertThat(genre).isNotNull();
+                    assertThat(genre.getId()).isEqualTo(1);
+                    assertThat(genre.getName()).isEqualTo("Updated Genre");
+                })
+                .verifyComplete();
+    }
+
+    @Test
+    @DisplayName("при запросе DELETE /api/v1/genres/{id} - должен удалить жанр")
+    void testDeleteGenre() {
+        webTestClient.delete().uri("/api/v1/genres/{id}", 1)
+                .exchange()
+                .expectStatus().isNoContent();
+
+        r2dbcEntityTemplate.selectOne(Query.query(Criteria.where("id").is(1)), Genre.class)
+                .as(StepVerifier::create)
+                .expectNextCount(0)
+                .verifyComplete();
+    }
 
 }

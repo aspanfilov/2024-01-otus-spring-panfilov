@@ -1,5 +1,6 @@
 package ru.otus.hw.dtos;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Data;
@@ -15,4 +16,12 @@ public class BookCommentDTO {
 
     private Long bookId;
 
+    public BookCommentDTO(@JsonProperty("id") Long id,
+                          @JsonProperty("commentText") String commentText,
+                          @JsonProperty("bookId") Long bookId) {
+        this.id = id;
+        this.commentText = commentText;
+        this.bookId = bookId;
+
+    }
 }

@@ -3,18 +3,14 @@ package ru.otus.hw.repositories;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.data.r2dbc.DataR2dbcTest;
-import org.springframework.context.annotation.Import;
 import reactor.test.StepVerifier;
-import ru.otus.hw.config.ObjectMapperConfig;
+import ru.otus.hw.AbstractDataResetTest;
 import ru.otus.hw.models.Genre;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("Репозиторий BookRepositoryCustom")
-@DataR2dbcTest
-@Import({BookRepositoryCustomImpl.class, ObjectMapperConfig.class})
-public class BookRepositoryCustomTest {
+public class BookRepositoryCustomTest extends AbstractDataResetTest {
 
     @Autowired
     private BookRepositoryCustom bookRepository;

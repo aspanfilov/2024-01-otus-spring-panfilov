@@ -1,5 +1,6 @@
 package ru.otus.hw.models;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Data;
 import org.jetbrains.annotations.NotNull;
@@ -21,7 +22,7 @@ public class Genre {
     private final String name;
 
     @PersistenceCreator
-    public Genre(Long id, String name) {
+    public Genre(@JsonProperty("id") Long id, @JsonProperty("name")String name) {
         this.id = id;
         this.name = name;
     }

@@ -1,8 +1,8 @@
 package ru.otus.hw.models;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.ToString;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.annotation.Id;
@@ -12,7 +12,6 @@ import org.springframework.data.relational.core.mapping.Table;
 
 @Table("book_comments")
 @Getter
-@Setter
 @EqualsAndHashCode(exclude = {"book"})
 @ToString(exclude = {"book"})
 public class BookComment {
@@ -29,7 +28,9 @@ public class BookComment {
     private final Long bookId;
 
     @PersistenceCreator
-    public BookComment(Long id, String commentText, Long bookId) {
+    public BookComment(@JsonProperty("id") Long id,
+                       @JsonProperty("commentText") String commentText,
+                       @JsonProperty("bookId") Long bookId) {
         this.id = id;
         this.commentText = commentText;
         this.bookId = bookId;

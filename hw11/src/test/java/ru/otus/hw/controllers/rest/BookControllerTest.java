@@ -1,197 +1,173 @@
 package ru.otus.hw.controllers.rest;
 
 import org.junit.jupiter.api.DisplayName;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
+import org.springframework.data.relational.core.query.Criteria;
+import org.springframework.data.relational.core.query.Query;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.reactive.server.WebTestClient;
+import reactor.test.StepVerifier;
+import ru.otus.hw.AbstractDataResetTest;
+import ru.otus.hw.dtos.book.BookBasicDto;
+import ru.otus.hw.dtos.book.BookDetailDTO;
+import ru.otus.hw.dtos.book.BookReferenceDTO;
+import ru.otus.hw.models.Book;
+import ru.otus.hw.models.BookGenreRef;
+
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
-import static org.mockito.Mockito.verify;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @DisplayName("Класс BookController")
-@WebMvcTest(BookController.class)
-public class BookControllerTest {
+public class BookControllerTest extends AbstractDataResetTest {
 
-//    private static final String BOOK_NOT_FOUND = "Book with id 123 not found";
-//    private static final Long NON_EXISTENT_ID = 123L;
-//    private static final Long BOOK_ID = 1L;
-//
-//
-//    @Autowired
-//    private MockMvc mvc;
-//
-//    @MockBean
-//    private BookService bookService;
-//
-//    @Autowired
-//    private ObjectMapper mapper;
-//
-//    private Book book;
-//    private BookDTO bookDTO;
-//    private BookRequestDTO bookRequestDTO;
-//
-//    @BeforeEach
-//    void setUp() {
-//
-//        Author author = new Author(1L, "author");
-//        Genre genre = new Genre(1L, "genre");
-//        book = new Book(BOOK_ID, "book", author, List.of(genre));
-//
-//        AuthorDTO authorDTO = new AuthorDTO(1L, "author");
-//        GenreDTO genreDTO = new GenreDTO(1L, "genre");
-//        bookDTO = BookDTO.builder()
-//                .id(BOOK_ID)
-//                .title("book")
-//                .author(authorDTO)
-//                .genres(List.of(genreDTO))
-//                .build();
-//
-//        bookRequestDTO = new BookRequestDTO(BOOK_ID, "title", 1L, Set.of(1L));
-//    }
-//
-//    @Test
-//    @DisplayName("при запросе GET /api/v1/books - должен вернуться список dto авторов")
-//    void testGetBooks() throws Exception {
-//        List<BookDTO> bookDTOs = List.of(bookDTO);
-//
-//        when(bookService.findAll()).thenReturn(bookDTOs);
-//
-//        try (MockedStatic<BookMapper> mockedStatic = Mockito.mockStatic(BookMapper.class)) {
-//            mockedStatic.when(() -> BookMapper.toBookDTO(book)).thenReturn(bookDTO);
-//
-//            mvc.perform(get("/api/v1/books"))
-//                    .andExpect(status().isOk())
-//                    .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-//                    .andExpect(content().json(mapper.writeValueAsString(bookDTOs)));
-//        }
-//    }
-//
-//    @Test
-//    @DisplayName("при запросе GET /api/v1/books/{id} - должен вернуть dto книги")
-//    void testGetBook() throws Exception {
-//        when(bookService.findById(BOOK_ID)).thenReturn(Optional.of(bookDTO));
-//
-//        try (MockedStatic<BookMapper> mockedStatic = Mockito.mockStatic(BookMapper.class)) {
-//
-//            mockedStatic.when(() -> BookMapper.toBookDTO(book)).thenReturn(bookDTO);
-//
-//            mvc.perform(get("/api/v1/books/{id}", BOOK_ID))
-//                    .andExpect(status().isOk())
-//                    .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-//                    .andExpect(content().json(mapper.writeValueAsString(bookDTO)));
-//        }
-//    }
-//
-//    @Test
-//    @DisplayName("при запросе GET /api/v1/books/{id} с несуществующим ID - должен бросить исключение")
-//    void testGetBook_withNonExistentId() throws Exception {
-//        when(bookService.findById(NON_EXISTENT_ID)).thenReturn(Optional.empty());
-//
-//        mvc.perform(get("/api/v1/books/{id}", NON_EXISTENT_ID))
-//                .andExpect(status().isNotFound())
-//                .andExpect(result -> assertThat(result.getResolvedException())
-//                        .isInstanceOf(EntityNotFoundException.class)
-//                        .hasMessage(BOOK_NOT_FOUND));
-//    }
-//
-//    @Test
-//    @DisplayName("при запросе POST /api/v1/books - должен создать нового автора")
-//    void testCreateBook() throws Exception {
-//
-//        try (MockedStatic<BookMapper> mockedStatic = Mockito.mockStatic(BookMapper.class)) {
-//
-//            when(bookService.insert(
-//                    bookRequestDTO.getTitle(),
-//                    bookRequestDTO.getAuthorId(),
-//                    bookRequestDTO.getGenreIds()))
-//                    .thenReturn(bookDTO);
-//            mockedStatic.when(() -> BookMapper.toBookDTO(book)).thenReturn(bookDTO);
-//
-//            mvc.perform(post("/api/v1/books")
-//                            .contentType(MediaType.APPLICATION_JSON)
-//                            .content(mapper.writeValueAsString(bookRequestDTO)))
-//                    .andExpect(status().isOk())
-//                    .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-//                    .andExpect(jsonPath("$.title").value(book.getTitle()))
-//                    .andExpect(jsonPath("$.author.id").value(book.getAuthor().getId()))
-//                    .andExpect(jsonPath("$.genres[*].id", containsInAnyOrder(1)));
-//
-//            verify(bookService).insert(
-//                    bookRequestDTO.getTitle(),
-//                    bookRequestDTO.getAuthorId(),
-//                    bookRequestDTO.getGenreIds());
-//        }
-//    }
-//
-//    @Test
-//    @DisplayName("при запросе POST /api/v1/books с некорректными данными - должен вернуть статус ошибки")
-//    void testCreateBook_withValidationErrors() throws Exception {
-//
-//        bookDTO.setTitle("");
-//
-//        mvc.perform(post("/api/v1/books")
-//                        .contentType(MediaType.APPLICATION_JSON)
-//                        .content(mapper.writeValueAsString(bookDTO)))
-//                .andExpect(status().isBadRequest());
-//    }
-//
-//    @Test
-//    @DisplayName("при запросе PUT /api/v1/books/{id} - должен обновить автора")
-//    void testUpdateBook() throws Exception {
-//        try (MockedStatic<BookMapper> mockedStatic = Mockito.mockStatic(BookMapper.class)) {
-//
-//            when(bookService.update(
-//                    bookRequestDTO.getId(),
-//                    bookRequestDTO.getTitle(),
-//                    bookRequestDTO.getAuthorId(),
-//                    bookRequestDTO.getGenreIds()))
-//                    .thenReturn(bookDTO);
-//            mockedStatic.when(() -> BookMapper.toBookDTO(book)).thenReturn(bookDTO);
-//
-//            mvc.perform(put("/api/v1/books/{id}", BOOK_ID)
-//                            .contentType(MediaType.APPLICATION_JSON)
-//                            .content(mapper.writeValueAsString(bookRequestDTO)))
-//                    .andExpect(status().isOk())
-//                    .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-//                    .andExpect(jsonPath("$.id").value(book.getId()))
-//                    .andExpect(jsonPath("$.title").value(book.getTitle()))
-//                    .andExpect(jsonPath("$.author.id").value(book.getAuthor().getId()))
-//                    .andExpect(jsonPath("$.genres[*].id", containsInAnyOrder(1)));
-//
-//
-//            verify(bookService).update(
-//                    bookRequestDTO.getId(),
-//                    bookRequestDTO.getTitle(),
-//                    bookRequestDTO.getAuthorId(),
-//                    bookRequestDTO.getGenreIds());
-//        }
-//    }
-//
-//    @Test
-//    @DisplayName("при запросе PUT /api/v1/books/{id} с некорректными данными - должен вернуть статус ошибки")
-//    void testUpdateBook_withValidationErrors() throws Exception {
-//
-//        bookDTO.setTitle("");
-//
-//        mvc.perform(put("/api/v1/books/{id}", bookDTO.getId())
-//                        .contentType(MediaType.APPLICATION_JSON)
-//                        .content(mapper.writeValueAsString(bookDTO)))
-//                .andExpect(status().isBadRequest());
-//    }
-//
-//    @Test
-//    @DisplayName("при запросе DELETE /books/{id} - должен удалить автора")
-//    void testDeleteBook() throws Exception {
-//
-//        mvc.perform(delete("/api/v1/books/{id}", bookDTO.getId())
-//                        .contentType(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isOk());
-//
-//        verify(bookService).deleteById(bookDTO.getId());
-//    }
+    @Autowired
+    private WebTestClient webTestClient;
+
+    @Autowired
+    private R2dbcEntityTemplate r2dbcEntityTemplate;
+
+    @Test
+    @DisplayName("при запросе GET /api/v1/books - должен вернуться список книг")
+    void testGetBooks() {
+        webTestClient.get().uri("/api/v1/books")
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                .returnResult(BookDetailDTO.class)
+                .getResponseBody()
+                .as(StepVerifier::create)
+                .expectNextMatches(book -> book.getTitle().equals("BookTitle_1"))
+                .expectNextMatches(book -> book.getTitle().equals("BookTitle_2"))
+                .expectNextMatches(book -> book.getTitle().equals("BookTitle_3"))
+                .expectComplete()
+                .verify();
+    }
+
+    @Test
+    @DisplayName("при запросе GET /api/v1/books/{id} - должен вернуть книгу")
+    void testGetBook() {
+        webTestClient.get().uri("/api/v1/books/1")
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                .returnResult(Book.class)
+                .getResponseBody()
+                .as(StepVerifier::create)
+                .consumeNextWith(book -> {
+                    assertThat(book).isNotNull();
+                    assertThat(book.getId()).isEqualTo(1L);
+                    assertThat(book.getTitle()).isEqualTo("BookTitle_1");
+                    assertThat(book.getAuthorId()).isEqualTo(1L);
+                    assertThat(book.getAuthor()).isNotNull();
+                    assertThat(book.getAuthor().getId()).isEqualTo(1L);
+                    assertThat(book.getAuthor().getFullName()).isEqualTo("Author_1");
+                    assertThat(book.getGenres()).isNotNull().hasSize(2);
+                    assertThat(book.getGenres()).extracting("id").containsExactlyInAnyOrder(1L, 2L);
+                    assertThat(book.getGenres()).extracting("name").containsExactlyInAnyOrder("Genre_1", "Genre_2");
+                })
+                .expectComplete()
+                .verify();
+    }
+
+    @Test
+    @DisplayName("при запросе GET /api/v1/books/{id} с несуществующим ID - должен вернуть 404")
+    void testGetBookByNonExistentId() {
+        webTestClient.get().uri("/api/v1/books/{id}", 123)
+                .exchange()
+                .expectStatus().isNotFound();
+    }
+
+    @Test
+    @DisplayName("при запросе POST /api/v1/books - должен создать новую книгу")
+    void testCreateBook() {
+        BookReferenceDTO newBook = new BookReferenceDTO(null, "New Book", 1L, Set.of(1L, 2L));
+
+        webTestClient.post().uri("/api/v1/books")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(newBook)
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                .returnResult(BookBasicDto.class)
+                .getResponseBody()
+                .as(StepVerifier::create)
+                .consumeNextWith(expectedBook -> {
+                    assertThat(expectedBook).isNotNull();
+                    assertThat(expectedBook.getTitle()).isEqualTo("New Book");
+
+                    r2dbcEntityTemplate
+                            .selectOne(Query.query(Criteria.where("id").is(expectedBook.getId())), Book.class)
+                            .as(StepVerifier::create)
+                            .consumeNextWith(actualBook -> {
+                                assertThat(actualBook).isNotNull();
+                                assertThat(actualBook.getId()).isEqualTo(expectedBook.getId());
+                                assertThat(actualBook.getTitle()).isEqualTo("New Book");
+                                assertThat(actualBook.getAuthorId()).isEqualTo(1L);
+                            })
+                            .verifyComplete();
+                })
+                .expectComplete()
+                .verify();
+    }
+
+    @Test
+    @DisplayName("при запросе PUT /api/v1/books/{id} - должен обновить книгу")
+    void testUpdateBook() {
+        BookReferenceDTO updatedBook = new BookReferenceDTO(1L, "Updated Book", 2L, Set.of(3L, 4L));
+
+        webTestClient.put().uri("/api/v1/books/{id}", 1)
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(updatedBook)
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                .returnResult(BookBasicDto.class)
+                .getResponseBody()
+                .as(StepVerifier::create)
+                .consumeNextWith(book -> {
+                    assertThat(book).isNotNull();
+                    assertThat(book.getId()).isEqualTo(1);
+                    assertThat(book.getTitle()).isEqualTo("Updated Book");
+                })
+                .expectComplete()
+                .verify();
+
+        r2dbcEntityTemplate
+                .selectOne(Query.query(Criteria.where("id").is(1)), Book.class)
+                .as(StepVerifier::create)
+                .consumeNextWith(book -> {
+                    assertThat(book).isNotNull();
+                    assertThat(book.getId()).isEqualTo(1);
+                    assertThat(book.getTitle()).isEqualTo("Updated Book");
+                    assertThat(book.getAuthorId()).isEqualTo(2);
+                })
+                .verifyComplete();
+
+        r2dbcEntityTemplate
+                .select(Query.query(Criteria.where("book_id").is(1)), BookGenreRef.class)
+                .collectList()
+                .as(StepVerifier::create)
+                .consumeNextWith(genreRefs -> {
+                    assertThat(genreRefs).hasSize(2);
+                    assertThat(genreRefs).extracting("genreId").containsExactlyInAnyOrder(3L, 4L);
+                })
+                .verifyComplete();
+    }
+
+    @Test
+    @DisplayName("при запросе DELETE /api/v1/books/{id} - должен удалить книгу")
+    void testDeleteBook() {
+        webTestClient.delete().uri("/api/v1/books/{id}", 1)
+                .exchange()
+                .expectStatus().isNoContent();
+
+        r2dbcEntityTemplate.selectOne(Query.query(Criteria.where("id").is(1)), Book.class)
+                .as(StepVerifier::create)
+                .expectNextCount(0)
+                .verifyComplete();
+    }
 
 }

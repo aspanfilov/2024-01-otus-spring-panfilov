@@ -1,4 +1,4 @@
-#Authors
+# Authors
 ###
 GET http://localhost:8080/api/v1/authors
 Accept: */*
@@ -39,15 +39,48 @@ Content-Type: application/json
 Cache-Control: no-cache
 
 ###########################################################
-//Genres
+# Genres
 ###
 GET http://localhost:8080/api/v1/genres
 Accept: */*
 Content-Type: application/json
 Cache-Control: no-cache
 
+###
+GET http://localhost:8080/api/v1/genres/6
+Accept: */*
+Content-Type: application/json
+Cache-Control: no-cache
+
+###
+POST http://localhost:8080/api/v1/genres
+Accept: */*
+Content-Type: application/json
+Cache-Control: no-cache
+
+{
+  "id": 0,
+  "name": "New Genre"
+}
+
+###
+PUT http://localhost:8080/api/v1/genres/6
+Accept: */*
+Content-Type: application/json
+Cache-Control: no-cache
+
+{
+  "name": "Updated Genre"
+}
+
+###
+DELETE http://localhost:8080/api/v1/genres/6
+Accept: */*
+Content-Type: application/json
+Cache-Control: no-cache
+
 ###########################################################
-//Books
+# Books
 ###
 GET http://localhost:8080/api/v1/books
 Accept: */*
@@ -74,7 +107,60 @@ Content-Type: application/json
 Cache-Control: no-cache
 
 ###
+PUT http://localhost:8080/api/v1/books/1
+Accept: */*
+Content-Type: application/json
+Cache-Control: no-cache
+
+{
+  "title": "Updated Book",
+  "authorId": 2,
+  "genreIds": [3, 4]
+}
+
+###
+DELETE http://localhost:8080/api/v1/books/1
+Accept: */*
+Content-Type: application/json
+Cache-Control: no-cache
+
+###########################################################
+# Comments
+###
+GET http://localhost:8080/api/v1/books/1/comments
+Accept: */*
+Content-Type: application/json
+Cache-Control: no-cache
+
+###
 GET http://localhost:8080/api/v1/books/1/comments/1
+Accept: */*
+Content-Type: application/json
+Cache-Control: no-cache
+
+###
+POST http://localhost:8080/api/v1/books/1/comments
+Accept: */*
+Content-Type: application/json
+Cache-Control: no-cache
+
+{
+  "id": 0,
+  "commentText": "New Comment"
+}
+
+###
+PUT http://localhost:8080/api/v1/books/1/comments/1
+Accept: */*
+Content-Type: application/json
+Cache-Control: no-cache
+
+{
+  "commentText": "Updated Comment"
+}
+
+###
+DELETE http://localhost:8080/api/v1/books/1/comments/1
 Accept: */*
 Content-Type: application/json
 Cache-Control: no-cache

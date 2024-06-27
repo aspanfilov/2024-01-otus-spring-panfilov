@@ -1,162 +1,152 @@
 package ru.otus.hw.controllers.rest;
 
 import org.junit.jupiter.api.DisplayName;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
+import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
+import org.springframework.data.relational.core.query.Criteria;
+import org.springframework.data.relational.core.query.Query;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.reactive.server.WebTestClient;
+import reactor.test.StepVerifier;
+import ru.otus.hw.AbstractDataResetTest;
+import ru.otus.hw.config.ObjectMapperConfig;
+import ru.otus.hw.dtos.AuthorDTO;
+import ru.otus.hw.models.Author;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.verify;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @DisplayName("Класс AuthorController")
-@WebMvcTest(AuthorController.class)
-public class AuthorControllerTest {
+public class AuthorControllerTest extends AbstractDataResetTest {
 
-//    private static final String AUTHOR_NOT_FOUND = "Author with id 123 not found";
-//    private static final Long NON_EXISTENT_ID = 123L;
-//
-//    @Autowired
-//    private MockMvc mvc;
-//
-//    @MockBean
-//    private AuthorService authorService;
-//
-//    @Autowired
-//    private ObjectMapper mapper;
-//
-//    private Author author;
-//    private AuthorDTO authorDTO;
-//
-//    @BeforeEach
-//    void setUp() {
-//        author = new Author(1L, "author1");
-//        authorDTO = new AuthorDTO(1L, "author1");
-//    }
-//
-//    @Test
-//    @DisplayName("при запросе GET /api/v1/authors - должен вернуться список dto авторов")
-//    void testGetAuthors() throws Exception {
-//        List<AuthorDTO> authorDTOs = List.of(authorDTO);
-//        List<Author> authors = List.of(author);
-//
-//        when(authorService.findAll()).thenReturn(authors);
-//
-//        try (MockedStatic<AuthorMapper> mockedStatic = Mockito.mockStatic(AuthorMapper.class)) {
-//            mockedStatic.when(() -> AuthorMapper.toDto(author)).thenReturn(authorDTO);
-//
-//            mvc.perform(get("/api/v1/authors"))
-//                    .andExpect(status().isOk())
-//                    .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-//                    .andExpect(content().json(mapper.writeValueAsString(authorDTOs)));
-//        }
-//    }
-//
-//    @Test
-//    @DisplayName("при запросе GET /api/v1/authors/{id} - должен вернуть dto автора")
-//    void testGetAuthor() throws Exception {
-//        when(authorService.findById(1L)).thenReturn(Optional.of(author));
-//
-//        try (MockedStatic<AuthorMapper> mockedStatic = Mockito.mockStatic(AuthorMapper.class)) {
-//
-//            mockedStatic.when(() -> AuthorMapper.toDto(author)).thenReturn(authorDTO);
-//
-//            mvc.perform(get("/api/v1/authors/1"))
-//                    .andExpect(status().isOk())
-//                    .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-//                    .andExpect(content().json(mapper.writeValueAsString(authorDTO)));
-//        }
-//    }
-//
-//    @Test
-//    @DisplayName("при запросе GET /api/v1/authors/{id} с несуществующим ID - должен бросить исключение")
-//    void testGetAuthor_withNonExistentId() throws Exception {
-//        when(authorService.findById(NON_EXISTENT_ID)).thenReturn(Optional.empty());
-//
-//        mvc.perform(get("/api/v1/authors/{id}", NON_EXISTENT_ID))
-//                .andExpect(status().isNotFound())
-//                .andExpect(result -> assertThat(result.getResolvedException())
-//                        .isInstanceOf(EntityNotFoundException.class)
-//                        .hasMessage(AUTHOR_NOT_FOUND));
-//    }
-//
-//    @Test
-//    @DisplayName("при запросе POST /api/v1/authors - должен создать нового автора")
-//    void testCreateAuthor() throws Exception {
-//
-//        try (MockedStatic<AuthorMapper> mockedStatic = Mockito.mockStatic(AuthorMapper.class)) {
-//
-//            when(authorService.insert(authorDTO.getFullName())).thenReturn(author);
-//            mockedStatic.when(() -> AuthorMapper.toDto(author)).thenReturn(authorDTO);
-//
-//            mvc.perform(post("/api/v1/authors")
-//                            .contentType(MediaType.APPLICATION_JSON)
-//                            .content(mapper.writeValueAsString(authorDTO)))
-//                    .andExpect(status().isOk())
-//                    .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-//                    .andExpect(jsonPath("$.fullName").value(author.getFullName()));
-//
-//            verify(authorService).insert(authorDTO.getFullName());
-//        }
-//    }
-//
-//    @Test
-//    @DisplayName("при запросе POST /api/v1/authors с некорректными данными - должен вернуть статус ошибки")
-//    void testCreateAuthor_withValidationErrors() throws Exception {
-//
-//        authorDTO.setFullName("");
-//
-//        mvc.perform(post("/api/v1/authors")
-//                        .contentType(MediaType.APPLICATION_JSON)
-//                        .content(mapper.writeValueAsString(authorDTO)))
-//                .andExpect(status().isBadRequest());
-//    }
-//
-//    @Test
-//    @DisplayName("при запросе PUT /api/v1/authors/{id} - должен обновить автора")
-//    void testUpdateAuthor() throws Exception {
-//        try (MockedStatic<AuthorMapper> mockedStatic = Mockito.mockStatic(AuthorMapper.class)) {
-//
-//            when(authorService.update(authorDTO.getId(), authorDTO.getFullName()))
-//                    .thenReturn(author);
-//            mockedStatic.when(() -> AuthorMapper.toDto(author))
-//                    .thenReturn(authorDTO);
-//
-//            mvc.perform(put("/api/v1/authors/{id}", authorDTO.getId())
-//                            .contentType(MediaType.APPLICATION_JSON)
-//                            .content(mapper.writeValueAsString(authorDTO)))
-//                    .andExpect(status().isOk())
-//                    .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-//                    .andExpect(jsonPath("$.id").value(author.getId()))
-//                    .andExpect(jsonPath("$.fullName").value(author.getFullName()));
-//
-//            verify(authorService).update(authorDTO.getId(), authorDTO.getFullName());
-//        }
-//    }
-//
-//    @Test
-//    @DisplayName("при запросе PUT /api/v1/authors/{id} с некорректными данными - должен вернуть статус ошибки")
-//    void testUpdateAuthor_withValidationErrors() throws Exception {
-//
-//        authorDTO.setFullName("");
-//
-//        mvc.perform(put("/api/v1/authors/{id}", authorDTO.getId())
-//                        .contentType(MediaType.APPLICATION_JSON)
-//                        .content(mapper.writeValueAsString(authorDTO)))
-//                .andExpect(status().isBadRequest());
-//    }
-//
-//    @Test
-//    @DisplayName("при запросе DELETE /authors/{id} - должен удалить автора")
-//    void testDeleteAuthor() throws Exception {
-//
-//        mvc.perform(delete("/api/v1/authors/{id}", authorDTO.getId())
-//                        .contentType(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isOk());
-//
-//        verify(authorService).deleteById(authorDTO.getId());
-//    }
+    @Autowired
+    private WebTestClient webTestClient;
+
+    @Autowired
+    private R2dbcEntityTemplate r2dbcEntityTemplate;
+
+    @Test
+    @DisplayName("при запросе GET /api/v1/authors - должен вернуться список авторов")
+    void testGetAuthors() {
+        webTestClient.get().uri("/api/v1/authors")
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                .returnResult(Author.class)
+                .getResponseBody()
+                .as(StepVerifier::create)
+                .expectNextMatches(author -> author.getFullName().equals("Author_1"))
+                .expectNextMatches(author -> author.getFullName().equals("Author_2"))
+                .expectNextMatches(author -> author.getFullName().equals("Author_3"))
+                .expectComplete()
+                .verify();
+    }
+
+    @Test
+    @DisplayName("при запросе GET /api/v1/authors/{id} - должен вернуть автора")
+    void testGetAuthor() {
+        webTestClient.get().uri("/api/v1/authors/1")
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                .returnResult(Author.class)
+                .getResponseBody()
+                .as(StepVerifier::create)
+                .consumeNextWith(author -> {
+                    assertThat(author).isNotNull();
+                    assertThat(author.getId()).isEqualTo(1L);
+                    assertThat(author.getFullName()).isEqualTo("Author_1");
+                })
+                .expectComplete()
+                .verify();
+    }
+
+    @Test
+    @DisplayName("при запросе GET /api/v1/authors/{id} с несуществующим ID - должен вернуть 404")
+    void testGetAuthorByNonExistentId() {
+        webTestClient.get().uri("/api/v1/authors/{id}", 123)
+                .exchange()
+                .expectStatus().isNotFound();
+    }
+
+    @Test
+    @DisplayName("при запросе POST /api/v1/authors - должен создать нового автора")
+    void testCreateAuthor() {
+        AuthorDTO newAuthor = new AuthorDTO(null, "New Author");
+
+        webTestClient.post().uri("/api/v1/authors")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(newAuthor)
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                .returnResult(Author.class)
+                .getResponseBody()
+                .as(StepVerifier::create)
+                .consumeNextWith(expectedAuthor -> {
+                    assertThat(expectedAuthor).isNotNull();
+                    assertThat(expectedAuthor.getFullName()).isEqualTo("New Author");
+
+                    r2dbcEntityTemplate
+                            .selectOne(Query.query(Criteria.where("id").is(expectedAuthor.getId())), Author.class)
+                            .as(StepVerifier::create)
+                            .consumeNextWith(actualAuthor -> {
+                                assertThat(actualAuthor).isNotNull();
+                                assertThat(actualAuthor.getId()).isEqualTo(expectedAuthor.getId());
+                                assertThat(actualAuthor.getFullName()).isEqualTo("New Author");
+                            })
+                            .verifyComplete();
+                })
+                .expectComplete()
+                .verify();
+    }
+
+    @Test
+    @DisplayName("при запросе PUT /api/v1/authors/{id} - должен обновить автора")
+    void testUpdateAuthor() {
+        AuthorDTO updatedAuthor = new AuthorDTO(1L, "Updated Author");
+
+        webTestClient.put().uri("/api/v1/authors/{id}", 1)
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(updatedAuthor)
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                .returnResult(Author.class)
+                .getResponseBody()
+                .as(StepVerifier::create)
+                .consumeNextWith(author -> {
+                    assertThat(author).isNotNull();
+                    assertThat(author.getId()).isEqualTo(1);
+                    assertThat(author.getFullName()).isEqualTo("Updated Author");
+                })
+                .expectComplete()
+                .verify();
+
+        r2dbcEntityTemplate
+                .selectOne(Query.query(Criteria.where("id").is(1)), Author.class)
+                .as(StepVerifier::create)
+                .consumeNextWith(author -> {
+                    assertThat(author).isNotNull();
+                    assertThat(author.getId()).isEqualTo(1);
+                    assertThat(author.getFullName()).isEqualTo("Updated Author");
+                })
+                .verifyComplete();
+    }
+
+    @Test
+    @DisplayName("при запросе DELETE /api/v1/authors/{id} - должен удалить автора")
+    void testDeleteAuthor() {
+        webTestClient.delete().uri("/api/v1/authors/{id}", 1)
+                .exchange()
+                .expectStatus().isNoContent();
+
+        r2dbcEntityTemplate.selectOne(Query.query(Criteria.where("id").is(1)), Author.class)
+                .as(StepVerifier::create)
+                .expectNextCount(0)
+                .verifyComplete();
+    }
 
 }

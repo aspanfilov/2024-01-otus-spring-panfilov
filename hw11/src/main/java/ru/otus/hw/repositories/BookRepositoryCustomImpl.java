@@ -108,14 +108,15 @@ public class BookRepositoryCustomImpl implements BookRepositoryCustom {
     }
 
     private Book mapToBook(Readable selectedRecord) {
-        return new Book(
-                selectedRecord.get("id", Long.class),
-                selectedRecord.get("title", String.class),
-                selectedRecord.get("author_id", Long.class),
-                Author.builder()
+        return Book.builder()
+                .id(selectedRecord.get("id", Long.class))
+                .title(selectedRecord.get("title", String.class))
+                .authorId(selectedRecord.get("author_id", Long.class))
+                .author(Author.builder()
                         .id(selectedRecord.get("author_id", Long.class))
                         .fullName(selectedRecord.get("author_full_name", String.class))
-                        .build());
+                        .build())
+                .build();
     }
 
     private Genre mapToGenre(Readable row) {
