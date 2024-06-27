@@ -3,6 +3,7 @@ package ru.otus.hw.controllers.rest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -48,6 +49,7 @@ public class BookController {
     }
 
     @PostMapping("/api/v1/books")
+    @Transactional
     public Mono<ResponseEntity<BookBasicDto>> createBook(@RequestBody @Valid Mono<BookReferenceDTO> bookReferenceDTO) {
         return bookReferenceDTO.flatMap(bookRequest -> {
             Book book = BookMapper.toEntity(bookRequest);
@@ -66,6 +68,7 @@ public class BookController {
     }
 
     @PutMapping("/api/v1/books/{id}")
+    @Transactional
     public Mono<ResponseEntity<BookBasicDto>> updateBook(@PathVariable Long id,
                                                  @RequestBody @Valid Mono<BookReferenceDTO>  bookReferenceDTO) {
         return bookReferenceDTO.flatMap(bookRequest ->
@@ -85,6 +88,7 @@ public class BookController {
     }
 
     @DeleteMapping("/api/v1/books/{id}")
+    @Transactional
     public Mono<ResponseEntity<Void>> deleteBook(@PathVariable("id") Long id) {
         return bookGenreRefRepository.deleteByBookId(id)
                 .then(bookRepository.deleteById(id))
