@@ -5,6 +5,14 @@ import ru.otus.hw.dtos.book.BookReferenceDTO;
 import ru.otus.hw.models.Book;
 
 public class BookMapper {
+    public static Book toNewEntity(BookReferenceDTO bookRequest) {
+        return new Book(
+                null,
+                bookRequest.getTitle(),
+                bookRequest.getAuthorId()
+        );
+    }
+
     public static Book toEntity(BookReferenceDTO bookRequest) {
 
         return new Book(

@@ -79,6 +79,7 @@ public class BookCommentControllerTest extends AbstractDataResetTest {
         BookCommentDTO newCommentDTO = BookCommentDTO.builder()
                 .id(null)
                 .commentText("New Comment")
+                .bookId(1L)
                 .build();
 
         webTestClient.post().uri("/api/v1/books/{bookId}/comments", 1)

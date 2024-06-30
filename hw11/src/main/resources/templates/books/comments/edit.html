@@ -106,7 +106,9 @@
             const commentText = document.getElementById("commentText").value;
             const errorMessage = document.getElementById("error-message");
             const bookCommentDto = {
+                id: bookCommentId,
                 commentText: commentText,
+                bookId: bookId
             };
 
             fetch(`/api/v1/books/${bookId}/comments/${bookCommentId}`, {

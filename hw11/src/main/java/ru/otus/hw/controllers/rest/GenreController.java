@@ -21,6 +21,9 @@ import ru.otus.hw.repositories.GenreRepository;
 @RequiredArgsConstructor
 public class GenreController {
 
+    //Пример контроллера методы которого принимают Mono
+    //  в таком случае методы представлены единой цепочкой операторов flow
+
     private final GenreRepository genreRepository;
 
     @GetMapping("/api/v1/genres")
@@ -36,20 +39,20 @@ public class GenreController {
     }
 
     @PostMapping("/api/v1/genres")
-    public Mono<ResponseEntity<Genre>> createGenre(@RequestBody @Valid Mono<GenreDTO> genreDTO) {
-        return genreDTO
-                .map(GenreMapper::toNewEntity)
-                .flatMap(genreRepository::save)
+    public Mono<ResponseEntity<Genre>> createGenre(@RequestBody @Valid GenreDTO genreDTO) {
+        Genre genre = GenreMapper.toNewEntity(genreDTO);
+        return genreRepository.save(genre)
                 .map(ResponseEntity::ok);
     }
 
     @PutMapping("/api/v1/genres/{id}")
     public Mono<ResponseEntity<Genre>> updateGenre(@PathVariable("id") Long id,
-                                                      @RequestBody @Valid Mono<GenreDTO> genreDTO) {
-        return genreRepository.findById(id)
-                .then(genreDTO.map(GenreMapper::toEntity)
-                        .flatMap(genreRepository::save)
-                        .map(ResponseEntity::ok))
+                                                      @RequestBody @Valid GenreDTO genreDTO) {
+        return genreRepository.existsById(id)
+                .map(exists -> exists ? genreDTO : null)
+                .map(GenreMapper::toEntity)
+                .flatMap(genreRepository::save)
+                .map(ResponseEntity::ok)
                 .switchIfEmpty(Mono.just(ResponseEntity.notFound().build()));
     }
 

@@ -46,7 +46,7 @@ public class AuthorController {
     public Mono<ResponseEntity<Author>> updateAuthor(@PathVariable("id") Long id,
                                                      @RequestBody @Valid AuthorDTO authorDTO) {
         return authorRepository.existsById(id)
-                .flatMap(exists -> exists ? Mono.just(authorDTO) : Mono.empty())
+                .map(exists -> exists ? authorDTO : null)
                 .map(AuthorMapper::toEntity)
                 .flatMap(authorRepository::save)
                 .map(ResponseEntity::ok)

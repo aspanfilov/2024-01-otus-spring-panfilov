@@ -1,6 +1,7 @@
 package ru.otus.hw.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
@@ -14,6 +15,7 @@ import org.springframework.data.relational.core.mapping.Table;
 @Getter
 @EqualsAndHashCode(exclude = {"book"})
 @ToString(exclude = {"book"})
+@Builder
 public class BookComment {
     @Id
     @Column("id")
