@@ -36,20 +36,20 @@ public class AuthorController {
     }
 
     @PostMapping("/api/v1/authors")
-    public Mono<ResponseEntity<Author>> createAuthor(@RequestBody @Valid Mono<AuthorDTO> authorDTO) {
-        return authorDTO
-                .map(AuthorMapper::toNewEntity)
-                .flatMap(authorRepository::save)
+    public Mono<ResponseEntity<Author>> createAuthor(@RequestBody @Valid AuthorDTO authorDTO) {
+        Author author = AuthorMapper.toNewEntity(authorDTO);
+        return authorRepository.save(author)
                 .map(ResponseEntity::ok);
     }
 
     @PutMapping("/api/v1/authors/{id}")
     public Mono<ResponseEntity<Author>> updateAuthor(@PathVariable("id") Long id,
-                                                     @RequestBody @Valid Mono<AuthorDTO> authorDTO) {
-        return authorRepository.findById(id)
-                .then(authorDTO.map(AuthorMapper::toEntity)
-                        .flatMap(authorRepository::save)
-                        .map(ResponseEntity::ok))
+                                                     @RequestBody @Valid AuthorDTO authorDTO) {
+        return authorRepository.existsById(id)
+                .flatMap(exists -> exists ? Mono.just(authorDTO) : Mono.empty())
+                .map(AuthorMapper::toEntity)
+                .flatMap(authorRepository::save)
+                .map(ResponseEntity::ok)
                 .switchIfEmpty(Mono.just(ResponseEntity.notFound().build()));
     }
 
