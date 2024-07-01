@@ -1,0 +1,27 @@
+server:
+  port: 8081
+
+spring:
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5434/test
+    username: postgres
+    password: postgres
+    show-sql: true
+
+  #  Драйвер jdbc подключен только для liquibase
+  datasource:
+    url: jdbc:postgresql://localhost:5434/test
+    username: ${spring.r2dbc.username}
+    password: ${spring.r2dbc.password}
+
+  liquibase:
+    enabled: true
+    url: ${spring.datasource.url}
+    change-log: db/changelog/db.changelog-test.yaml
+    user: ${spring.datasource.username}
+    password: ${spring.datasource.password}
+
+logging:
+  level:
+    ROOT: ERROR
+    ru.otus: DEBUG

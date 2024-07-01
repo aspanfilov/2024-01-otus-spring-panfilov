@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Book Comment</title>
+
+    <style>
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+        }
+
+        div {
+            margin-top: 10px;
+        }
+
+        a {
+            color: blue;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        table {
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        input[readonly] {
+            background-color: #f2f2f2;
+        }
+
+        .form-row {
+            display: flex;
+            align-items: center;
+        }
+
+        .form-row label {
+            width: 100px;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: flex-start;
+            gap: 10px;
+        }
+
+        .error-message {
+            color: red;
+            margin-top: 1px;
+            margin-bottom: 0;
+        }
+
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const bookId = document.getElementById("bookId").value;
+            const bookCommentId = document.getElementById("bookCommentId").value;
+
+            fetch(`/api/v1/books/${bookId}`, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            }).then(response => response.json())
+                .then(book => {
+                    const bookTitle = book.title;
+                    const bookAuthor = book.author.fullName;
+
+                    document.querySelector('h3').textContent = `Comments: ${bookAuthor} - ${bookTitle}`;
+                });
+
+            fetch(`/api/v1/books/${bookId}/comments/${bookCommentId}`)
+                .then(response => {
+                    if (response.ok) {
+                        return response.json();
+                    } else if (response.status === 404) {
+                        window.location.href = "/error/404";
+                    } else {
+                        window.location.href = "/error/500";
+                    }
+                })
+                .then(comment => {
+                    document.getElementById("id").value = comment.id;
+                    document.getElementById("commentText").value = comment.commentText;
+                });
+        });
+
+        function updateComment() {
+            const bookId = document.getElementById("bookId").value;
+            const bookCommentId = document.getElementById("bookCommentId").value;
+            const commentText = document.getElementById("commentText").value;
+            const errorMessage = document.getElementById("error-message");
+            const bookCommentDto = {
+                id: bookCommentId,
+                commentText: commentText,
+                bookId: bookId
+            };
+
+            fetch(`/api/v1/books/${bookId}/comments/${bookCommentId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(bookCommentDto)
+            }).then(response => {
+                if (response.ok) {
+                    window.location.href = `/books/${bookId}/comments`;
+                } else {
+                    response.json().then(data => {
+                        if (data.commentText) {
+                            errorMessage.textContent = data.commentText;
+                        } else {
+                            alert("Error updating comment.");
+                        }
+                    })
+                }
+            }).catch(() => alert("An error occurred while updating the comment."));
+        }
+
+        function deleteComment() {
+            const bookId = document.getElementById("bookId").value;
+            const bookCommentId = document.getElementById("bookCommentId").value;
+
+            if (confirm("Are you sure you want to delete this comment?")) {
+                fetch(`/api/v1/books/${bookId}/comments/${bookCommentId}`, {
+                    method: 'DELETE'
+                }).then(() => window.location.href = `/books/${bookId}/comments`);
+            }
+        }
+
+    </script>
+
+</head>
+
+<body id="editBookCommentPage">
+
+<nav>
+    <a href="/">Home</a> |
+    <a href="/books">Books</a> |
+    <a th:href="@{/books/{bookId}/comments(bookId=${bookId})}">Comments</a>
+</nav>
+
+<h3>Book Comment</h3>
+
+<input type="hidden" id="bookId" th:value="${bookId}"/>
+<input type="hidden" id="bookCommentId" th:value="${bookCommentId}"/>
+
+<div class="form-row">
+    <label for="id">ID:</label>
+    <input type="text" id="id" readonly/>
+</div>
+
+<div class="form-row">
+    <label for="commentText">Сomment:</label>
+    <textarea id="commentText" rows="4" cols="50" placeholder="Enter comment"></textarea>
+</div>
+
+<div id="error-message" class="error-message"></div>
+
+<div class="button-group">
+    <button onclick="updateComment()">Update</button>
+    <button onclick="deleteComment()">Delete</button>
+</div>
+
+</body>
+</html>

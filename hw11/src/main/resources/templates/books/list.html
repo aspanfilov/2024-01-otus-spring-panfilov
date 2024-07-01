@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Books</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+        }
+
+        div {
+            margin-top: 10px;
+        }
+
+        a {
+            color: blue;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        table {
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        input[readonly] {
+            background-color: #f2f2f2;
+        }
+
+        .form-row {
+            display: flex;
+            align-items: center;
+        }
+
+        .form-row label {
+            width: 100px;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: flex-start;
+            gap: 10px;
+        }
+
+        .error-message {
+            color: red;
+            margin-top: 1px;
+            margin-bottom: 0;
+        }
+
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            fetch('/api/v1/books', {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => response.json())
+                .then(books => {
+                    const tbody = document.querySelector('tbody');
+                    tbody.innerHTML = books.map(book => {
+                        const genreNames = book.genres.join(", ");
+                        return `
+                        <tr>
+                            <td>${book.id}</td>
+                            <td>${book.title}</td>
+                            <td>${book.author}</td>
+                            <td>${genreNames}</td>
+                            <td>
+                                <button onclick="bookComments(${book.id})">Comments</button>
+                            </td>
+                            <td>
+                                <button onclick="editBook(${book.id})">Edit</button>
+                            </td>
+                            <td>
+                                <button onclick="deleteBook(${book.id})">Delete</button>
+                            </td>
+                        </tr>
+                    `;
+                    }).join('');
+                });
+        });
+
+        function bookComments(id) {
+            window.location.href = `/books/${id}/comments`;
+        }
+
+        function editBook(id) {
+            window.location.href = `/books/${id}`;
+        }
+
+        function deleteBook(id) {
+            if (confirm("Are you sure you want to delete this book?")) {
+                fetch(`/api/v1/books/${id}`, {
+                    method: 'DELETE'
+                }).then(response => {
+                    if (response.ok) {
+                        window.location.reload();
+                    } else {
+                        return response.json().then(data => {
+                            alert(`Error deleting book: ${data.error || 'Unknown error'}`);
+                        });
+                    }
+                })
+            }
+        }
+    </script>
+
+</head>
+<body id="booksListPage">
+
+<nav>
+    <a href="/">Home</a> |
+    <a href="/authors">Authors</a> |
+    <a href="/genres">Genres</a>
+</nav>
+
+<h3>Books</h3>
+
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Title</th>
+        <th>Author</th>
+        <th>Genres</th>
+        <th>Comments</th>
+        <th>Edit</th>
+        <th>Delete</th>
+    </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
+<hr/>
+
+<div>
+    <a href="/books/new">
+        <button type="button">Add New Book</button>
+    </a>
+</div>
+
+</body>
+</html>
