@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Book</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+        }
+
+        div {
+            margin-top: 10px;
+        }
+
+        a {
+            color: blue;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        table {
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        input[readonly] {
+            background-color: #f2f2f2;
+        }
+
+        .form-row {
+            display: flex;
+            align-items: center;
+        }
+
+        .form-row label {
+            width: 100px;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: flex-start;
+            gap: 10px;
+        }
+
+        .error-message {
+            color: red;
+            margin-top: 1px;
+            margin-bottom: 0;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const bookId = document.getElementById("bookId").value;
+
+            fetch(`/api/v1/books/${bookId}`)
+                .then(response => {
+                    if (response.ok) {
+                        return response.json();
+                    } else if (response.status === 404) {
+                        window.location.href = "/error/404";
+                    } else {
+                        window.location.href = "/error/500";
+                    }
+                })
+                .then(book => {
+                    document.getElementById("id").value = book.id;
+                    document.getElementById("title").value = book.title;
+                    document.getElementById("author").value = book.author.id;
+
+                    const genresSelect = document.getElementById("genres");
+                    const selectedGenreIds = new Set(book.genres.map(genre => genre.id));
+
+                    for (let i = 0; i < genresSelect.options.length; i++) {
+                        const optionValue = parseInt(genresSelect.options[i].value);
+                        if (selectedGenreIds.has(optionValue)) {
+                            genresSelect.options[i].selected = true;
+                        }
+                    }
+                })
+        });
+
+        function updateBook() {
+            const bookId = document.getElementById("bookId").value;
+            const bookTitle = document.getElementById("title").value;
+            const bookAuthorId = document.getElementById("author").value;
+            const bookGenres = Array.from(document.getElementById("genres").selectedOptions).map(option => option.value);
+
+            const bookDto = {
+                id: bookId,
+                title: bookTitle,
+                authorId: bookAuthorId,
+                genreIds: bookGenres
+            };
+
+            fetch(`/api/v1/books/${bookId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(bookDto)
+            }).then(response => {
+                if (response.ok) {
+                    window.location.href = "/books";
+                } else if (response.status === 403) {
+                    alert('You do not have permission to perform this action.');
+                } else {
+                    response.json().then(data => {
+                        document.getElementById("error-title").textContent = data.title || "";
+                        document.getElementById("error-author").textContent = data.authorId || "";
+                        document.getElementById("error-genres").textContent = data.genreIds || "";
+                    })
+                }
+            }).catch(() => alert("An error occurred while updating the book."));
+        }
+
+        function deleteBook() {
+            const bookId = document.getElementById("bookId").value;
+
+            if (confirm("Are you sure you want to delete this book?")) {
+                fetch(`/api/v1/books/${bookId}`, {
+                    method: 'DELETE'
+                }).then(response => {
+                    if (response.ok) {
+                        window.location.href = "/books";
+                    } else if (response.status === 403) {
+                        alert('You do not have permission to perform this action.');
+                    } else {
+                        return response.json().then(data => {
+                            alert(`Error deleting book: ${data.error || 'Unknown error'}`);
+                        });
+                    }
+                })
+            }
+        }
+
+    </script>
+
+</head>
+<body>
+
+<nav>
+    <div>
+        <a href="/">Home</a> |
+        <a href="/books">Books</a>
+    </div>
+    <a href="/logout">Logout</a>
+</nav>
+
+<h3>Book</h3>
+
+<input type="hidden" id="bookId" th:value="${bookId}"/>
+
+<div class="form-row">
+    <label for="id">ID:</label>
+    <input type="text" id="id" readonly/>
+</div>
+
+<div class="form-row">
+    <label for="title">Title:</label>
+    <input type="text" id="title" placeholder="Enter book's title"/>
+</div>
+
+<div id="error-title" class="error-message"></div>
+
+<div class="form-row">
+    <label for="author">Author:</label>
+    <select id="author">
+        <option th:each="author : ${authors}"
+                th:value="${author.id}"
+                th:text="${author.fullName}">
+            очередной автор
+        </option>
+    </select>
+</div>
+
+<div id="error-author" class="error-message"></div>
+
+<div class="form-row">
+    <label for="genres">Genres:</label>
+    <select id="genres" multiple>
+        <option th:each="genre : ${genres}"
+                th:value="${genre.id}"
+                th:text="${genre.name}">
+            очередной жанр
+        </option>
+    </select>
+</div>
+
+<div id="error-genres" class="error-message"></div>
+
+<div class="button-group">
+    <button onclick="updateBook()">Update</button>
+    <button onclick="deleteBook()">Delete</button>
+</div>
+
+</body>
+</html>

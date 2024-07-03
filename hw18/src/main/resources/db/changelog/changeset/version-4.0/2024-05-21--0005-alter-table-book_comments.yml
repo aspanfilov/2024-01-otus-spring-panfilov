@@ -1,0 +1,28 @@
+databaseChangeLog:
+  - changeSet:
+      id: alter-table-book-comments
+      author: Panfilov Artur
+      changes:
+        - tagDatabase:
+            tag: version-4.0
+        - addColumn:
+            tableName: book_comments
+            remarks: Справочник комментариев книг
+            columns:
+              - column:
+                  name: user_id
+                  remarks: ссылка на автора комментария
+                  type: bigserial
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            constraintName: book_comments_user_id_fk
+            baseTableName: book_comments
+            baseColumnNames: user_id
+            referencedTableName: users
+            referencedColumnNames: id
+            deferrable: false
+            initiallyDeferred: false
+            onDelete: CASCADE
+            onUpdate: NO ACTION
+            validate: true

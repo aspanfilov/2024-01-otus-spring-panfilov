@@ -1,0 +1,27 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-table-authority_groups
+      author: Panfilov Artur
+      changes:
+        - tagDatabase:
+            tag: version-4.0
+        - createTable:
+            tableName: authority_groups
+            remarks: Справочник групп полномочий
+            columns:
+              - column:
+                  name: id
+                  remarks: Уникальный идентификатор записи
+                  type: bigserial
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: pk_authoritн_group
+                    nullable: false
+              - column:
+                  name: name
+                  remarks: наименование группы полномочий
+                  type: VARCHAR(255)
+                  constraints:
+                    unique: true
+                    nullable: false
