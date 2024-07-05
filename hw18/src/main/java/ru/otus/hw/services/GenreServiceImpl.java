@@ -1,5 +1,6 @@
 package ru.otus.hw.services;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -18,6 +19,7 @@ import static ru.otus.hw.config.CacheConfig.BOOKS_CACHE;
 import static ru.otus.hw.config.CacheConfig.GENRES_CACHE;
 
 @Service
+@CircuitBreaker(name = "dbCircuitBreaker")
 @RequiredArgsConstructor
 public class GenreServiceImpl implements GenreService {
 

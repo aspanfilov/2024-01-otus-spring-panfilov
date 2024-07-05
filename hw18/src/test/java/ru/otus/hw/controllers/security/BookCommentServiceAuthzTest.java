@@ -25,7 +25,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DisplayName("Класс BookCommentService")
 @SpringBootTest
-@Transactional
 public class BookCommentServiceAuthzTest extends BaseContainerTest {
 
     @Autowired

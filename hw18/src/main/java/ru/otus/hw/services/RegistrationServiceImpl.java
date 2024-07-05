@@ -1,5 +1,6 @@
 package ru.otus.hw.services;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ import ru.otus.hw.security.AuthorityGroupRole;
 import java.util.Set;
 
 @Service
+@CircuitBreaker(name = "dbCircuitBreaker")
 @RequiredArgsConstructor
 public class RegistrationServiceImpl implements RegistrationService {
 

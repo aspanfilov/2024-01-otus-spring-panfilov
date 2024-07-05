@@ -1,5 +1,6 @@
 package ru.otus.hw.services;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,6 +10,7 @@ import ru.otus.hw.repositories.UserRepository;
 import java.util.Optional;
 
 @Service
+@CircuitBreaker(name = "dbCircuitBreaker")
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 

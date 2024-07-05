@@ -17,6 +17,24 @@ spring:
         format_sql: true
     show-sql: true
 
+resilience4j:
+  circuitbreaker:
+    metrics:
+      enabled: true
+    configs:
+      default:
+        register-health-indicator: true
+        sliding-window-type: count-based
+        sliding-window-size: 5
+        slow-call-duration-threshold: 3s
+        slow-call-rate-threshold: 60
+        failure-rate-threshold: 60
+        wait-duration-in-open-state: 10s
+        permitted-number-of-calls-in-half-open-state: 3
+    instances:
+      dbCircuitBreaker:
+        baseConfig: default
+
 logging:
   level:
     ROOT: ERROR

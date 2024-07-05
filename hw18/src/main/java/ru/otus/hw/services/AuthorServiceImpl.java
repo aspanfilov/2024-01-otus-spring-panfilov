@@ -1,7 +1,7 @@
 package ru.otus.hw.services;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -18,8 +18,8 @@ import static ru.otus.hw.config.CacheConfig.ALL_AUTHORS_KEY;
 import static ru.otus.hw.config.CacheConfig.AUTHORS_CACHE;
 import static ru.otus.hw.config.CacheConfig.BOOKS_CACHE;
 
-@Slf4j
 @Service
+@CircuitBreaker(name = "dbCircuitBreaker")
 @RequiredArgsConstructor
 public class AuthorServiceImpl implements AuthorService {
 
@@ -78,4 +78,5 @@ public class AuthorServiceImpl implements AuthorService {
     public long getCount() {
         return authorRepository.count();
     }
+
 }
