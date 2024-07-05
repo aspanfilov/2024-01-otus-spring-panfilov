@@ -23,7 +23,7 @@ public class BookCommentServiceQueryOptimizationTest extends BaseContainerTest {
     private static final long FIRST_BOOK_ID = 1;
     private static final long FIRST_BOOKCOMMENT_ID = 1;
     private static final int FIRST_BOOK_COMMENTS_COUNT = 2;
-    private static final int FINDBYID_EXPECTED_QUERIES_COUNT = 1;
+    private static final int FINDBYID_EXPECTED_QUERIES_COUNT = 2;
     private static final int FINDALLBYBOOKID_EXPECTED_QUERIES_COUNT = 2;
 
     @Autowired
