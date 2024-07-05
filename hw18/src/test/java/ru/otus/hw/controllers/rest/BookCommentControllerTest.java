@@ -229,6 +229,6 @@ public class BookCommentControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
 
-        verify(bookCommentService).deleteById(bookCommentDTO.getId());
+        verify(bookCommentService).deleteById(bookCommentDTO.getId(), bookCommentDTO.getBook().getId());
     }
 }

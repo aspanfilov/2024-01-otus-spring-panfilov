@@ -49,6 +49,6 @@ public class BookCommentController {
     @DeleteMapping("/api/v1/books/{bookId}/comments/{bookCommentId}")
     public void deleteBookComment(@PathVariable("bookId") Long bookId,
                                   @PathVariable("bookCommentId") Long bookCommentId) {
-        bookCommentService.deleteById(bookCommentId);
+        bookCommentService.deleteById(bookCommentId, bookId);
     }
 }

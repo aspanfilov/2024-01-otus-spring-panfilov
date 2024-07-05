@@ -37,3 +37,7 @@ management:
 info:
   build:
     location: classpath:/META-INF/build-info.properties
+
+logging:
+  level:
+    ROOT: ERROR

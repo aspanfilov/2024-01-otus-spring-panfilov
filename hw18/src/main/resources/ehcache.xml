@@ -1,0 +1,16 @@
+<config xmlns="http://www.ehcache.org/v3"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.ehcache.org/v3 http://www.ehcache.org/schema/ehcache-core-3.0.xsd">
+
+    <cache-template name="default">
+        <expiry>
+            <ttl unit="seconds">600</ttl> <!-- 10 минут -->
+        </expiry>
+        <heap unit="entries">1000</heap>
+    </cache-template>
+
+    <cache alias="genres" uses-template="default"/>
+    <cache alias="authors" uses-template="default"/>
+    <cache alias="books" uses-template="default"/>
+    <cache alias="bookComments" uses-template="default"/>
+</config>

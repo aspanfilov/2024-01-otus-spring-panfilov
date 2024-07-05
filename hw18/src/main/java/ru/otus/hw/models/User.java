@@ -38,7 +38,7 @@ public class User {
     private String password;
 
     @ManyToMany(cascade = {CascadeType.PERSIST},
-            fetch = FetchType.EAGER)
+            fetch = FetchType.LAZY)
     @JoinTable(name = "users_authority_groups",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "authority_group_id"))

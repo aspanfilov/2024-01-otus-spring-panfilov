@@ -9,6 +9,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.transaction.annotation.Transactional;
 import ru.otus.hw.BaseContainerTest;
 import ru.otus.hw.dtos.AuthorDTO;
 import ru.otus.hw.dtos.BookCommentDTO;
@@ -24,6 +25,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DisplayName("Класс BookCommentService")
 @SpringBootTest
+@Transactional
 public class BookCommentServiceAuthzTest extends BaseContainerTest {
 
     @Autowired
@@ -94,7 +96,9 @@ public class BookCommentServiceAuthzTest extends BaseContainerTest {
         setAuthentication(user1Details);
 
         var savedCommentByUser1 = bookCommentService.insert(newCommentByUser1);
-        bookCommentService.deleteById(savedCommentByUser1.getId());
+        bookCommentService.deleteById(
+                savedCommentByUser1.getId(),
+                savedCommentByUser1.getBook().getId());
 
         assertThat(bookCommentService.findById(savedCommentByUser1.getId())).isEmpty();
     }
@@ -111,7 +115,9 @@ public class BookCommentServiceAuthzTest extends BaseContainerTest {
         var user2Details = userDetailsService.loadUserByUsername("user2");
         setAuthentication(user2Details);
 
-        assertThatThrownBy(() -> bookCommentService.deleteById(savedCommentByUser1.getId()))
+        assertThatThrownBy(() -> bookCommentService.deleteById(
+                savedCommentByUser1.getId(),
+                savedCommentByUser1.getBook().getId()))
                 .isInstanceOf(AccessDeniedException.class);
     }
 

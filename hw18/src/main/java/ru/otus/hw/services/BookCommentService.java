@@ -14,5 +14,5 @@ public interface BookCommentService {
 
     BookCommentDTO update(long id, BookCommentDTO bookCommentDTO);
 
-    void deleteById(long id);
+    void deleteById(long id, long bookId);
 }
