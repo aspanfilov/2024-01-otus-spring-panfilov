@@ -1,6 +1,7 @@
 package ru.otus.hw.services;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,7 @@ import ru.otus.hw.repositories.BookCommentRepository;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class BookCommentServiceImpl implements BookCommentService {
@@ -25,6 +27,7 @@ public class BookCommentServiceImpl implements BookCommentService {
 
     private final UserService userService;
 
+    //    @Cacheable(value = BOOK_COMMENTS_CACHE, key = BOOK_ID_PREFIX + " + #bookId")
     @Transactional(readOnly = true)
     @Override
     public List<BookCommentDTO> findAllByBookId(long bookId) {
@@ -32,15 +35,21 @@ public class BookCommentServiceImpl implements BookCommentService {
         return bookCommentRepository.findAllByBookId(bookId).stream().map(BookCommentMapper::toBookCommentDTO).toList();
     }
 
+    //    @Cacheable(value = BOOK_COMMENTS_CACHE, key = "#id")
     @Transactional(readOnly = true)
     @Override
     public Optional<BookCommentDTO> findById(long id) {
         return bookCommentRepository.findById(id).map(BookCommentMapper::toBookCommentDTO);
     }
 
+    //    @CacheEvict(value = BOOK_COMMENTS_CACHE, key = BOOK_ID_PREFIX + " + #commentDTO.book.id")
+//    @CacheEvict(value = BOOK_COMMENTS_CACHE, key = "'book' + #commentDTO.book.id")
     @Transactional
     @Override
     public BookCommentDTO insert(BookCommentDTO commentDTO) {
+
+        log.info("commentDTO.book.id: {}", commentDTO.getBook().getId());
+
         User currentUser = getCurrentUser();
         Long bookId = commentDTO.getBook().getId();
         String commentText = commentDTO.getCommentText();
@@ -49,6 +58,9 @@ public class BookCommentServiceImpl implements BookCommentService {
         return BookCommentMapper.toBookCommentDTO(bookComment);
     }
 
+    //    @CachePut(value = BOOK_COMMENTS_CACHE, key = "#id")
+//    @CacheEvict(value = BOOK_COMMENTS_CACHE, key = BOOK_ID_PREFIX + " + #commentDTO.book.id")
+//    @CacheEvict(value = BOOK_COMMENTS_CACHE, key = "'book' + #commentDTO")
     @PreAuthorize("#commentDTO.user.username == authentication.name")
     @Transactional
     @Override
@@ -62,6 +74,10 @@ public class BookCommentServiceImpl implements BookCommentService {
         return BookCommentMapper.toBookCommentDTO(bookComment);
     }
 
+    //    @Caching(evict = {
+//            @CacheEvict(value = BOOK_COMMENTS_CACHE, key = "#id"),
+//            @CacheEvict(value = BOOK_COMMENTS_CACHE, key = BOOK_ID_PREFIX + " + #commentDTO.book.id")
+//    })
     @PreAuthorize("@bookCommentServiceImpl.isCommentOwner(#id, authentication.name)")
     @Transactional
     @Override

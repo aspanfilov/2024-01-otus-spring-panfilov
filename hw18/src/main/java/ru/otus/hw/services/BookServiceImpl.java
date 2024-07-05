@@ -1,6 +1,10 @@
 package ru.otus.hw.services;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.hw.dtos.BookDTO;
@@ -16,16 +20,21 @@ import java.util.Optional;
 import java.util.Set;
 
 import static org.springframework.util.CollectionUtils.isEmpty;
+import static ru.otus.hw.config.CacheConfig.ALL_BOOKS_KEY;
+import static ru.otus.hw.config.CacheConfig.BOOKS_CACHE;
+import static ru.otus.hw.config.CacheConfig.ENTITY_PREFIX;
 
 @Service
 @RequiredArgsConstructor
 public class BookServiceImpl implements BookService {
+
     private final AuthorRepository authorRepository;
 
     private final GenreRepository genreRepository;
 
     private final BookRepository bookRepository;
 
+    @Cacheable(value = BOOKS_CACHE, key = "#id")
     @Transactional(readOnly = true)
     @Override
     public Optional<BookDTO> findById(long id) {
@@ -33,12 +42,14 @@ public class BookServiceImpl implements BookService {
         return book.map(BookMapper::toBookDTO);
     }
 
+    @Cacheable(value = BOOKS_CACHE, key = ENTITY_PREFIX + " + #id")
     @Transactional(readOnly = true)
     @Override
     public Optional<Book> findBookById(long id) {
         return bookRepository.findById(id);
     }
 
+    @Cacheable(value = BOOKS_CACHE, key = ALL_BOOKS_KEY)
     @Transactional(readOnly = true)
     @Override
     public List<BookDTO> findAll() {
@@ -46,6 +57,7 @@ public class BookServiceImpl implements BookService {
         return BookMapper.toBookDTOList(books);
     }
 
+    @CacheEvict(value = BOOKS_CACHE, key = ALL_BOOKS_KEY)
     @Transactional
     @Override
     public BookDTO insert(String title, long authorId, Set<Long> genresIds) {
@@ -53,6 +65,11 @@ public class BookServiceImpl implements BookService {
         return BookMapper.toBookDTO(book);
     }
 
+    @CachePut(value = BOOKS_CACHE, key = "#id")
+    @Caching(evict = {
+            @CacheEvict(value = BOOKS_CACHE, key = ALL_BOOKS_KEY),
+            @CacheEvict(value = BOOKS_CACHE, key = ENTITY_PREFIX + " + #id")
+    })
     @Transactional
     @Override
     public BookDTO update(long id, String title, long authorId, Set<Long> genresIds) {
@@ -60,6 +77,11 @@ public class BookServiceImpl implements BookService {
         return BookMapper.toBookDTO(book);
     }
 
+    @Caching(evict = {
+            @CacheEvict(value = BOOKS_CACHE, key = ALL_BOOKS_KEY),
+            @CacheEvict(value = BOOKS_CACHE, key = ENTITY_PREFIX + " + #id"),
+            @CacheEvict(value = BOOKS_CACHE, key = "#id")
+    })
     @Transactional
     @Override
     public void deleteById(long id) {
