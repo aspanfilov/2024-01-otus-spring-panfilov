@@ -1,0 +1,6 @@
+# Эту строку необходимо пропустить. Добавить своих вопросов. CsvToBean (withSkipLines)
+Name the capital of France?;Paris%true|Madrid%false|Rome%false|Berlin%false|London%false
+Name the capital of Japan?;Seoul%false|Beijing%false|Kyoto%false|Bangkok%false|Tokyo%true
+Name the capital of Australia?;Sydney%false|Melbourne%false|Canberra%true|Brisbane%false|Adelaide%false
+Name the capital of Canada?;Toronto%false|Vancouver%false|Ottawa%true|Montreal%false|Quebec%false
+Name the capital of Brazil?;Rio de Janeiro%false|Sao Paulo%false|Brasilia%true|Salvador%false|Belo Horizonte%false
