@@ -71,7 +71,7 @@ public class AuthorServiceCircuitBreakerTest extends BaseContainerTest {
     @DisplayName("CircuitBreaker предотвращает дальнейшие вызовы БД после открытия")
     public void testCircuitBreakerPreventsFurtherCalls() {
 
-        for (int i = 0; i < failureThreshold; i++) {
+        for (int i = 0; i < failureThreshold ; i++) {
             invokeFindByIdAndIgnoreExceptions();
         }
 

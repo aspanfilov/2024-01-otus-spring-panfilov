@@ -25,7 +25,6 @@ import static ru.otus.hw.config.CacheConfig.BOOK_COMMENTS_CACHE;
 import static ru.otus.hw.config.CacheConfig.BOOK_ID_PREFIX;
 
 @Service
-@CircuitBreaker(name = "dbCircuitBreaker")
 @RequiredArgsConstructor
 public class BookCommentServiceImpl implements BookCommentService {
     private final BookCommentRepository bookCommentRepository;
@@ -34,6 +33,7 @@ public class BookCommentServiceImpl implements BookCommentService {
 
     private final UserService userService;
 
+    @CircuitBreaker(name = "dbCircuitBreaker")
     @Cacheable(value = BOOK_COMMENTS_CACHE, key = BOOK_ID_PREFIX + " + #bookId")
     @Transactional(readOnly = true)
     @Override
@@ -42,6 +42,7 @@ public class BookCommentServiceImpl implements BookCommentService {
         return bookCommentRepository.findAllByBookId(bookId).stream().map(BookCommentMapper::toBookCommentDTO).toList();
     }
 
+    @CircuitBreaker(name = "dbCircuitBreaker")
     @Cacheable(value = BOOK_COMMENTS_CACHE, key = "#id")
     @Transactional(readOnly = true)
     @Override
@@ -49,6 +50,7 @@ public class BookCommentServiceImpl implements BookCommentService {
         return bookCommentRepository.findById(id).map(BookCommentMapper::toBookCommentDTO);
     }
 
+    @CircuitBreaker(name = "dbCircuitBreaker")
     @CacheEvict(value = BOOK_COMMENTS_CACHE, key = BOOK_ID_PREFIX + " + #commentDTO.book.id")
     @Transactional
     @Override
@@ -62,6 +64,7 @@ public class BookCommentServiceImpl implements BookCommentService {
         return BookCommentMapper.toBookCommentDTO(bookComment);
     }
 
+    @CircuitBreaker(name = "dbCircuitBreaker")
     @CachePut(value = BOOK_COMMENTS_CACHE, key = "#id")
     @CacheEvict(value = BOOK_COMMENTS_CACHE, key = BOOK_ID_PREFIX + " + #commentDTO.book.id")
     @PreAuthorize("#commentDTO.user.username == authentication.name")
@@ -77,6 +80,7 @@ public class BookCommentServiceImpl implements BookCommentService {
         return BookCommentMapper.toBookCommentDTO(bookComment);
     }
 
+    @CircuitBreaker(name = "dbCircuitBreaker")
     @Caching(evict = {
             @CacheEvict(value = BOOK_COMMENTS_CACHE, key = "#id"),
             @CacheEvict(value = BOOK_COMMENTS_CACHE, key = BOOK_ID_PREFIX + " + #bookId")
@@ -86,6 +90,12 @@ public class BookCommentServiceImpl implements BookCommentService {
     @Override
     public void deleteById(long id, long bookId) {
         bookCommentRepository.deleteById(id);
+    }
+
+    public boolean isCommentOwner(long commentId, String username) {
+        return bookCommentRepository.findById(commentId)
+                .map(comment -> comment.getUser().getUsername().equals(username))
+                .orElse(false);
     }
 
     private BookComment save(long id, long bookId, String commentText, User user) {
@@ -99,12 +109,6 @@ public class BookCommentServiceImpl implements BookCommentService {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         return userService.findByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException("User %s not found".formatted(username)));
-    }
-
-    public boolean isCommentOwner(long commentId, String username) {
-        return bookCommentRepository.findById(commentId)
-                .map(comment -> comment.getUser().getUsername().equals(username))
-                .orElse(false);
     }
 }
 

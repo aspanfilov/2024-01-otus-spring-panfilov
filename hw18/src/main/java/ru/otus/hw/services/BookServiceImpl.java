@@ -26,7 +26,6 @@ import static ru.otus.hw.config.CacheConfig.BOOKS_CACHE;
 import static ru.otus.hw.config.CacheConfig.ENTITY_PREFIX;
 
 @Service
-@CircuitBreaker(name = "dbCircuitBreaker")
 @RequiredArgsConstructor
 public class BookServiceImpl implements BookService {
 
@@ -36,6 +35,7 @@ public class BookServiceImpl implements BookService {
 
     private final BookRepository bookRepository;
 
+    @CircuitBreaker(name = "dbCircuitBreaker")
     @Cacheable(value = BOOKS_CACHE, key = "#id")
     @Transactional(readOnly = true)
     @Override
@@ -44,6 +44,7 @@ public class BookServiceImpl implements BookService {
         return book.map(BookMapper::toBookDTO);
     }
 
+    @CircuitBreaker(name = "dbCircuitBreaker")
     @Cacheable(value = BOOKS_CACHE, key = ENTITY_PREFIX + " + #id")
     @Transactional(readOnly = true)
     @Override
@@ -51,6 +52,7 @@ public class BookServiceImpl implements BookService {
         return bookRepository.findById(id);
     }
 
+    @CircuitBreaker(name = "dbCircuitBreaker")
     @Cacheable(value = BOOKS_CACHE, key = ALL_BOOKS_KEY)
     @Transactional(readOnly = true)
     @Override
@@ -59,6 +61,7 @@ public class BookServiceImpl implements BookService {
         return BookMapper.toBookDTOList(books);
     }
 
+    @CircuitBreaker(name = "dbCircuitBreaker")
     @CacheEvict(value = BOOKS_CACHE, key = ALL_BOOKS_KEY)
     @Transactional
     @Override
@@ -67,6 +70,7 @@ public class BookServiceImpl implements BookService {
         return BookMapper.toBookDTO(book);
     }
 
+    @CircuitBreaker(name = "dbCircuitBreaker")
     @CachePut(value = BOOKS_CACHE, key = "#id")
     @Caching(evict = {
             @CacheEvict(value = BOOKS_CACHE, key = ALL_BOOKS_KEY),
@@ -79,6 +83,7 @@ public class BookServiceImpl implements BookService {
         return BookMapper.toBookDTO(book);
     }
 
+    @CircuitBreaker(name = "dbCircuitBreaker")
     @Caching(evict = {
             @CacheEvict(value = BOOKS_CACHE, key = ALL_BOOKS_KEY),
             @CacheEvict(value = BOOKS_CACHE, key = ENTITY_PREFIX + " + #id"),
@@ -88,6 +93,13 @@ public class BookServiceImpl implements BookService {
     @Override
     public void deleteById(long id) {
         bookRepository.deleteById(id);
+    }
+
+    @CircuitBreaker(name = "dbCircuitBreaker")
+    @Transactional(readOnly = true)
+    @Override
+    public long getCount() {
+        return bookRepository.count();
     }
 
     private Book save(long id, String title, long authorId, Set<Long> genresIds) {
@@ -104,11 +116,5 @@ public class BookServiceImpl implements BookService {
 
         var book = new Book(id, title, author, genres);
         return bookRepository.save(book);
-    }
-
-    @Transactional(readOnly = true)
-    @Override
-    public long getCount() {
-        return bookRepository.count();
     }
 }

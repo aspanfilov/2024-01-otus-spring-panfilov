@@ -10,12 +10,12 @@ import ru.otus.hw.repositories.UserRepository;
 import java.util.Optional;
 
 @Service
-@CircuitBreaker(name = "dbCircuitBreaker")
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
 
+    @CircuitBreaker(name = "dbCircuitBreaker")
     @Transactional(readOnly = true)
     @Override
     public Optional<User> findByUsername(String username) {

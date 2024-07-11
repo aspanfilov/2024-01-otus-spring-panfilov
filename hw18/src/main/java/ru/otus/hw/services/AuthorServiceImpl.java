@@ -19,12 +19,12 @@ import static ru.otus.hw.config.CacheConfig.AUTHORS_CACHE;
 import static ru.otus.hw.config.CacheConfig.BOOKS_CACHE;
 
 @Service
-@CircuitBreaker(name = "dbCircuitBreaker")
 @RequiredArgsConstructor
 public class AuthorServiceImpl implements AuthorService {
 
     private final AuthorRepository authorRepository;
 
+    @CircuitBreaker(name = "dbCircuitBreaker")
     @Cacheable(value = AUTHORS_CACHE, key = ALL_AUTHORS_KEY)
     @Transactional(readOnly = true)
     @Override
@@ -32,6 +32,7 @@ public class AuthorServiceImpl implements AuthorService {
         return authorRepository.findAll();
     }
 
+    @CircuitBreaker(name = "dbCircuitBreaker")
     @Cacheable(value = AUTHORS_CACHE, key = "#id")
     @Transactional(readOnly = true)
     @Override
@@ -39,6 +40,7 @@ public class AuthorServiceImpl implements AuthorService {
         return authorRepository.findById(id);
     }
 
+    @CircuitBreaker(name = "dbCircuitBreaker")
     @CacheEvict(value = AUTHORS_CACHE, key = ALL_AUTHORS_KEY)
     @Transactional
     @Override
@@ -46,6 +48,7 @@ public class AuthorServiceImpl implements AuthorService {
         return save(0, fullName);
     }
 
+    @CircuitBreaker(name = "dbCircuitBreaker")
     @CachePut(value = AUTHORS_CACHE, key = "#id")
     @Caching(evict = {
             @CacheEvict(value = AUTHORS_CACHE, key = ALL_AUTHORS_KEY),
@@ -57,11 +60,7 @@ public class AuthorServiceImpl implements AuthorService {
         return save(id, fullName);
     }
 
-    private Author save(long id, String fullName) {
-        var author = new Author(id, fullName);
-        return authorRepository.save(author);
-    }
-
+    @CircuitBreaker(name = "dbCircuitBreaker")
     @Caching(evict = {
             @CacheEvict(value = AUTHORS_CACHE, key = "#id"),
             @CacheEvict(value = AUTHORS_CACHE, key = ALL_AUTHORS_KEY),
@@ -73,10 +72,16 @@ public class AuthorServiceImpl implements AuthorService {
         authorRepository.deleteById(id);
     }
 
+    @CircuitBreaker(name = "dbCircuitBreaker")
     @Transactional(readOnly = true)
     @Override
     public long getCount() {
         return authorRepository.count();
+    }
+
+    private Author save(long id, String fullName) {
+        var author = new Author(id, fullName);
+        return authorRepository.save(author);
     }
 
 }

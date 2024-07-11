@@ -19,12 +19,12 @@ import static ru.otus.hw.config.CacheConfig.BOOKS_CACHE;
 import static ru.otus.hw.config.CacheConfig.GENRES_CACHE;
 
 @Service
-@CircuitBreaker(name = "dbCircuitBreaker")
 @RequiredArgsConstructor
 public class GenreServiceImpl implements GenreService {
 
     private final GenreRepository genreRepository;
 
+    @CircuitBreaker(name = "dbCircuitBreaker")
     @Cacheable(value = GENRES_CACHE, key = ALL_GENRES_KEY)
     @Transactional(readOnly = true)
     @Override
@@ -32,6 +32,7 @@ public class GenreServiceImpl implements GenreService {
         return genreRepository.findAll();
     }
 
+    @CircuitBreaker(name = "dbCircuitBreaker")
     @Cacheable(value = GENRES_CACHE, key = "#ids")
     @Transactional(readOnly = true)
     @Override
@@ -39,6 +40,7 @@ public class GenreServiceImpl implements GenreService {
         return genreRepository.findAllById(ids);
     }
 
+    @CircuitBreaker(name = "dbCircuitBreaker")
     @Cacheable(value = GENRES_CACHE, key = "#id")
     @Transactional(readOnly = true)
     @Override
@@ -46,6 +48,7 @@ public class GenreServiceImpl implements GenreService {
         return genreRepository.findById(id);
     }
 
+    @CircuitBreaker(name = "dbCircuitBreaker")
     @CacheEvict(value = GENRES_CACHE, key = ALL_GENRES_KEY)
     @Transactional
     @Override
@@ -53,6 +56,7 @@ public class GenreServiceImpl implements GenreService {
         return save(0, name);
     }
 
+    @CircuitBreaker(name = "dbCircuitBreaker")
     @Caching(evict = {
             @CacheEvict(value = GENRES_CACHE, allEntries = true),
             @CacheEvict(value = BOOKS_CACHE, allEntries = true)
@@ -63,6 +67,7 @@ public class GenreServiceImpl implements GenreService {
         return save(id, name);
     }
 
+    @CircuitBreaker(name = "dbCircuitBreaker")
     @Caching(evict = {
             @CacheEvict(value = GENRES_CACHE, allEntries = true),
             @CacheEvict(value = BOOKS_CACHE, allEntries = true)
@@ -73,14 +78,15 @@ public class GenreServiceImpl implements GenreService {
         genreRepository.deleteById(id);
     }
 
-    private Genre save(long id, String name) {
-        var genre = new Genre(id, name);
-        return genreRepository.save(genre);
-    }
-
+    @CircuitBreaker(name = "dbCircuitBreaker")
     @Transactional(readOnly = true)
     @Override
     public long getCount() {
         return genreRepository.count();
+    }
+
+    private Genre save(long id, String name) {
+        var genre = new Genre(id, name);
+        return genreRepository.save(genre);
     }
 }
