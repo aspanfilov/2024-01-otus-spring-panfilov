@@ -1,0 +1,61 @@
+spring:
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/library
+    username: postgres
+    password: postgres
+
+  liquibase:
+    enabled: true
+
+  jpa:
+    generate-ddl: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true
+    show-sql: true
+
+  jmx:
+    enabled: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health, info, metrics, loggers, logfile"
+  endpoint:
+    logfile:
+      external-file: hw16/logs/app.log
+    health:
+      show-details: always
+  health:
+    defaults:
+      enabled: true
+
+resilience4j:
+  circuitbreaker:
+    metrics:
+      enabled: true
+    configs:
+      default:
+        register-health-indicator: true
+        sliding-window-type: count-based
+        sliding-window-size: 5
+        slow-call-duration-threshold: 3s
+        slow-call-rate-threshold: 60
+        failure-rate-threshold: 60
+        wait-duration-in-open-state: 30s
+        permitted-number-of-calls-in-half-open-state: 3
+    instances:
+      dbCircuitBreaker:
+        baseConfig: default
+
+info:
+  build:
+    location: classpath:/META-INF/build-info.properties
+
+logging:
+  level:
+    ROOT: INFO

@@ -1,0 +1,49 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-table-authority_groups_authorities
+      author: Panfilov Artur
+      changes:
+        - tagDatabase:
+            tag: version-4.0
+        - createTable:
+            tableName: authority_groups_authorities
+            remarks: таблица связей многие ко многим полномочий и групп полномочий
+            columns:
+              - column:
+                  name: authority_group_id
+                  remarks: ссылка на группу (внешний ключ)
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: pk_authority_group_authority_2
+                    nullable: false
+              - column:
+                  name: authority_id
+                  remarks: ссылка на полномочие (внешний ключ)
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: pk_authority_group_authority_2
+                    nullable: false
+        - addForeignKeyConstraint:
+            constraintName: authority_groups_authorities_authority_group_id_fk
+            baseTableName: authority_groups_authorities
+            baseColumnNames: authority_group_id
+            referencedTableName: authority_groups
+            referencedColumnNames: id
+            deferrable: false
+            initiallyDeferred: false
+            onDelete: CASCADE
+            onUpdate: NO ACTION
+            validate: true
+        - addForeignKeyConstraint:
+            constraintName: authority_groups_authorities_authority_id_fk
+            baseTableName: authority_groups_authorities
+            baseColumnNames: authority_id
+            referencedTableName: authorities
+            referencedColumnNames: id
+            deferrable: false
+            initiallyDeferred: false
+            onDelete: CASCADE
+            onUpdate: NO ACTION
+            validate: true
