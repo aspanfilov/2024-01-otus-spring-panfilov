@@ -2,6 +2,8 @@ package ru.otus.services;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import ru.otus.domain.Answer;
 import ru.otus.domain.Question;
 import ru.otus.service.QuestionConverter;
@@ -11,8 +13,12 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@SpringBootTest(classes = QuestionConverterImpl.class)
 @DisplayName("Класс QuestionConverterImpl")
 public class QuestionConverterImplTest {
+
+    @Autowired
+    private QuestionConverterImpl questionConverter;
 
     @Test
     @DisplayName("правильно конвертирует вопросы в текстовое представление")
@@ -30,7 +36,7 @@ public class QuestionConverterImplTest {
                         "3 Rome\n" +
                         "4 Berlin\n" +
                         "5 London\n";
-        QuestionConverter questionConverter = new QuestionConverterImpl();
+
         String actualQuestionText = questionConverter.convertQuestionToString(question);
 
         assertThat(actualQuestionText).isEqualTo(expectedQuestionText);

@@ -24,7 +24,8 @@ public class ApplicationCommands {
     public ApplicationCommands(TestRunner testRunner,
                                StudentEnrollmentService studentEnrollmentService,
                                StudentRegistrationManager studentRegistrationService,
-                               @Qualifier("localizedMessagesServiceImpl") LocalizedMessagesService localizedMessagesService) {
+                               @Qualifier("localizedMessagesServiceImpl")
+                               LocalizedMessagesService localizedMessagesService) {
         this.testRunner = testRunner;
         this.studentEnrollmentService = studentEnrollmentService;
         this.studentRegistrationService = studentRegistrationService;

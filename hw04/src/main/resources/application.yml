@@ -6,7 +6,6 @@ spring:
 test:
   rightAnswersCountToPass: 3
   maxInputAttempts: 10
-#  locale: en-US
   locale: ru-RU
   fileNameByLocaleTag:
     ru-RU: questions_ru.csv

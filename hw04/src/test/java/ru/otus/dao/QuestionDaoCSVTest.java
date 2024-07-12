@@ -2,10 +2,9 @@ package ru.otus.dao;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import ru.otus.config.TestFileNameProvider;
 import ru.otus.domain.Answer;
 import ru.otus.domain.Question;
@@ -16,13 +15,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 @DisplayName("Класс QuestionDaoCSV")
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest(classes = QuestionDaoCSV.class)
 public class QuestionDaoCSVTest {
 
-    @Mock
+    @MockBean
     private TestFileNameProvider testFileNameProvider;
 
-    @InjectMocks
+    @Autowired
     private QuestionDaoCSV questionDaoCSV;
 
     @Test

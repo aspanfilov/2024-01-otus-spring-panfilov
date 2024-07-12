@@ -7,6 +7,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import ru.otus.config.TestConfig;
 import ru.otus.domain.Question;
 import ru.otus.domain.Student;
@@ -19,19 +22,19 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @DisplayName("Класс ResultServiceImpl")
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest(classes = ResultServiceImpl.class)
 public class ResultServiceImplTest {
 
-    @Mock
+    @MockBean
     private TestConfig testConfig;
 
-    @Mock
+    @MockBean
     private LocalizedIOService ioService;
 
-    @Mock
+    @MockBean
     private Question anyQuestion;
 
-    @InjectMocks
+    @Autowired
     private ResultServiceImpl resultService;
 
     private TestResult testResult;

@@ -4,17 +4,17 @@ import ru.otus.domain.Student;
 
 public class StudentContext {
 
-    private static final ThreadLocal<Student> currentStudent = new ThreadLocal<>();
+    private static final ThreadLocal<Student> CURRENT_STUDENT = new ThreadLocal<>();
 
     public static void setCurrentStudent(Student student) {
-        currentStudent.set(student);
+        CURRENT_STUDENT.set(student);
     }
 
     public static Student getCurrentStudent() {
-        return currentStudent.get();
+        return CURRENT_STUDENT.get();
     }
 
     public static void clear() {
-        currentStudent.remove();
+        CURRENT_STUDENT.remove();
     }
 }
