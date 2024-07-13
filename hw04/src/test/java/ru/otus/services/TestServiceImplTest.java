@@ -35,15 +35,13 @@ public class TestServiceImplTest {
     @MockBean
     private QuestionConverter questionConverter;
 
-    @MockBean
-    private Student anyStudent;
-
     @Autowired
     private TestServiceImpl testService;
 
     @Test
     @DisplayName("Должен корректно выполнить тестирование")
     void shouldCorrectExecuteTest() {
+        Student anyStudent = new Student("Ivan", "Ivanov");
         Question question = new Question("Name the capital of France?", List.of(
                 new Answer("Paris", true),
                 new Answer("Madrid", false),

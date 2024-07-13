@@ -11,12 +11,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import ru.otus.config.TestConfig;
+import ru.otus.domain.Answer;
 import ru.otus.domain.Question;
 import ru.otus.domain.Student;
 import ru.otus.domain.TestResult;
 import ru.otus.service.IO.IOService;
 import ru.otus.service.IO.LocalizedIOService;
 import ru.otus.service.ResultServiceImpl;
+
+import java.util.List;
 
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -31,9 +34,6 @@ public class ResultServiceImplTest {
     @MockBean
     private LocalizedIOService ioService;
 
-    @MockBean
-    private Question anyQuestion;
-
     @Autowired
     private ResultServiceImpl resultService;
 
@@ -42,8 +42,10 @@ public class ResultServiceImplTest {
     @BeforeEach
     void setUp() {
         Student student = new Student("Ivan", "Ivanov");
+        Answer answer = new Answer("Answer", true);
+        Question question = new Question("Question", List.of(answer));
         testResult = new TestResult(student);
-        testResult.applyAnswer(anyQuestion, true);
+        testResult.applyAnswer(question, true);
     }
 
     @Test
